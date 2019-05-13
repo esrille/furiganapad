@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <menu id="menubar">
+    <submenu>
+      <attribute name="label">_File</attribute>
+      <section>
+        <item>
+          <attribute name="label">_New Window</attribute>
+          <attribute name="action">win.new</attribute>
+          <attribute name="accel">&lt;Primary&gt;n</attribute>
+        </item>
+        <item>
+          <attribute name="label">_Open…</attribute>
+          <attribute name="action">win.open</attribute>
+          <attribute name="accel">&lt;Primary&gt;o</attribute>
+        </item>
+      </section>
+      <section>
+        <item>
+          <attribute name="label">_Save</attribute>
+          <attribute name="action">win.save</attribute>
+          <attribute name="accel">&lt;Primary&gt;s</attribute>
+        </item>
+        <item>
+          <attribute name="label">Save _As…</attribute>
+          <attribute name="action">win.saveas</attribute>
+        </item>
+      </section>
+      <section>
+        <item>
+          <attribute name="label">_Close</attribute>
+          <attribute name="action">win.close</attribute>
+          <attribute name="accel">&lt;Primary&gt;w</attribute>
+        </item>
+        <item>
+          <attribute name="label">Clos_e All</attribute>
+          <attribute name="action">win.closeall</attribute>
+        </item>
+      </section>
+    </submenu>
+    <submenu>
+      <attribute name="label">_Edit</attribute>
+      <section>
+        <item>
+          <attribute name="label">_Undo</attribute>
+          <attribute name="action">win.undo</attribute>
+          <attribute name="accel">&lt;Primary&gt;z</attribute>
+        </item>
+        <item>
+          <attribute name="label">Re_do</attribute>
+          <attribute name="action">win.redo</attribute>
+          <attribute name="accel">&lt;Primary&gt;&lt;Shift&gt;z</attribute>
+        </item>
+      </section>
+      <section>
+        <item>
+          <attribute name="label">Cu_t</attribute>
+          <attribute name="action">win.cut</attribute>
+        </item>
+        <item>
+          <attribute name="label">_Copy</attribute>
+          <attribute name="action">win.copy</attribute>
+        </item>
+        <item>
+          <attribute name="label">_Paste</attribute>
+          <attribute name="action">win.paste</attribute>
+        </item>
+      </section>
+      <section>
+        <item>
+          <attribute name="label">Select _All</attribute>
+          <attribute name="action">win.selectall</attribute>
+        </item>
+      </section>
+      <section>
+        <item>
+          <attribute name="label">_Find…</attribute>
+          <attribute name="action">win.find</attribute>
+          <attribute name="accel">&lt;Primary&gt;f</attribute>
+        </item>
+        <item>
+          <attribute name="label">_Replace…</attribute>
+          <attribute name="action">win.replace</attribute>
+          <attribute name="accel">&lt;Primary&gt;r</attribute>
+        </item>
+      </section>
+      <section>
+        <item>
+          <attribute name="label">Ru_by…</attribute>
+          <attribute name="action">win.annotate</attribute>
+        </item>
+        <item>
+          <attribute name="label">Revert to _Hiragana</attribute>
+          <attribute name="action">win.unconvert</attribute>
+          <attribute name="accel">&lt;Primary&gt;t</attribute>
+        </item>
+      </section>
+    </submenu>
+    <submenu>
+      <attribute name="label">_Settings</attribute>
+      <section>
+        <item>
+          <attribute name="label">_Font…</attribute>
+          <attribute name="action">win.font</attribute>
+        </item>
+        <item>
+          <attribute name="label">_Ruby</attribute>
+          <attribute name="action">win.ruby</attribute>
+        </item>
+        <item>
+          <attribute name="label">Highlight _Long Sentences</attribute>
+          <attribute name="action">win.highlightlongsentences</attribute>
+        </item>
+      </section>
+    </submenu>
+    <submenu>
+      <attribute name="label">_Help</attribute>
+      <section>
+        <item>
+          <attribute name="label">_About…</attribute>
+          <attribute name="action">win.about</attribute>
+          <attribute name="accel">F1</attribute>
+        </item>
+      </section>
+    </submenu>
+  </menu>
+</interface>
