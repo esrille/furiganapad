@@ -126,7 +126,7 @@ $ sudo apt install python3-cairo python3-gi-cairo
 
 
 
-　ふりがなパッドは、UTF-8でエンコードされたキストファイルのよみかきができます。
+　ふりがなパッドは、UTF-8でエンコードされたテキストファイルのよみかきができます。
 
 　ふりがなは、ユニコードのルビ<ruby>用<rp>(</rp><rt>よう</rt><rp>)</rp></ruby>のコードポイントU+FFF9からU+FFFBをつかって<ruby>保存<rp>(</rp><rt>ほぞん</rt><rp>)</rp></ruby>しています。ただし、このコードポイントに<ruby>対応<rp>(</rp><rt>たいおう</rt><rp>)</rp></ruby>しているソフトウェアはあまりおおくありません。
 
