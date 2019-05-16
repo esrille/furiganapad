@@ -34,7 +34,7 @@ class Converter:
         })
 
     def convert_line(self, line):
-        print(line.translate(self.tr))
+        print(line.translate(self.tr), sep='')
 
     def convert(self, filename):
         with open(filename, 'r') as file:

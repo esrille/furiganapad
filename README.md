@@ -1,14 +1,10 @@
 # ふりがなパッド (ベータ<ruby>版<rp>(</rp><rt>ばん</rt><rp>)</rp></ruby>)
 
-
-
 　ふりがなパッドは、<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ふりがなをうった<ruby>文章<rp>(</rp><rt>ぶんしょう</rt><rp>)</rp></ruby>をかんたんにつくれるテキストエディターです。[<ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby><ruby>置換<rp>(</rp><rt>ちかん</rt><rp>)</rp></ruby>インプットメソッド](https://github.com/esrille/ibus-replace-with-kanji)といっしょにつかうと、<ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby>に<ruby>自動的<rp>(</rp><rt>じどうてき</rt><rp>)</rp></ruby>にふりがなをふっていきます。
 
 
 
 ## つかいかた
-
-
 
 ```
 
@@ -16,19 +12,13 @@ $ furiganapad [filename...]
 
 ```
 
-
-
 ## スクリーン ショット
-
-
 
 ![ふりがなパッドのスクリーンショット](screenshot.png)
 
 
 
 ## ふりがなパッドのインストール<ruby>方法<rp>(</rp><rt>ほうほう</rt><rp>)</rp></ruby>
-
-
 
 ```
 
@@ -40,19 +30,13 @@ $ sudo make install
 
 ```
 
-
-
 アンインストールするときは、つぎのようにします:
-
-
 
 ```
 
 $ sudo make uninstall
 
 ```
-
-
 
 ### ふりがなパッドのつかえる<ruby>環境<rp>(</rp><rt>かんきょう</rt><rp>)</rp></ruby>
 
@@ -70,19 +54,19 @@ $ sudo apt install python3-cairo python3-gi-cairo
 
 ## ふりがなについて
 
-
-
 　こども<ruby>用<rp>(</rp><rt>よう</rt><rp>)</rp></ruby>の<ruby>本<rp>(</rp><rt>ほん</rt><rp>)</rp></ruby>には、すべての<ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby>にふりがながふってある<ruby>本<rp>(</rp><rt>ほん</rt><rp>)</rp></ruby>もすくなくありません。そうしたふりがなのつけかたを「<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ふりがな」とか「<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ルビ」といいます。
 
+
+
 　さいきんでは、「やさしい<ruby>日本語<rp>(</rp><rt>にほんご</rt><rp>)</rp></ruby>」でかいた<ruby>文章<rp>(</rp><rt>ぶんしょう</rt><rp>)</rp></ruby>をみたり、かいたりする<ruby>機会<rp>(</rp><rt>きかい</rt><rp>)</rp></ruby>がふえてきました。「やさしい<ruby>日本語<rp>(</rp><rt>にほんご</rt><rp>)</rp></ruby>」の<ruby>文章<rp>(</rp><rt>ぶんしょう</rt><rp>)</rp></ruby>も<ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby>にふりがながふってあります。
+
+
 
 　いまではウェブブラウザも、ふりがなを<ruby>表示<rp>(</rp><rt>ひょうじ</rt><rp>)</rp></ruby>できるようになっています。ふりがなパッドは、<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ルビの<ruby>文章<rp>(</rp><rt>ぶんしょう</rt><rp>)</rp></ruby>をかんたんに<ruby>作成<rp>(</rp><rt>さくせい</rt><rp>)</rp></ruby>したり<ruby>編集<rp>(</rp><rt>へんしゅう</rt><rp>)</rp></ruby>したりできるようにかんがえてあります。
 
 
 
 ## とくべつな<ruby>機能<rp>(</rp><rt>きのう</rt><rp>)</rp></ruby>
-
-
 
 　ふりがなパッドには、テキストエディターの<ruby>基本的<rp>(</rp><rt>きほんてき</rt><rp>)</rp></ruby>な<ruby>機能<rp>(</rp><rt>きのう</rt><rp>)</rp></ruby>のほかに、つぎのような<ruby>機能<rp>(</rp><rt>きのう</rt><rp>)</rp></ruby>があります。
 
@@ -118,17 +102,21 @@ $ sudo apt install python3-cairo python3-gi-cairo
 
 　メニューの「ながい<ruby>文<rp>(</rp><rt>ぶん</rt><rp>)</rp></ruby>をめだたせる」にチェックをつけておくと、ながい<ruby>文<rp>(</rp><rt>ぶん</rt><rp>)</rp></ruby>を<ruby>色<rp>(</rp><rt>いろ</rt><rp>)</rp></ruby>づけして<ruby>表示<rp>(</rp><rt>ひょうじ</rt><rp>)</rp></ruby>します。一<ruby>文<rp>(</rp><rt>ぶん</rt><rp>)</rp></ruby>のながさが５０<ruby>字<rp>(</rp><rt>じ</rt><rp>)</rp></ruby>をこえると、<ruby>文<rp>(</rp><rt>ぶん</rt><rp>)</rp></ruby>の<ruby>背景<rp>(</rp><rt>はいけい</rt><rp>)</rp></ruby>が<ruby>黄<rp>(</rp><rt>き</rt><rp>)</rp></ruby><ruby>色<rp>(</rp><rt>いろ</rt><rp>)</rp></ruby>になります。さらに、６０<ruby>字<rp>(</rp><rt>じ</rt><rp>)</rp></ruby>をこえると、<ruby>文<rp>(</rp><rt>ぶん</rt><rp>)</rp></ruby>の<ruby>背景<rp>(</rp><rt>はいけい</rt><rp>)</rp></ruby>が<ruby>赤色<rp>(</rp><rt> あかいろ</rt><rp>)</rp></ruby>になります。
 
+
+
 ※　ながい<ruby>文<rp>(</rp><rt>ぶん</rt><rp>)</rp></ruby>はみじかくきって、かきなおすと、よみやすくなります。
 
 
 
 ## ファイル<ruby>形式<rp>(</rp><rt>けいしき</rt><rp>)</rp></ruby>と<ruby>応用<rp>(</rp><rt>おうよう</rt><rp>)</rp></ruby>のしかた
 
-
-
 　ふりがなパッドは、UTF-8でエンコードされたテキストファイルのよみかきができます。
 
+
+
 　ふりがなは、ユニコードのルビ<ruby>用<rp>(</rp><rt>よう</rt><rp>)</rp></ruby>のコードポイントU+FFF9からU+FFFBをつかって<ruby>保存<rp>(</rp><rt>ほぞん</rt><rp>)</rp></ruby>しています。ただし、このコードポイントに<ruby>対応<rp>(</rp><rt>たいおう</rt><rp>)</rp></ruby>しているソフトウェアはあまりおおくありません。
+
+
 
 　そのかわり、ユニコードのルビをHTMLのrubyタグに<ruby>変換<rp>(</rp><rt>へんかん</rt><rp>)</rp></ruby>したりするのはかんたんです。つぎの<ruby>例<rp>(</rp><rt>れい</rt><rp>)</rp></ruby>では、ふりがなパッドでかいたREADME.txtを、スクリプトをつかって、README.mdに<ruby>変換<rp>(</rp><rt>へんかん</rt><rp>)</rp></ruby>しています。
 
