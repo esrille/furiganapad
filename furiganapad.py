@@ -377,7 +377,6 @@ class TextMark():
         self.iter.set_line(end.get_line() + d)
         if 0 < d:
             return
-        assert self.iter.get_line() == start.get_line()
         d = self.iter.get_line_offset() - start.get_line_offset()
         self.iter.set_line_offset(end.get_line_offset() + d)
 
@@ -391,7 +390,6 @@ class TextMark():
         self.iter.set_line(start.get_line() + d)
         if 0 < d:
             return
-        assert self.iter.get_line() == end.get_line()
         d = self.iter.get_line_offset() - end.get_line_offset()
         self.iter.set_line_offset(start.get_line_offset() + d)
 
