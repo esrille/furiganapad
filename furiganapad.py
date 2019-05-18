@@ -402,7 +402,9 @@ class TextBuffer(GObject.Object):
         'insert_text': (GObject.SIGNAL_RUN_LAST, None, (object, str, )),
         'delete_range': (GObject.SIGNAL_RUN_LAST, None, (object, object, )),
         'begin_user_action': (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'end_user_action': (GObject.SIGNAL_RUN_FIRST, None, ())
+        'end_user_action': (GObject.SIGNAL_RUN_FIRST, None, ()),
+        'undo': (GObject.SIGNAL_RUN_LAST, None, ()),
+        'redo': (GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
     def __init__(self):
@@ -415,6 +417,12 @@ class TextBuffer(GObject.Object):
         self.annotated = ''
         self.ruby_mode = True
 
+        # Undo buffers
+        self.user_action = False
+        self.undo = []  # undo buffer
+        self.redo = []  # redo buffer
+        self.inserting = None
+
         # TextBuffer always contains at least one line
         paragraph = Paragraph()
         self.paragraphs.append(paragraph)
@@ -423,6 +431,11 @@ class TextBuffer(GObject.Object):
         iter = self.get_start_iter()
         self.create_mark("insert", iter)
         self.create_mark("selection_bound", iter)
+
+        # Connect operations for undo and redo
+        self.connect("insert_text", self.on_insert)
+        self.connect_after("insert_text", self.on_inserted)
+        self.connect("delete_range", self.on_delete)
 
     def _empty(self):
         if 1 < self.get_line_count():
@@ -532,6 +545,7 @@ class TextBuffer(GObject.Object):
         return self.paragraphs[iter.get_line()]._inside_ruby(iter.get_line_offset())
 
     def begin_user_action(self):
+        self.user_action = True
         self.emit('begin_user_action')
 
     def copy_clipboard(self, clipboard):
@@ -658,6 +672,7 @@ class TextBuffer(GObject.Object):
 
     def end_user_action(self):
         self.emit('end_user_action')
+        self.user_action = False
 
     def get_bounds(self):
         start = self.get_start_iter()
@@ -826,7 +841,12 @@ class TextBuffer(GObject.Object):
         self.select_range(start, end)
 
     def set_modified(self, setting):
+        if self.modified == setting:
+            return
         self.modified = setting
+        if not self.modified:
+            self.undo = []
+            self.redo = []
 
     def set_ruby_mode(self, ruby):
         self.ruby_mode = ruby
@@ -884,6 +904,84 @@ class TextBuffer(GObject.Object):
                 ruby = c + ruby
         return False
 
+    def on_delete(self, textbuffer, start, end):
+        if self.user_action:
+            text = self.get_text(start, end, True)
+            action = ["delete_range",
+                      start.get_line(), start.get_line_offset(),
+                      end.get_line(), end.get_line_offset(),
+                      text,
+                      time.perf_counter()]
+            print("on_delete", action)
+            self.undo.append(action)
+            self.redo.clear()
+
+    def on_insert(self, textbuffer, iter, text):
+        if self.user_action:
+            self.inserting = iter.copy()
+
+    def on_inserted(self, textbuffer, iter, text):
+        if self.user_action:
+            action = ["insert_text",
+                      self.inserting.get_line(), self.inserting.get_line_offset(),
+                      iter.get_line(), iter.get_line_offset(),
+                      text,
+                      time.perf_counter()]
+            print("on_inserted", action)
+            self.undo.append(action)
+            self.redo.clear()
+            self.inserting = None
+
+    def do_undo(self):
+        if not self.undo:
+            return
+        print("do_undo")
+        action = self.undo.pop()
+        if action[0] == "insert_text":
+            start = self.get_iter_at_line_offset(action[1], action[2])
+            end = self.get_iter_at_line_offset(action[3], action[4])
+            self.delete(start, end)
+            # Undo previous delete_range that issued within 5 msec
+            # to cope with ibus-replace-with-kanji smoothly
+            if self.undo:
+                prev = self.undo[-1]
+                if prev[0] == "delete_range" and action[6] - prev[6] < 0.005:
+                    self.redo.append(action)
+                    action = self.undo.pop()
+                    print("do_undo", action)
+                    start = self.get_iter_at_line_offset(action[1], action[2])
+                    self.insert(start, action[5])
+        elif action[0] == "delete_range":
+            start = self.get_iter_at_line_offset(action[1], action[2])
+            self.insert(start, action[5])
+        self.place_cursor(start)
+        self.redo.append(action)
+
+    def do_redo(self):
+        if not self.redo:
+            return
+        print("do_redo")
+        action = self.redo.pop()
+        if action[0] == "insert_text":
+            start = self.get_iter_at_line_offset(action[1], action[2])
+            self.insert(start, action[5])
+        elif action[0] == "delete_range":
+            start = self.get_iter_at_line_offset(action[1], action[2])
+            end = self.get_iter_at_line_offset(action[3], action[4])
+            self.delete(start, end)
+            # Redo previous insert_text that issued within 5 msec
+            # to cope with ibus-replace-with-kanji smoothly
+            if self.redo:
+                prev = self.redo[-1]
+                if prev[0] == "insert_text" and action[6] - prev[6] < 0.005:
+                    self.undo.append(action)
+                    action = self.redo.pop()
+                    print("do_redo", action)
+                    start = self.get_iter_at_line_offset(action[1], action[2])
+                    self.insert(start, action[5])
+        self.place_cursor(start)
+        self.undo.append(action)
+
 
 class TextView(Gtk.DrawingArea, Gtk.Scrollable):
 
@@ -907,14 +1005,11 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         self.caret = Gdk.Rectangle()
         self.heights = list()
         self.highlight_sentences = True
-        desc = Pango.font_description_from_string(DEFAULT_FONT)
-        # desc = self.get_style().font_desc
-        self.set_font(desc)
+        self.reflow_line = -1   # line number to reflow after "delete_range"; -1 to reflow every line
 
-        self.reflow_line = -1   # line number to reflow after "delete_range"
-        self.buffer.connect_after("insert_text", self.on_insert)
+        self.buffer.connect_after("insert_text", self.on_inserted)
         self.buffer.connect("delete_range", self.on_delete)
-        self.buffer.connect_after("delete_range", self.on_delete_after)
+        self.buffer.connect_after("delete_range", self.on_deleted)
 
         self.connect("draw", self.on_draw)
         self.connect("key-press-event", self.on_key_press)
@@ -931,6 +1026,10 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                         Gdk.EventMask.BUTTON_MOTION_MASK |
                         Gdk.EventMask.BUTTON_RELEASE_MASK |
                         Gdk.EventMask.SCROLL_MASK)
+
+        desc = Pango.font_description_from_string(DEFAULT_FONT)
+        # desc = self.get_style().font_desc
+        self.set_font(desc)
 
         self.tr = str.maketrans({
             '<': '&lt;',
@@ -1472,7 +1571,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
     def on_value_changed(self, *whatever):
         self.queue_draw()
 
-    def on_insert(self, textbuffer, iter, text):
+    def on_inserted(self, textbuffer, iter, text):
         if has_newline(text):
             self.reflow()
         else:
@@ -1485,7 +1584,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         else:
             self.reflow_line = -1
 
-    def on_delete_after(self, textbuffer, start, end):
+    def on_deleted(self, textbuffer, start, end):
         self.reflow(self.reflow_line)
         self.queue_draw()
 
@@ -1586,10 +1685,6 @@ class EditorWindow(Gtk.ApplicationWindow):
         content = ""
 
         self.title = _("FuriganaPad")
-        self.user_action = False
-        self.undo = []  # undo buffer
-        self.redo = []  # redo buffer
-        self.inserting = None
 
         if file:
             try:
@@ -1657,11 +1752,6 @@ class EditorWindow(Gtk.ApplicationWindow):
             self.buffer.set_text(content)
             self.buffer.set_modified(False)
             self.buffer.place_cursor(self.buffer.get_start_iter())
-        self.buffer.connect("insert_text", self.on_insert)
-        self.buffer.connect("delete_range", self.on_delete)
-        self.buffer.connect("begin_user_action", self.on_begin_user_action)
-        self.buffer.connect("end_user_action", self.on_end_user_action)
-        self.buffer.connect_after("insert_text", self.on_inserted)
 
         actions = {
             "new": self.new_callback,
@@ -1734,8 +1824,6 @@ class EditorWindow(Gtk.ApplicationWindow):
         self.file = file
         if self.file:
             self.buffer.set_modified(False)
-            self.undo = []
-            self.redo = []
             self.set_title(file.get_basename() + " ― " + self.title)
             return False
         else:
@@ -1748,40 +1836,6 @@ class EditorWindow(Gtk.ApplicationWindow):
             if window.file and window.file.equal(file):
                 return window
         return None
-
-    def on_insert(self, textbuffer, iter, text):
-        if self.user_action:
-            self.inserting = iter.copy()
-
-    def on_inserted(self, textbuffer, iter, text):
-        if self.user_action:
-            action = ["insert_text",
-                      self.inserting.get_line(), self.inserting.get_line_offset(),
-                      iter.get_line(), iter.get_line_offset(),
-                      text,
-                      time.perf_counter()]
-            print("on_inserted", action)
-            self.undo.append(action)
-            self.redo.clear()
-            self.inserting = None
-
-    def on_delete(self, textbuffer, start, end):
-        if self.user_action:
-            text = self.buffer.get_text(start, end, True)
-            action = ["delete_range",
-                      start.get_line(), start.get_line_offset(),
-                      end.get_line(), end.get_line_offset(),
-                      text,
-                      time.perf_counter()]
-            print("on_delete", action)
-            self.undo.append(action)
-            self.redo.clear()
-
-    def on_begin_user_action(self, textbuffer):
-        self.user_action = True
-
-    def on_end_user_action(self, textbuffer):
-        self.user_action = False
 
     def new_callback(self, action, parameter):
         win = EditorWindow(self.get_application())
@@ -1923,54 +1977,10 @@ class EditorWindow(Gtk.ApplicationWindow):
         return self.confirm_save_changes()
 
     def undo_callback(self, action, parameter):
-        if not self.undo or not self.textview.is_focus():
-            return
-        action = self.undo.pop()
-        print("undo_callback", action)
-        if action[0] == "insert_text":
-            start = self.buffer.get_iter_at_line_offset(action[1], action[2])
-            end = self.buffer.get_iter_at_line_offset(action[3], action[4])
-            self.buffer.delete(start, end)
-            # Undo previous delete_range that issued within 5 msec
-            # to cope with ibus-replace-with-kanji smoothly
-            if self.undo:
-                prev = self.undo[-1]
-                if prev[0] == "delete_range" and action[6] - prev[6] < 0.005:
-                    self.redo.append(action)
-                    action = self.undo.pop()
-                    print("undo_callback", action)
-                    start = self.buffer.get_iter_at_line_offset(action[1], action[2])
-                    self.buffer.insert(start, action[5])
-        elif action[0] == "delete_range":
-            start = self.buffer.get_iter_at_line_offset(action[1], action[2])
-            self.buffer.insert(start, action[5])
-        self.buffer.place_cursor(start)
-        self.redo.append(action)
+        self.buffer.emit('undo')
 
     def redo_callback(self, action, parameter):
-        if not self.redo or not self.textview.is_focus():
-            return
-        action = self.redo.pop()
-        print("redo_callback", action)
-        if action[0] == "insert_text":
-            start = self.buffer.get_iter_at_line_offset(action[1], action[2])
-            self.buffer.insert(start, action[5])
-        elif action[0] == "delete_range":
-            start = self.buffer.get_iter_at_line_offset(action[1], action[2])
-            end = self.buffer.get_iter_at_line_offset(action[3], action[4])
-            self.buffer.delete(start, end)
-            # Redo previous insert_text that issued within 5 msec
-            # to cope with ibus-replace-with-kanji smoothly
-            if self.redo:
-                prev = self.redo[-1]
-                if prev[0] == "insert_text" and action[6] - prev[6] < 0.005:
-                    self.undo.append(action)
-                    action = self.redo.pop()
-                    print("redo_callback", action)
-                    start = self.buffer.get_iter_at_line_offset(action[1], action[2])
-                    self.buffer.insert(start, action[5])
-        self.buffer.place_cursor(start)
-        self.undo.append(action)
+        self.buffer.emit('redo')
 
     def cut_callback(self, action, parameter):
         self.textview.emit('cut-clipboard')
