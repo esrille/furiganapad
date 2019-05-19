@@ -34,17 +34,18 @@ class Converter:
         })
 
     def convert_line(self, line):
-        print(line.translate(self.tr), sep='')
+        return line.translate(self.tr)
 
-    def convert(self, filename):
-        with open(filename, 'r') as file:
-            for line in file:
-                self.convert_line(line)
+    def convert(self, source, destination):
+        with open(destination, 'w') as destination_file:
+            with open(source, 'r') as source_file:
+                for line in source_file:
+                    destination_file.write(self.convert_line(line))
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 3:
         sys.exit(0)
 
     converter = Converter()
-    converter.convert(sys.argv[1])
+    converter.convert(sys.argv[1], sys.argv[2])

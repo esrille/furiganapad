@@ -9,14 +9,17 @@ $ furiganapad [filename...]
 ![ふりがなパッドのスクリーンショット](screenshot.png)
 
 ## ふりがなパッドのインストール￹方法￺ほうほう￻
+　ふりがなパッドのビルドには、MesonとNinjaをつかいます。
 ```
+$ sudo apt install meson  # MesonとNinjaをインストールします
 $ git clone https://github.com/esrille/furiganapad.git
-$ make
-$ sudo make install
+$ meson . _build  # さいしょの一回目だけ
+$ ninja -C _build
+$ sudo ninja -C _build install
 ```
 アンインストールするときは、つぎのようにします:
 ```
-$ sudo make uninstall
+$ sudo ninja -C _build uninstall
 ```
 ### ふりがなパッドのつかえる￹環境￺かんきょう￻
 　ふりがなパッドは、いまのところ、Ubuntu 18.04およびRaspbian Stretchで￹動作￺どうさ￻を￹確認￺かくにん￻をしています。ひつようなパッケージがインストールされていないと、うまく￹実行￺じっこう￻できないときがあります。そのようなばあいは、￹下記￺かき￻のようなパッケージを￹追加￺ついか￻でインストールしてください。

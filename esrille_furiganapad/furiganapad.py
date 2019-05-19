@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2019  Esrille Inc.
 #
@@ -17,6 +16,7 @@
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 import os
+import signal
 import sys
 import time
 import locale
@@ -2109,24 +2109,26 @@ class EditorWindow(Gtk.ApplicationWindow):
 
 class EditorApplication(Gtk.Application):
 
-    def __init__(self, *args, **kwargs):
+    uitexts = {}
+
+    def __init__(self, resourcedir='', *args, **kwargs):
         super().__init__(*args,
                          flags=Gio.ApplicationFlags.HANDLES_OPEN,
                          **kwargs)
 
-        self.resourcedir = os.path.dirname(sys.argv[0])
-        if not sys.argv[0].endswith(".py"):
-            # application has been installed
-            self.resourcedir = os.path.dirname(self.resourcedir)
-            self.resourcedir += '/share/furiganapad'
+        if resourcedir:
+            self.resourcedir = resourcedir
+        else:
+            self.resourcedir = os.path.join(os.path.dirname(sys.argv[0]), "../data")
+        print(self.resourcedir)
 
         self.lang = locale.getdefaultlocale()[0]
-        filename = self.resourcedir + "/furiganapad." + self.lang + ".json"
+        filename = os.path.join(self.resourcedir, "furiganapad." + self.lang + ".json")
         try:
             with open(filename, 'r') as file:
-                self.uitexts = json.load(file)
+                EditorApplication.uitexts = json.load(file)
         except OSError as e:
-            self.uitexts = {}
+            EditorApplication.uitexts = {}
 
     def do_activate(self):
         win = EditorWindow(self)
@@ -2135,12 +2137,12 @@ class EditorApplication(Gtk.Application):
     def do_startup(self):
         Gtk.Application.do_startup(self)
         builder = Gtk.Builder()
-        filename = self.resourcedir + "/furiganapad.menu." + self.lang + ".ui"
+        filename = os.path.join(self.resourcedir, "furiganapad.menu." + self.lang + ".ui")
         try:
             builder.add_from_file(filename)
         except GObject.GError as e:
             try:
-                filename = self.resourcedir + "/furiganapad.menu.ui"
+                filename = os.path.join(self.resourcedir, "furiganapad.menu.ui")
                 builder.add_from_file(filename)
             except GObject.GError as e:
                 print("Error: " + e.message)
@@ -2152,17 +2154,16 @@ class EditorApplication(Gtk.Application):
             win = EditorWindow(self, file=file)
             win.show_all()
 
-    def get_text(self, string):
-        if string in self.uitexts:
-            return self.uitexts[string]
-        return string
-
 
 # i18n
 def _(string):
-    return app.get_text(string)
+    if string in EditorApplication.uitexts:
+        return EditorApplication.uitexts[string]
+    return string
 
 
-app = EditorApplication()
-exit_status = app.run(sys.argv)
-sys.exit(exit_status)
+if __name__ == '__main__':
+    app = EditorApplication()
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    exit_status = app.run(sys.argv)
+    sys.exit(exit_status)
