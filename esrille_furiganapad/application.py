@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #
 # Copyright (C) 2019  Esrille Inc.
 #
@@ -73,10 +72,3 @@ class Application(Gtk.Application):
         for file in files:
             win = Window(self, file=file)
             win.show_all()
-
-
-if __name__ == '__main__':
-    app = Application()
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
-    exit_status = app.run(sys.argv)
-    sys.exit(exit_status)
