@@ -15,7 +15,6 @@
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 import os
-import signal
 import sys
 import locale
 import json
