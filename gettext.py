@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-import os
 import sys
 
 
@@ -30,7 +29,7 @@ class GetText:
             pos = line.find("_(")
             if pos < 0:
                 return
-            line = line[pos+2:].strip()
+            line = line[pos + 2:].strip()
             if line[0] not in "'\"":
                 return
             d = line[0]
@@ -51,7 +50,7 @@ class GetText:
                     s += c
             if d:
                 return
-            line = line[len(s)-1:].strip()
+            line = line[len(s) - 1:].strip()
             if not line or line[0] != ')':
                 return
             line = line[1:]
@@ -75,7 +74,15 @@ class GetText:
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         sys.exit(0)
-
+    output = 'output.json'
     gettext = GetText()
-    gettext.scan(sys.argv[1])
-    gettext.emit(os.path.splitext(sys.argv[1])[0] + ".json")
+    for filename in sys.argv[1:]:
+        if filename == '-o':
+            output = ''
+            continue
+        if not output:
+            output = filename
+            continue
+        gettext.scan(filename)
+    if output:
+        gettext.emit(output)
