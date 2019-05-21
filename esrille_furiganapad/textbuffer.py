@@ -428,7 +428,7 @@ class TextBuffer(GObject.Object):
             return False
         return self.paragraphs[0].get_length() == 1
 
-    def __annotate(self, s, r):
+    def _annotate(self, s, r):
         if is_kana(s):
             return s
         pos = r.find('―')
@@ -794,7 +794,7 @@ class TextBuffer(GObject.Object):
             elif text[-1] in NEWLINES:
                 text = text[:-1]
         if self.surround_deleted and self.ruby_mode and not iter.inside_ruby():
-            text = self.__annotate(text, self.reading)
+            text = self._annotate(text, self.reading)
         self.surround_deleted = False
         start = TextIter(self)
         start.assign(iter)
