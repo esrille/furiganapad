@@ -52,6 +52,11 @@ class Application(Gtk.Application):
         win = Window(self)
         win.show_all()
 
+    def do_open(self, files, *hint):
+        for file in files:
+            win = Window(self, file=file)
+            win.show_all()
+
     def do_startup(self):
         Gtk.Application.do_startup(self)
         builder = Gtk.Builder()
@@ -66,8 +71,3 @@ class Application(Gtk.Application):
                 print("Error: " + e.message)
                 sys.exit()
         self.set_menubar(builder.get_object("menubar"))
-
-    def do_open(self, files, *hint):
-        for file in files:
-            win = Window(self, file=file)
-            win.show_all()

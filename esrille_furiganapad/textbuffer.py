@@ -76,75 +76,25 @@ class Paragraph:
         self.plain = ''
         self.rubies = list()
 
-    def set_text(self, text):
-        self.text = text
-        self.plain = ''
-        self.rubies.clear()
-
-    def get_text(self):
-        return self.text
-
-    def get_length(self):
-        # plus one as a newline at the end of the line
-        return len(self.text) + 1
-
-    def insert(self, offset, text):
-        assert offset <= len(self.text)
-        self.set_text(self.text[:offset] + text + self.text[offset:])
-
-    def split(self, offset):
-        assert offset <= len(self.text)
-        next = Paragraph(self.text[offset:])
-        self.set_text(self.text[:offset])
-        return next
-
-    def get_plain_text(self):
-        if self.plain:
-            return self.plain
+    def _backward_cursor_position(self, offset):
+        if offset <= 0:
+            return -1
         mode = self.PLAIN
-        i = 0
-        ruby = ''
-        for c in self.text:
+        for c in reversed(self.text[:offset]):
+            offset -= 1
             if c == IAA:
-                mode = self.BASE
-                pos = i
-            elif c == IAS:
-                mode = self.RUBY
-                len = i - pos
-            elif c == IAT:
                 mode = self.PLAIN
-                self.rubies.append([pos, len, ruby])
-                ruby = ''
-            elif mode == self.RUBY:
-                ruby += c
-            else:
-                self.plain += c
-                i += 1
-        return self.plain
-
-    def get_plain_length(self):
-        # plus one as a newline at the end of the line
-        return len(self.get_plain_text()) + 1
-
-    def _get_plain_offset(self, offset):
-        mode = self.PLAIN
-        i = 0
-        len = 0
-        for c in self.text:
-            if i == offset:
-                break
-            if c == IAA:
-                mode = self.BASE
             elif c == IAS:
-                mode = self.RUBY
+                mode = self.BASE
             elif c == IAT:
-                mode = self.PLAIN
+                mode = self.RUBY
             elif mode == self.RUBY:
                 pass
             else:
-                len += 1
-            i += 1
-        return len
+                if 0 < offset and self.text[offset - 1] == IAA:
+                    offset -= 1
+                return offset
+        return -1
 
     def _expand_plain_offset(self, offset):
         mode = self.PLAIN
@@ -199,25 +149,25 @@ class Paragraph:
         offset = self._expand_plain_offset(offset)
         return (offset, end)
 
-    def _backward_cursor_position(self, offset):
-        if offset <= 0:
-            return -1
+    def _get_plain_offset(self, offset):
         mode = self.PLAIN
-        for c in reversed(self.text[:offset]):
-            offset -= 1
+        i = 0
+        len = 0
+        for c in self.text:
+            if i == offset:
+                break
             if c == IAA:
-                mode = self.PLAIN
-            elif c == IAS:
                 mode = self.BASE
-            elif c == IAT:
+            elif c == IAS:
                 mode = self.RUBY
+            elif c == IAT:
+                mode = self.PLAIN
             elif mode == self.RUBY:
                 pass
             else:
-                if 0 < offset and self.text[offset - 1] == IAA:
-                    offset -= 1
-                return offset
-        return -1
+                len += 1
+            i += 1
+        return len
 
     def _inside_ruby(self, offset):
         assert offset < self.get_length()
@@ -230,6 +180,56 @@ class Paragraph:
                 return True
         return False
 
+    def get_length(self):
+        # plus one as a newline at the end of the line
+        return len(self.text) + 1
+
+    def get_plain_length(self):
+        # plus one as a newline at the end of the line
+        return len(self.get_plain_text()) + 1
+
+    def get_plain_text(self):
+        if self.plain:
+            return self.plain
+        mode = self.PLAIN
+        i = 0
+        ruby = ''
+        for c in self.text:
+            if c == IAA:
+                mode = self.BASE
+                pos = i
+            elif c == IAS:
+                mode = self.RUBY
+                len = i - pos
+            elif c == IAT:
+                mode = self.PLAIN
+                self.rubies.append([pos, len, ruby])
+                ruby = ''
+            elif mode == self.RUBY:
+                ruby += c
+            else:
+                self.plain += c
+                i += 1
+        return self.plain
+
+    def get_text(self):
+        return self.text
+
+    def insert(self, offset, text):
+        assert offset <= len(self.text)
+        self.set_text(self.text[:offset] + text + self.text[offset:])
+
+    def set_text(self, text):
+        self.text = text
+        self.plain = ''
+        self.rubies.clear()
+
+    def split(self, offset):
+        assert offset <= len(self.text)
+        next = Paragraph(self.text[offset:])
+        self.set_text(self.text[:offset])
+        return next
+
 
 class TextIter:
 
@@ -238,12 +238,14 @@ class TextIter:
         self.line = line
         self.offset = offset
 
-    def __lt__(self, other):
-        if self.line < other.line:
-            return True
-        if other.line < self.line:
-            return False
-        return self.offset < other.offset
+    def __eq__(self, other):
+        return self.line == other.line and self.offset == other.offset
+
+    def __ge__(self, other):
+        return not self.__lt__(other)
+
+    def __gt__(self, other):
+        return not self.__le__(other)
 
     def __le__(self, other):
         if self.line < other.line:
@@ -252,25 +254,20 @@ class TextIter:
             return False
         return self.offset <= other.offset
 
-    def __eq__(self, other):
-        return self.line == other.line and self.offset == other.offset
+    def __lt__(self, other):
+        if self.line < other.line:
+            return True
+        if other.line < self.line:
+            return False
+        return self.offset < other.offset
 
     def __ne__(self, other):
         return not self.__eq__(other)
-
-    def __gt__(self, other):
-        return not self.__le__(other)
-
-    def __ge__(self, other):
-        return not self.__lt__(other)
 
     def assign(self, other):
         self.buffer = other.buffer
         self.line = other.line
         self.offset = other.offset
-
-    def copy(self):
-        return TextIter(self.buffer, self.line, self.offset)
 
     def backward_char(self):
         return self.forward_chars(-1)
@@ -290,6 +287,9 @@ class TextIter:
             if not self.backward_cursor_position():
                 return False
         return True
+
+    def copy(self):
+        return TextIter(self.buffer, self.line, self.offset)
 
     def forward_char(self):
         return self.forward_chars(1)
@@ -354,6 +354,19 @@ class TextMark():
         self.iter = TextIter(iter.get_buffer())
         self.iter.assign(iter)
 
+    def on_delete(self, start, end):
+        if self.iter <= start:
+            return
+        if self.iter <= end:
+            self.iter.assign(start)
+            return
+        d = self.iter.get_line() - end.get_line()
+        self.iter.set_line(start.get_line() + d)
+        if 0 < d:
+            return
+        d = self.iter.get_line_offset() - end.get_line_offset()
+        self.iter.set_line_offset(start.get_line_offset() + d)
+
     # The cursor has moved from start to end.
     def on_insert(self, start, end):
         if self.iter < start:
@@ -367,19 +380,6 @@ class TextMark():
             return
         d = self.iter.get_line_offset() - start.get_line_offset()
         self.iter.set_line_offset(end.get_line_offset() + d)
-
-    def on_delete(self, start, end):
-        if self.iter <= start:
-            return
-        if self.iter <= end:
-            self.iter.assign(start)
-            return
-        d = self.iter.get_line() - end.get_line()
-        self.iter.set_line(start.get_line() + d)
-        if 0 < d:
-            return
-        d = self.iter.get_line_offset() - end.get_line_offset()
-        self.iter.set_line_offset(start.get_line_offset() + d)
 
 
 class TextBuffer(GObject.Object):
@@ -423,11 +423,6 @@ class TextBuffer(GObject.Object):
         self.connect_after("insert_text", self.on_inserted)
         self.connect("delete_range", self.on_delete)
 
-    def _empty(self):
-        if 1 < self.get_line_count():
-            return False
-        return self.paragraphs[0].get_length() == 1
-
     def _annotate(self, s, r):
         if is_kana(s):
             return s
@@ -456,6 +451,25 @@ class TextBuffer(GObject.Object):
             s = IAA + s + IAS + r + IAT
         return before + s + after
 
+    def _backward_cursor_position(self, iter):
+        lineno = iter.get_line()
+        offset = iter.get_line_offset()
+        offset = self.paragraphs[lineno]._backward_cursor_position(offset)
+        if 0 <= offset:
+            iter.set_line_offset(offset)
+            return True
+        lineno -= 1
+        if 0 <= lineno:
+            iter.set_line(lineno)
+            iter.set_line_offset(self.paragraphs[lineno].get_length() - 1)
+            return True
+        return False
+
+    def _empty(self):
+        if 1 < self.get_line_count():
+            return False
+        return self.paragraphs[0].get_length() == 1
+
     def _forward_chars(self, iter, count):
         if count == 0:
             return False
@@ -477,20 +491,6 @@ class TextBuffer(GObject.Object):
                 if lineno < 0:
                     lineno = len(self.paragraphs) - 1
                 offset += self.paragraphs[lineno].get_length()
-
-    def _backward_cursor_position(self, iter):
-        lineno = iter.get_line()
-        offset = iter.get_line_offset()
-        offset = self.paragraphs[lineno]._backward_cursor_position(offset)
-        if 0 <= offset:
-            iter.set_line_offset(offset)
-            return True
-        lineno -= 1
-        if 0 <= lineno:
-            iter.set_line(lineno)
-            iter.set_line_offset(self.paragraphs[lineno].get_length() - 1)
-            return True
-        return False
 
     def _forward_cursor_position(self, iter):
         lineno = iter.get_line()
@@ -618,6 +618,37 @@ class TextBuffer(GObject.Object):
             mark.on_delete(start, end)
         self.emit('delete_range', start, end)
 
+    def delete_selection(self, interactive, default_editable):
+        if not self.get_has_selection():
+            return False
+        if interactive:
+            self.begin_user_action()
+            self.delete(self.get_anchor(), self.get_cursor())
+            self.end_user_action()
+        else:
+            self.delete(self.get_anchor(), self.get_cursor())
+        return True
+
+    def delete_surrounding(self, offset, len):
+        if len == 0:
+            return
+        start = self.get_cursor()
+        start.forward_cursor_positions(offset)
+        end = start.copy()
+        end.forward_cursor_positions(len)
+        if end < start:
+            start, end = end, start
+            if len < 0:
+                len = -len
+
+        assert start.get_line() == end.get_line()
+        reading = self.paragraphs[start.get_line()].get_text()[start.get_line_offset():end.get_line_offset()]
+        if is_reading(reading):
+            self.reading = reading
+            print('よみ:', self.reading)
+        self.surround_deleted = True
+        self.delete(start, end)
+
     def do_delete_range(self, start, end):
         self.set_modified(True)
 
@@ -644,108 +675,6 @@ class TextBuffer(GObject.Object):
         if self.annotated:
             self.insert(start, self.annotated)
             self.annotated = ''
-
-    def delete_selection(self, interactive, default_editable):
-        if not self.get_has_selection():
-            return False
-        if interactive:
-            self.begin_user_action()
-            self.delete(self.get_anchor(), self.get_cursor())
-            self.end_user_action()
-        else:
-            self.delete(self.get_anchor(), self.get_cursor())
-        return True
-
-    def end_user_action(self):
-        self.emit('end_user_action')
-        self.user_action = False
-
-    def get_bounds(self):
-        start = self.get_start_iter()
-        end = self.get_end_iter()
-        return start, end
-
-    def get_anchor(self):
-        return self.get_selection_bound().iter.copy()
-
-    def get_cursor(self):
-        return self.get_insert().iter.copy()
-
-    def get_end_iter(self):
-        lineno = self.get_line_count() - 1
-        return TextIter(self, lineno, self.paragraphs[lineno].get_length() - 1)
-
-    def get_has_selection(self):
-        return self.get_selection_bound().iter != self.get_insert().iter
-
-    def get_insert(self):
-        return self.marks["insert"]
-
-    def get_iter_at_offset(self, offset):
-        pass
-
-    def get_iter_at_line_offset(self, line_number, char_offset):
-        assert line_number < self.get_line_count()
-        assert char_offset < self.paragraphs[line_number].get_length()
-        return TextIter(self, line_number, char_offset)
-
-    def get_iter_at_mark(self, mark):
-        return mark.iter.copy()
-
-    def get_line_count(self):
-        return len(self.paragraphs)
-
-    def get_modified(self):
-        return self.modified
-
-    def get_selection_bound(self):
-        return self.marks["selection_bound"]
-
-    def get_selection_bounds(self):
-        start = self.get_anchor()
-        end = self.get_cursor()
-        if end < start:
-            start, end = end, start
-        return (start, end)
-
-    def get_start_iter(self):
-        return TextIter(self, 0, 0)
-
-    def get_text(self, start, end, include_hidden_chars):
-        if start == end:
-            return ''
-        if end < start:
-            start, end = end, start
-        line = start.get_line()
-        if line == end.get_line():
-            if include_hidden_chars:
-                return self.paragraphs[line].get_text()[start.get_line_offset():end.get_line_offset()]
-            else:
-                s = self._get_plain_line_offset(start)
-                e = self._get_plain_line_offset(end)
-                return self.paragraphs[line].get_plain_text()[s:e]
-        assert start < end
-        text = ''
-        if include_hidden_chars:
-            text += self.paragraphs[line].get_text()[start.get_line_offset():] + '\n'
-        else:
-            offset = self._get_plain_line_offset(start)
-            text += self.paragraphs[line].get_plain_text()[offset:] + '\n'
-        line += 1
-        while line < end.get_line():
-            if include_hidden_chars:
-                text += self.paragraphs[line].get_text() + '\n'
-            else:
-                text += self.paragraphs[line].get_plain_text() + '\n'
-            line += 1
-        assert line == end.get_line()
-        if line < self.get_line_count():
-            if include_hidden_chars:
-                text += self.paragraphs[line].get_text()[:end.get_line_offset()]
-            else:
-                offset = self._get_plain_line_offset(end)
-                text += self.paragraphs[line].get_plain_text()[:offset]
-        return text
 
     def do_insert_text(self, iter, text):
         assert 0 < len(text)
@@ -784,6 +713,148 @@ class TextBuffer(GObject.Object):
         iter.set_line(lineno + 1)
         iter.set_line_offset(0)
 
+    def do_redo(self):
+        if not self.redo:
+            return
+        print("do_redo")
+        action = self.redo.pop()
+        if action[0] == "insert_text":
+            start = self.get_iter_at_line_offset(action[1], action[2])
+            self.insert(start, action[5])
+        elif action[0] == "delete_range":
+            start = self.get_iter_at_line_offset(action[1], action[2])
+            end = self.get_iter_at_line_offset(action[3], action[4])
+            self.delete(start, end)
+            # Redo previous insert_text that issued within 5 msec
+            # to cope with ibus-replace-with-kanji smoothly
+            if self.redo:
+                prev = self.redo[-1]
+                if prev[0] == "insert_text" and action[6] - prev[6] < 0.005:
+                    self.undo.append(action)
+                    action = self.redo.pop()
+                    print("do_redo", action)
+                    start = self.get_iter_at_line_offset(action[1], action[2])
+                    self.insert(start, action[5])
+        self.place_cursor(start)
+        self.undo.append(action)
+
+    def do_undo(self):
+        if not self.undo:
+            return
+        print("do_undo")
+        action = self.undo.pop()
+        if action[0] == "insert_text":
+            start = self.get_iter_at_line_offset(action[1], action[2])
+            end = self.get_iter_at_line_offset(action[3], action[4])
+            self.delete(start, end)
+            # Undo previous delete_range that issued within 5 msec
+            # to cope with ibus-replace-with-kanji smoothly
+            if self.undo:
+                prev = self.undo[-1]
+                if prev[0] == "delete_range" and action[6] - prev[6] < 0.005:
+                    self.redo.append(action)
+                    action = self.undo.pop()
+                    print("do_undo", action)
+                    start = self.get_iter_at_line_offset(action[1], action[2])
+                    self.insert(start, action[5])
+        elif action[0] == "delete_range":
+            start = self.get_iter_at_line_offset(action[1], action[2])
+            self.insert(start, action[5])
+        self.place_cursor(start)
+        self.redo.append(action)
+
+    def end_user_action(self):
+        self.emit('end_user_action')
+        self.user_action = False
+
+    def get_anchor(self):
+        return self.get_selection_bound().iter.copy()
+
+    def get_bounds(self):
+        start = self.get_start_iter()
+        end = self.get_end_iter()
+        return start, end
+
+    def get_cursor(self):
+        return self.get_insert().iter.copy()
+
+    def get_end_iter(self):
+        lineno = self.get_line_count() - 1
+        return TextIter(self, lineno, self.paragraphs[lineno].get_length() - 1)
+
+    def get_has_selection(self):
+        return self.get_selection_bound().iter != self.get_insert().iter
+
+    def get_insert(self):
+        return self.marks["insert"]
+
+    def get_iter_at_line_offset(self, line_number, char_offset):
+        assert line_number < self.get_line_count()
+        assert char_offset < self.paragraphs[line_number].get_length()
+        return TextIter(self, line_number, char_offset)
+
+    def get_iter_at_mark(self, mark):
+        return mark.iter.copy()
+
+    def get_line_count(self):
+        return len(self.paragraphs)
+
+    def get_modified(self):
+        return self.modified
+
+    def get_selection_bound(self):
+        return self.marks["selection_bound"]
+
+    def get_selection_bounds(self):
+        start = self.get_anchor()
+        end = self.get_cursor()
+        if end < start:
+            start, end = end, start
+        return (start, end)
+
+    def get_start_iter(self):
+        return TextIter(self, 0, 0)
+
+    def get_surrounding(self):
+        cursor = self.get_cursor()
+        return self.paragraphs[cursor.get_line()].get_text(), cursor.get_line_offset()
+
+    def get_text(self, start, end, include_hidden_chars):
+        if start == end:
+            return ''
+        if end < start:
+            start, end = end, start
+        line = start.get_line()
+        if line == end.get_line():
+            if include_hidden_chars:
+                return self.paragraphs[line].get_text()[start.get_line_offset():end.get_line_offset()]
+            else:
+                s = self._get_plain_line_offset(start)
+                e = self._get_plain_line_offset(end)
+                return self.paragraphs[line].get_plain_text()[s:e]
+        assert start < end
+        text = ''
+        if include_hidden_chars:
+            text += self.paragraphs[line].get_text()[start.get_line_offset():] + '\n'
+        else:
+            offset = self._get_plain_line_offset(start)
+            text += self.paragraphs[line].get_plain_text()[offset:] + '\n'
+        line += 1
+        while line < end.get_line():
+            if include_hidden_chars:
+                text += self.paragraphs[line].get_text() + '\n'
+            else:
+                text += self.paragraphs[line].get_plain_text() + '\n'
+            line += 1
+        assert line == end.get_line()
+        if line < self.get_line_count():
+            if include_hidden_chars:
+                text += self.paragraphs[line].get_text()[:end.get_line_offset()]
+            else:
+                offset = self._get_plain_line_offset(end)
+                text += self.paragraphs[line].get_plain_text()[:offset]
+        return text
+
     def insert(self, iter, text):
         if not text:
             self.surround_deleted = False
@@ -815,81 +886,6 @@ class TextBuffer(GObject.Object):
     def move_mark(self, mark, where):
         mark.iter.assign(where)
 
-    def place_cursor(self, where):
-        self.select_range(where, where)
-
-    def select_range(self, ins, bound):
-        self.move_mark(self.get_insert(), ins)
-        self.move_mark(self.get_selection_bound(), bound)
-
-    def select_all(self):
-        start, end = self.get_bounds()
-        self.select_range(start, end)
-
-    def set_modified(self, setting):
-        if self.modified == setting:
-            return
-        self.modified = setting
-        if not self.modified:
-            self.undo = []
-            self.redo = []
-
-    def set_ruby_mode(self, ruby):
-        self.ruby_mode = ruby
-
-    def set_text(self, text):
-        start, end = self.get_bounds()
-        self.delete(start, end)
-        self.insert(start, text)
-        iter = self.get_start_iter()
-        self.place_cursor(iter)
-
-    def get_surrounding(self):
-        cursor = self.get_cursor()
-        return self.paragraphs[cursor.get_line()].get_text(), cursor.get_line_offset()
-
-    def delete_surrounding(self, offset, len):
-        if len == 0:
-            return
-        start = self.get_cursor()
-        start.forward_cursor_positions(offset)
-        end = start.copy()
-        end.forward_cursor_positions(len)
-        if end < start:
-            start, end = end, start
-            if len < 0:
-                len = -len
-
-        assert start.get_line() == end.get_line()
-        reading = self.paragraphs[start.get_line()].get_text()[start.get_line_offset():end.get_line_offset()]
-        if is_reading(reading):
-            self.reading = reading
-            print('よみ:', self.reading)
-        self.surround_deleted = True
-        self.delete(start, end)
-
-    def unconvert(self, iter):
-        text = self.paragraphs[iter.get_line()].get_text()
-        pos = iter.get_line_offset()
-        if pos < 5 or text[pos - 1] != IAT:
-            return False
-        mode = IAT
-        ruby = ''
-        size = 1
-        for c in reversed(text[:pos - 1]):
-            size += 1
-            if c == IAA:
-                start = iter.copy()
-                start.set_line_offset(pos - size)
-                self.delete(start, iter)
-                self.insert(iter, ruby)
-                return True
-            elif c == IAS:
-                mode = IAS
-            elif mode == IAT:
-                ruby = c + ruby
-        return False
-
     def on_delete(self, textbuffer, start, end):
         if self.user_action:
             text = self.get_text(start, end, True)
@@ -918,52 +914,53 @@ class TextBuffer(GObject.Object):
             self.redo.clear()
             self.inserting = None
 
-    def do_undo(self):
-        if not self.undo:
-            return
-        print("do_undo")
-        action = self.undo.pop()
-        if action[0] == "insert_text":
-            start = self.get_iter_at_line_offset(action[1], action[2])
-            end = self.get_iter_at_line_offset(action[3], action[4])
-            self.delete(start, end)
-            # Undo previous delete_range that issued within 5 msec
-            # to cope with ibus-replace-with-kanji smoothly
-            if self.undo:
-                prev = self.undo[-1]
-                if prev[0] == "delete_range" and action[6] - prev[6] < 0.005:
-                    self.redo.append(action)
-                    action = self.undo.pop()
-                    print("do_undo", action)
-                    start = self.get_iter_at_line_offset(action[1], action[2])
-                    self.insert(start, action[5])
-        elif action[0] == "delete_range":
-            start = self.get_iter_at_line_offset(action[1], action[2])
-            self.insert(start, action[5])
-        self.place_cursor(start)
-        self.redo.append(action)
+    def place_cursor(self, where):
+        self.select_range(where, where)
 
-    def do_redo(self):
-        if not self.redo:
+    def select_all(self):
+        start, end = self.get_bounds()
+        self.select_range(start, end)
+
+    def select_range(self, ins, bound):
+        self.move_mark(self.get_insert(), ins)
+        self.move_mark(self.get_selection_bound(), bound)
+
+    def set_modified(self, setting):
+        if self.modified == setting:
             return
-        print("do_redo")
-        action = self.redo.pop()
-        if action[0] == "insert_text":
-            start = self.get_iter_at_line_offset(action[1], action[2])
-            self.insert(start, action[5])
-        elif action[0] == "delete_range":
-            start = self.get_iter_at_line_offset(action[1], action[2])
-            end = self.get_iter_at_line_offset(action[3], action[4])
-            self.delete(start, end)
-            # Redo previous insert_text that issued within 5 msec
-            # to cope with ibus-replace-with-kanji smoothly
-            if self.redo:
-                prev = self.redo[-1]
-                if prev[0] == "insert_text" and action[6] - prev[6] < 0.005:
-                    self.undo.append(action)
-                    action = self.redo.pop()
-                    print("do_redo", action)
-                    start = self.get_iter_at_line_offset(action[1], action[2])
-                    self.insert(start, action[5])
-        self.place_cursor(start)
-        self.undo.append(action)
+        self.modified = setting
+        if not self.modified:
+            self.undo = []
+            self.redo = []
+
+    def set_ruby_mode(self, ruby):
+        self.ruby_mode = ruby
+
+    def set_text(self, text):
+        start, end = self.get_bounds()
+        self.delete(start, end)
+        self.insert(start, text)
+        iter = self.get_start_iter()
+        self.place_cursor(iter)
+
+    def unconvert(self, iter):
+        text = self.paragraphs[iter.get_line()].get_text()
+        pos = iter.get_line_offset()
+        if pos < 5 or text[pos - 1] != IAT:
+            return False
+        mode = IAT
+        ruby = ''
+        size = 1
+        for c in reversed(text[:pos - 1]):
+            size += 1
+            if c == IAA:
+                start = iter.copy()
+                start.set_line_offset(pos - size)
+                self.delete(start, iter)
+                self.insert(iter, ruby)
+                return True
+            elif c == IAS:
+                mode = IAS
+            elif mode == IAT:
+                ruby = c + ruby
+        return False

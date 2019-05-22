@@ -142,6 +142,128 @@ class Window(Gtk.ApplicationWindow):
 
         self.set_file(file)
 
+    def about_callback(self, action, parameter):
+        dialog = Gtk.AboutDialog()
+        dialog.set_transient_for(self)
+
+        authors = ["Esrille Inc."]
+        documenters = ["Esrille Inc."]
+
+        dialog.set_program_name(self.title)
+        dialog.set_copyright("Copyright 2019 Esrille Inc.")
+        dialog.set_authors(authors)
+        dialog.set_documenters(documenters)
+        dialog.set_website("http://www.esrille.com/")
+        dialog.set_website_label("Esrille Inc.")
+        dialog.set_logo_icon_name("furiganapad")
+
+        # To close the dialog when "close" is clicked, e.g. on RPi,
+        # we connect the "response" signal to about_response_callback
+        dialog.connect("response", self.about_response_callback)
+        dialog.show()
+
+    def about_response_callback(self, dialog, response):
+        dialog.destroy()
+
+    def add_filters(self, dialog):
+        filter_text = Gtk.FileFilter()
+        filter_text.set_name(_("Text files"))
+        filter_text.add_mime_type("text/plain")
+        dialog.add_filter(filter_text)
+
+        filter_py = Gtk.FileFilter()
+        filter_py.set_name(_("Python files"))
+        filter_py.add_mime_type("text/x-python")
+        dialog.add_filter(filter_py)
+
+        filter_any = Gtk.FileFilter()
+        filter_any.set_name(_("Any files"))
+        filter_any.add_pattern("*")
+        dialog.add_filter(filter_any)
+
+    def annotate_callback(self, action, parameter):
+        if self.buffer.get_has_selection():
+            self.rubybar.set_search_mode(True)
+
+    def close_all_callback(self, action, parameter):
+        windows = self.get_application().get_windows()
+        for window in windows:
+            window.lookup_action("close").activate()
+
+    def close_callback(self, action, parameter):
+        if not self.confirm_save_changes():
+            self.destroy()
+
+    def confirm_save_changes(self):
+        if not self.buffer.get_modified():
+            return False
+        dialog = Gtk.MessageDialog(
+            self, 0, Gtk.MessageType.QUESTION,
+            Gtk.ButtonsType.NONE, _("Save changes to this document?"))
+        dialog.format_secondary_text(
+            _("If you don't, changes will be lost."))
+        dialog.add_button(_("Close _Without Saving"), Gtk.ResponseType.NO)
+        dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        dialog.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.YES)
+        dialog.set_default_response(Gtk.ResponseType.YES)
+        response = dialog.run()
+        dialog.destroy()
+        if response == Gtk.ResponseType.NO:
+            return False
+        elif response == Gtk.ResponseType.YES:
+            # Close the window after saving changes
+            self.close_after_save = True
+            if self.file is not None:
+                return self.save()
+            else:
+                return self.save_as()
+        else:
+            return True
+
+    def copy_callback(self, action, parameter):
+        self.textview.emit('copy-clipboard')
+
+    def cut_callback(self, action, parameter):
+        self.textview.emit('cut-clipboard')
+
+    def find_callback(self, action, parameter):
+        self.searchbar.set_search_mode(True)
+
+    def font_callback(self, action, parameter):
+        dialog = Gtk.FontChooserDialog(_("Font"), self)
+        dialog.props.preview_text = _("The quick brown fox jumps over the lazy dog.")
+        font_desc = self.textview.get_font()
+        dialog.set_font_desc(font_desc)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            font = dialog.get_font()
+            if font:
+                desc = Pango.font_description_from_string(font)
+                self.textview.set_font(desc)
+        dialog.destroy()
+
+    def highlightlongsentences_callback(self, action, parameter):
+        highlight = not action.get_state()
+        action.set_state(GLib.Variant.new_boolean(highlight))
+        self.textview.set_check_sentences(highlight)
+
+    def is_opened(self, file):
+        windows = self.get_application().get_windows()
+        for window in windows:
+            if window.file and window.file.equal(file):
+                return window
+        return None
+
+    def new_callback(self, action, parameter):
+        win = Window(self.get_application())
+        win.show_all()
+
+    def on_delete_event(self, wid, event):
+        return self.confirm_save_changes()
+
+    def on_find(self, entry):
+        self.select_text(entry.get_text())
+
     def on_key_press_event(self, wid, event):
         # Control focus around search bars by checking keys typed into the
         # main window
@@ -170,26 +292,38 @@ class Window(Gtk.ApplicationWindow):
                 return True
         return False
 
-    def set_file(self, file):
-        self.file = file
-        if self.file:
-            self.buffer.set_modified(False)
-            self.set_title(file.get_basename() + " ― " + self.title)
-            return False
-        else:
-            self.set_title(self.title)
-            return True
+    def on_replace(self, entry):
+        match = self.select_text(self.replace_from.get_text())
+        if match is None:
+            return
+        self.buffer.begin_user_action()
+        self.buffer.delete(match[0], match[1])
+        text = self.replace_to.get_text()
+        if text is not None:
+            self.buffer.insert_at_cursor(text)
+            cursor_mark = self.buffer.get_insert()
+            end = self.buffer.get_iter_at_mark(cursor_mark)
+            start = end.copy()
+            start.backward_chars(len(text))
+            self.textview.scroll_mark_onscreen(cursor_mark)
+            self.buffer.select_range(start, end)
+        self.buffer.end_user_action()
 
-    def is_opened(self, file):
-        windows = self.get_application().get_windows()
-        for window in windows:
-            if window.file and window.file.equal(file):
-                return window
-        return None
-
-    def new_callback(self, action, parameter):
-        win = Window(self.get_application())
-        win.show_all()
+    def on_ruby(self, entry):
+        start, end = self.buffer.get_selection_bounds()
+        if start == end:
+            return
+        if start.get_line() != end.get_line():
+            return
+        text = self.buffer.get_text(start, end, False)
+        ruby = entry.get_text()
+        # TODO: remove IAA, IAS, IAT from ruby
+        self.buffer.begin_user_action()
+        self.buffer.delete(start, end)
+        if ruby:
+            text = IAA + text + IAS + ruby + IAT
+        self.buffer.insert_at_cursor(text)
+        self.buffer.end_user_action()
 
     def open_callback(self, action, parameter):
         open_dialog = Gtk.FileChooserDialog(
@@ -218,21 +352,19 @@ class Window(Gtk.ApplicationWindow):
             win = Window(self.get_application(), file=file)
             win.show_all()
 
-    def add_filters(self, dialog):
-        filter_text = Gtk.FileFilter()
-        filter_text.set_name(_("Text files"))
-        filter_text.add_mime_type("text/plain")
-        dialog.add_filter(filter_text)
+    def paste_callback(self, action, parameter):
+        self.textview.emit('paste-clipboard')
 
-        filter_py = Gtk.FileFilter()
-        filter_py.set_name(_("Python files"))
-        filter_py.add_mime_type("text/x-python")
-        dialog.add_filter(filter_py)
+    def redo_callback(self, action, parameter):
+        self.buffer.emit('redo')
 
-        filter_any = Gtk.FileFilter()
-        filter_any.set_name(_("Any files"))
-        filter_any.add_pattern("*")
-        dialog.add_filter(filter_any)
+    def replace_callback(self, action, parameter):
+        self.replacebar.set_search_mode(True)
+
+    def ruby_callback(self, action, parameter):
+        ruby = not action.get_state()
+        action.set_state(GLib.Variant.new_boolean(ruby))
+        self.buffer.set_ruby_mode(ruby)
 
     def save(self):
         [start, end] = self.buffer.get_bounds()
@@ -279,31 +411,8 @@ class Window(Gtk.ApplicationWindow):
         dialog.destroy()
         return self.set_file(None)
 
-    def confirm_save_changes(self):
-        if not self.buffer.get_modified():
-            return False
-        dialog = Gtk.MessageDialog(
-            self, 0, Gtk.MessageType.QUESTION,
-            Gtk.ButtonsType.NONE, _("Save changes to this document?"))
-        dialog.format_secondary_text(
-            _("If you don't, changes will be lost."))
-        dialog.add_button(_("Close _Without Saving"), Gtk.ResponseType.NO)
-        dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
-        dialog.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.YES)
-        dialog.set_default_response(Gtk.ResponseType.YES)
-        response = dialog.run()
-        dialog.destroy()
-        if response == Gtk.ResponseType.NO:
-            return False
-        elif response == Gtk.ResponseType.YES:
-            # Close the window after saving changes
-            self.close_after_save = True
-            if self.file is not None:
-                return self.save()
-            else:
-                return self.save_as()
-        else:
-            return True
+    def save_as_callback(self, action, parameter):
+        self.save_as()
 
     def save_callback(self, action, parameter):
         if self.file is not None:
@@ -311,38 +420,8 @@ class Window(Gtk.ApplicationWindow):
         else:
             self.save_as()
 
-    def save_as_callback(self, action, parameter):
-        self.save_as()
-
-    def close_callback(self, action, parameter):
-        if not self.confirm_save_changes():
-            self.destroy()
-
-    def close_all_callback(self, action, parameter):
-        windows = self.get_application().get_windows()
-        for window in windows:
-            window.lookup_action("close").activate()
-
-    def on_delete_event(self, wid, event):
-        return self.confirm_save_changes()
-
-    def undo_callback(self, action, parameter):
-        self.buffer.emit('undo')
-
-    def redo_callback(self, action, parameter):
-        self.buffer.emit('redo')
-
-    def cut_callback(self, action, parameter):
-        self.textview.emit('cut-clipboard')
-
-    def copy_callback(self, action, parameter):
-        self.textview.emit('copy-clipboard')
-
-    def paste_callback(self, action, parameter):
-        self.textview.emit('paste-clipboard')
-
-    def find_callback(self, action, parameter):
-        self.searchbar.set_search_mode(True)
+    def select_all_callback(self, action, parameter):
+        self.textview.emit('select-all', True)
 
     def select_text(self, text):
         cursor_mark = self.buffer.get_insert()
@@ -361,99 +440,20 @@ class Window(Gtk.ApplicationWindow):
             self.textview.scroll_mark_onscreen(self.buffer.get_insert())
         return match
 
-    def on_find(self, entry):
-        self.select_text(entry.get_text())
-
-    def replace_callback(self, action, parameter):
-        self.replacebar.set_search_mode(True)
-
-    def on_replace(self, entry):
-        match = self.select_text(self.replace_from.get_text())
-        if match is None:
-            return
-        self.buffer.begin_user_action()
-        self.buffer.delete(match[0], match[1])
-        text = self.replace_to.get_text()
-        if text is not None:
-            self.buffer.insert_at_cursor(text)
-            cursor_mark = self.buffer.get_insert()
-            end = self.buffer.get_iter_at_mark(cursor_mark)
-            start = end.copy()
-            start.backward_chars(len(text))
-            self.textview.scroll_mark_onscreen(cursor_mark)
-            self.buffer.select_range(start, end)
-        self.buffer.end_user_action()
-
-    def annotate_callback(self, action, parameter):
-        if self.buffer.get_has_selection():
-            self.rubybar.set_search_mode(True)
+    def set_file(self, file):
+        self.file = file
+        if self.file:
+            self.buffer.set_modified(False)
+            self.set_title(file.get_basename() + " ― " + self.title)
+            return False
+        else:
+            self.set_title(self.title)
+            return True
 
     def unconvert_callback(self, action, parameter):
         self.buffer.begin_user_action()
         self.buffer.unconvert(self.buffer.get_cursor())
         self.buffer.end_user_action()
 
-    def on_ruby(self, entry):
-        start, end = self.buffer.get_selection_bounds()
-        if start == end:
-            return
-        if start.get_line() != end.get_line():
-            return
-        text = self.buffer.get_text(start, end, False)
-        ruby = entry.get_text()
-        # TODO: remove IAA, IAS, IAT from ruby
-        self.buffer.begin_user_action()
-        self.buffer.delete(start, end)
-        if ruby:
-            text = IAA + text + IAS + ruby + IAT
-        self.buffer.insert_at_cursor(text)
-        self.buffer.end_user_action()
-
-    def select_all_callback(self, action, parameter):
-        self.textview.emit('select-all', True)
-
-    def font_callback(self, action, parameter):
-        dialog = Gtk.FontChooserDialog(_("Font"), self)
-        dialog.props.preview_text = _("The quick brown fox jumps over the lazy dog.")
-        font_desc = self.textview.get_font()
-        dialog.set_font_desc(font_desc)
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            font = dialog.get_font()
-            if font:
-                desc = Pango.font_description_from_string(font)
-                self.textview.set_font(desc)
-        dialog.destroy()
-
-    def ruby_callback(self, action, parameter):
-        ruby = not action.get_state()
-        action.set_state(GLib.Variant.new_boolean(ruby))
-        self.buffer.set_ruby_mode(ruby)
-
-    def highlightlongsentences_callback(self, action, parameter):
-        highlight = not action.get_state()
-        action.set_state(GLib.Variant.new_boolean(highlight))
-        self.textview.set_check_sentences(highlight)
-
-    def about_callback(self, action, parameter):
-        dialog = Gtk.AboutDialog()
-        dialog.set_transient_for(self)
-
-        authors = ["Esrille Inc."]
-        documenters = ["Esrille Inc."]
-
-        dialog.set_program_name(self.title)
-        dialog.set_copyright("Copyright 2019 Esrille Inc.")
-        dialog.set_authors(authors)
-        dialog.set_documenters(documenters)
-        dialog.set_website("http://www.esrille.com/")
-        dialog.set_website_label("Esrille Inc.")
-        dialog.set_logo_icon_name("furiganapad")
-
-        # To close the dialog when "close" is clicked, e.g. on RPi,
-        # we connect the "response" signal to about_response_callback
-        dialog.connect("response", self.about_response_callback)
-        dialog.show()
-
-    def about_response_callback(self, dialog, response):
-        dialog.destroy()
+    def undo_callback(self, action, parameter):
+        self.buffer.emit('undo')

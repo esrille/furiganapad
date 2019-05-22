@@ -86,138 +86,53 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
             '&': '&amp;'
         })
 
-    def _init_scrollable(self):
-        self._hadjustment = self._vadjustment = None
-        self._hadjust_signal = self._vadjust_signal = None
+    def _check_sentences(self, text):
+        if not self.highlight_sentences:
+            return text
+        markup = ''
+        sentence = ''
+        start = end = 0
+        text_length = len(text)
+        for i in range(text_length):
+            c = text[i]
+            if start == end:
+                if c in "\t 　":
+                    markup += c
+                    start += 1
+                    end = start
+                    continue
+            end = i + 1
+            if c in "　 。．？！" or text_length <= end:
+                if c in "　 ":
+                    end -= 1
+                else:
+                    sentence += c
+                count = end - start
+                if SENTENCE_LONG < count:
+                    markup += '<span background="light pink">' + sentence + '</span>'
+                elif SENTENCE_SHORT < count:
+                    markup += '<span background="light yellow">' + sentence + '</span>'
+                else:
+                    markup += sentence
+                if c in "　 ":
+                    markup += c
+                start = end = i + 1
+                sentence = ''
+            else:
+                sentence += self._escape(c)
+        return markup
 
-    def _init_immultiontext(self):
-        self.im = Gtk.IMMulticontext()
-        self.im.connect("commit", self.on_commit)
-        self.im.connect("delete-surrounding", self.on_delete_surrounding)
-        self.im.connect("retrieve-surrounding", self.on_retrieve_surrounding)
-        self.im.connect("preedit-changed", self.on_preedit_changed)
-        self.im.connect("preedit-end", self.on_preedit_end)
-        self.im.connect("preedit-start", self.on_preedit_start)
-        self.preedit = ('', None, 0)
-
-    def _escape(self, str):
-        return str.translate(self.tr)
-
-    def _get_offset(self):
-        offset = 0
-        if self._vadjustment:
-            offset = self._vadjustment.get_value()
-        return offset
-
-    def _has_preedit(self):
-        return self.preedit[0]
-
-    def get_buffer(self):
-        return self.buffer
-
-    def get_paragraph(self, line):
-        if 0 <= line and line < self.get_buffer().get_line_count():
-            return self.get_buffer().paragraphs[line]
-        return None
-
-    def get_editable(self):
-        return True
-
-    def get_iter_at_location(self, x, y):
-        cursor = self.buffer.get_cursor()
-        width = self.get_allocated_width()
-        height = 0
-        i = 0
-        for h in self.heights:
-            if y < h + height:
-                context = self.create_pango_context()
-                layout = Pango.Layout(context)
-                desc = self.get_font()
-                layout.set_font_description(desc)
-                layout.set_width(width * Pango.SCALE)
-                layout.set_spacing(self.spacing * Pango.SCALE)
-                paragraph = self.get_paragraph(i)
-                text = paragraph.get_plain_text()
-                cursor_offset = len(text)
-                if i == cursor.get_line() and self._has_preedit():
-                    cursor_offset = cursor.get_plain_line_offset()
-                    text = text[:cursor_offset] + self.preedit[0] + text[cursor_offset:]
-                layout.set_text(text, -1)
-                inside, index, trailing = layout.xy_to_index(x * Pango.SCALE, (y - height) * Pango.SCALE)
-                offset = len(text.encode()[:index].decode())
-                if cursor_offset <= offset:
-                    offset -= len(self.preedit[0])
-                offset = paragraph._expand_plain_offset(offset)
-                if trailing:
-                    offset = paragraph._forward_cursor_position(offset)
-                iter = self.buffer.get_iter_at_line_offset(i, offset)
-                return inside, iter
-            height += h
-            i += 1
-        return False, self.buffer.get_end_iter()
-
-    def get_font(self):
-        return self.font_desc
-
-    def set_font(self, font_desc):
-        self.font_desc = font_desc
-        if font_desc.get_size_is_absolute():
-            self.spacing = font_desc.get_size() / Pango.SCALE * 7 / 8
-        else:
-            context = self.create_pango_context()
-            dpi = PangoCairo.context_get_resolution(context)
-            self.spacing = font_desc.get_size() / Pango.SCALE * dpi / 72 * 7 / 8
-        self.reflow()
-
-    def get_check_sentences(self):
-        return self.highlight_sentences
-
-    def set_check_sentences(self, value):
-        if value != self.highlight_sentences:
-            self.highlight_sentences = value
-            self.queue_draw()
-
-    def place_cursor_onscreen(self):
-        self.scroll_mark_onscreen(self.buffer.get_insert())
-
-    def scroll_mark_onscreen(self, mark):
-        if not self._vadjustment:
-            return
-
-        width = self.get_allocated_width()
-        height = self.get_allocated_height()
-        offset = self._get_offset()
-
-        y = 0
-        line = mark.iter.get_line()
-        for i in range(line):
-            y += self.heights[i]
-
-        context = self.create_pango_context()
-        layout = Pango.Layout(context)
-        desc = self.get_font()
-        layout.set_font_description(desc)
-        layout.set_width(width * Pango.SCALE)
-        layout.set_spacing(self.spacing * Pango.SCALE)
-        text = self.buffer.paragraphs[line].get_plain_text()
-        layout.set_text(text, -1)
-
-        current = text[:mark.iter.get_plain_line_offset()]
-        st, we = layout.get_cursor_pos(len(current.encode()))
-        st.x, st.y, st.width, st.height = \
-            st.x / Pango.SCALE - 1, st.y / Pango.SCALE, st.width / Pango.SCALE + 2, st.height / Pango.SCALE
-        y += st.y
-        h = self.spacing + self.caret.height
-
-        if y < offset:
-            self._vadjustment.set_value(y)
-        elif offset + height <= y + h:
-            y += h
-            lines = height // h
-            y = (y + h - 1) // h
-            self._vadjustment.set_value(h * (y - lines))
-
-        self.queue_draw()
+    def _draw_caret(self, cr, layout, current, y, offset):
+        cr.save()
+        st, we = layout.get_cursor_pos(len(current[:offset].encode()))
+        self.caret.x, self.caret.y, self.caret.width, self.caret.height = \
+            st.x / Pango.SCALE - 1, y + st.y / Pango.SCALE, st.width / Pango.SCALE + 2, st.height / Pango.SCALE
+        cr.set_operator(cairo.Operator.DIFFERENCE)
+        cr.set_source_rgb(1, 1, 1)
+        cr.rectangle(self.caret.x, self.caret.y, self.caret.width, self.caret.height)
+        cr.fill()
+        self.im.set_cursor_location(self.caret)
+        cr.restore()
 
     def _draw_rubies(self, cr, layout, paragraph, plain, height, cursor_offset):
         lt = PangoCairo.create_layout(cr)
@@ -277,102 +192,132 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                     PangoCairo.show_layout(cr, lt)
                     cr.restore()
 
-    def _draw_caret(self, cr, layout, current, y, offset):
-        cr.save()
-        st, we = layout.get_cursor_pos(len(current[:offset].encode()))
-        self.caret.x, self.caret.y, self.caret.width, self.caret.height = \
-            st.x / Pango.SCALE - 1, y + st.y / Pango.SCALE, st.width / Pango.SCALE + 2, st.height / Pango.SCALE
-        cr.set_operator(cairo.Operator.DIFFERENCE)
-        cr.set_source_rgb(1, 1, 1)
-        cr.rectangle(self.caret.x, self.caret.y, self.caret.width, self.caret.height)
-        cr.fill()
-        self.im.set_cursor_location(self.caret)
-        cr.restore()
+    def _escape(self, str):
+        return str.translate(self.tr)
 
-    def reflow(self, line=-1, redraw=True):
-        self.width = self.get_allocated_width()
+    def _get_offset(self):
+        offset = 0
+        if self._vadjustment:
+            offset = self._vadjustment.get_value()
+        return offset
 
+    def _has_preedit(self):
+        return self.preedit[0]
+
+    def _init_immultiontext(self):
+        self.im = Gtk.IMMulticontext()
+        self.im.connect("commit", self.on_commit)
+        self.im.connect("delete-surrounding", self.on_delete_surrounding)
+        self.im.connect("retrieve-surrounding", self.on_retrieve_surrounding)
+        self.im.connect("preedit-changed", self.on_preedit_changed)
+        self.im.connect("preedit-end", self.on_preedit_end)
+        self.im.connect("preedit-start", self.on_preedit_start)
+        self.preedit = ('', None, 0)
+
+    def _init_scrollable(self):
+        self._hadjustment = self._vadjustment = None
+        self._hadjust_signal = self._vadjust_signal = None
+
+    def do_copy_clipboard(self):
+        clipboard = self.get_clipboard(Gdk.SELECTION_CLIPBOARD)
+        self.buffer.copy_clipboard(clipboard)
+
+    def do_cut_clipboard(self):
+        clipboard = self.get_clipboard(Gdk.SELECTION_CLIPBOARD)
+        self.buffer.cut_clipboard(clipboard, self.get_editable())
+        self.place_cursor_onscreen()
+
+    def do_paste_clipboard(self):
+        clipboard = self.get_clipboard(Gdk.SELECTION_CLIPBOARD)
+        text = clipboard.wait_for_text()
+        if text is not None:
+            self.buffer.begin_user_action()
+            self.buffer.insert_at_cursor(text)
+            self.buffer.end_user_action()
+
+    def do_select_all(self, select):
+        self.buffer.select_all()
+        self.queue_draw()
+
+    def get_buffer(self):
+        return self.buffer
+
+    def get_check_sentences(self):
+        return self.highlight_sentences
+
+    def get_editable(self):
+        return True
+
+    def get_font(self):
+        return self.font_desc
+
+    def get_hadjustment(self):
+        return self._hadjustment
+
+    def get_iter_at_location(self, x, y):
         cursor = self.buffer.get_cursor()
-
-        context = self.create_pango_context()
-        layout = Pango.Layout(context)
-        desc = self.get_font()
-        layout.set_font_description(desc)
-        layout.set_width(self.width * Pango.SCALE)
-        layout.set_spacing(self.spacing * Pango.SCALE)
-
-        paragraph = self.get_paragraph(line)
-        if paragraph and self.heights:
-            self.height -= self.heights[line]
-            text = paragraph.get_plain_text()
-            if line == cursor.get_line() and self._has_preedit():
-                cursor_offset = cursor.get_plain_line_offset()
-                text = text[:cursor_offset] + self.preedit[0] + text[cursor_offset:]
-            layout.set_text(text, -1)
-            w, h = layout.get_pixel_size()
-            h += self.spacing
-            self.heights[line] = h
-            self.height += h
-        else:
-            self.heights.clear()
-            self.height = self.spacing
-            for paragraph in self.get_buffer().paragraphs:
+        width = self.get_allocated_width()
+        height = 0
+        i = 0
+        for h in self.heights:
+            if y < h + height:
+                context = self.create_pango_context()
+                layout = Pango.Layout(context)
+                desc = self.get_font()
+                layout.set_font_description(desc)
+                layout.set_width(width * Pango.SCALE)
+                layout.set_spacing(self.spacing * Pango.SCALE)
+                paragraph = self.get_paragraph(i)
                 text = paragraph.get_plain_text()
-                if line == cursor.get_line() and self._has_preedit():
+                cursor_offset = len(text)
+                if i == cursor.get_line() and self._has_preedit():
                     cursor_offset = cursor.get_plain_line_offset()
                     text = text[:cursor_offset] + self.preedit[0] + text[cursor_offset:]
                 layout.set_text(text, -1)
-                w, h = layout.get_pixel_size()
-                h += self.spacing
-                self.heights.append(h)
-                self.height += h
+                inside, index, trailing = layout.xy_to_index(x * Pango.SCALE, (y - height) * Pango.SCALE)
+                offset = len(text.encode()[:index].decode())
+                if cursor_offset <= offset:
+                    offset -= len(self.preedit[0])
+                offset = paragraph._expand_plain_offset(offset)
+                if trailing:
+                    offset = paragraph._forward_cursor_position(offset)
+                iter = self.buffer.get_iter_at_line_offset(i, offset)
+                return inside, iter
+            height += h
+            i += 1
+        return False, self.buffer.get_end_iter()
 
-        if self._vadjustment:
-            # TODO: Adjust _vadjustment value as well
-            self._vadjustment.set_properties(
-                lower=0,
-                upper=self.height,
-                page_size=self.get_allocated_height()
-            )
+    def get_paragraph(self, line):
+        if 0 <= line and line < self.get_buffer().get_line_count():
+            return self.get_buffer().paragraphs[line]
+        return None
 
-        if redraw:
-            self.queue_draw()
+    def get_vadjustment(self):
+        return self._vadjustment
 
-    def _check_sentences(self, text):
-        if not self.highlight_sentences:
-            return text
-        markup = ''
-        sentence = ''
-        start = end = 0
-        text_length = len(text)
-        for i in range(text_length):
-            c = text[i]
-            if start == end:
-                if c in "\t 　":
-                    markup += c
-                    start += 1
-                    end = start
-                    continue
-            end = i + 1
-            if c in "　 。．？！" or text_length <= end:
-                if c in "　 ":
-                    end -= 1
-                else:
-                    sentence += c
-                count = end - start
-                if SENTENCE_LONG < count:
-                    markup += '<span background="light pink">' + sentence + '</span>'
-                elif SENTENCE_SHORT < count:
-                    markup += '<span background="light yellow">' + sentence + '</span>'
-                else:
-                    markup += sentence
-                if c in "　 ":
-                    markup += c
-                start = end = i + 1
-                sentence = ''
-            else:
-                sentence += self._escape(c)
-        return markup
+    def on_commit(self, wid, str):
+        self.buffer.begin_user_action()
+        self.buffer.insert_at_cursor(str)
+        self.buffer.end_user_action()
+        self.place_cursor_onscreen()
+        return True
+
+    def on_delete(self, textbuffer, start, end):
+        if start.get_line() == end.get_line():
+            self.reflow_line = start.get_line()
+        else:
+            self.reflow_line = -1
+
+    def on_delete_surrounding(self, wid, offset, n_chars):
+        self.buffer.begin_user_action()
+        self.buffer.delete_surrounding(offset, n_chars)
+        self.buffer.end_user_action()
+        self.place_cursor_onscreen()
+        return True
+
+    def on_deleted(self, textbuffer, start, end):
+        self.reflow(self.reflow_line)
+        self.queue_draw()
 
     def on_draw(self, wid, cr):
         if wid.get_allocated_width() != self.width:
@@ -461,6 +406,13 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         print("on_focus_out")
         self.im.focus_out()
         return True
+
+    def on_inserted(self, textbuffer, iter, text):
+        if has_newline(text):
+            self.reflow()
+        else:
+            self.reflow(iter.get_line())
+        self.queue_draw()
 
     def on_key_press(self, wid, event):
         is_selection = (event.state & Gdk.ModifierType.SHIFT_MASK)
@@ -581,23 +533,22 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
             return True
         return False
 
-    def on_commit(self, wid, str):
-        self.buffer.begin_user_action()
-        self.buffer.insert_at_cursor(str)
-        self.buffer.end_user_action()
-        self.place_cursor_onscreen()
+    def on_mouse_move(self, wid, event):
+        if (event.state & Gdk.ModifierType.BUTTON1_MASK):
+            inside, cursor = self.get_iter_at_location(event.x, self._get_offset() + event.y)
+            self.buffer.move_cursor(cursor, True)
+            self.place_cursor_onscreen()
         return True
 
-    def on_retrieve_surrounding(self, wid):
-        text, offset = self.buffer.get_surrounding()
-        self.im.set_surrounding(text, len(text.encode()), len(text[:offset].encode()))
+    def on_mouse_press(self, wid, event):
+        if event.button == Gdk.BUTTON_PRIMARY:
+            is_selection = (event.state & Gdk.ModifierType.SHIFT_MASK)
+            inside, cursor = self.get_iter_at_location(event.x, self._get_offset() + event.y)
+            self.buffer.move_cursor(cursor, is_selection)
+            self.place_cursor_onscreen()
         return True
 
-    def on_delete_surrounding(self, wid, offset, n_chars):
-        self.buffer.begin_user_action()
-        self.buffer.delete_surrounding(offset, n_chars)
-        self.buffer.end_user_action()
-        self.place_cursor_onscreen()
+    def on_mouse_release(self, wid, event):
         return True
 
     def on_preedit_changed(self, wid):
@@ -617,49 +568,119 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         self.buffer.delete_selection(True, True)
         print('on_preedit_start', self.preedit)
 
+    def on_retrieve_surrounding(self, wid):
+        text, offset = self.buffer.get_surrounding()
+        self.im.set_surrounding(text, len(text.encode()), len(text[:offset].encode()))
+        return True
+
     def on_value_changed(self, *whatever):
         self.queue_draw()
 
-    def on_inserted(self, textbuffer, iter, text):
-        if has_newline(text):
-            self.reflow()
+    def place_cursor_onscreen(self):
+        self.scroll_mark_onscreen(self.buffer.get_insert())
+
+    def reflow(self, line=-1, redraw=True):
+        self.width = self.get_allocated_width()
+
+        cursor = self.buffer.get_cursor()
+
+        context = self.create_pango_context()
+        layout = Pango.Layout(context)
+        desc = self.get_font()
+        layout.set_font_description(desc)
+        layout.set_width(self.width * Pango.SCALE)
+        layout.set_spacing(self.spacing * Pango.SCALE)
+
+        paragraph = self.get_paragraph(line)
+        if paragraph and self.heights:
+            self.height -= self.heights[line]
+            text = paragraph.get_plain_text()
+            if line == cursor.get_line() and self._has_preedit():
+                cursor_offset = cursor.get_plain_line_offset()
+                text = text[:cursor_offset] + self.preedit[0] + text[cursor_offset:]
+            layout.set_text(text, -1)
+            w, h = layout.get_pixel_size()
+            h += self.spacing
+            self.heights[line] = h
+            self.height += h
         else:
-            self.reflow(iter.get_line())
+            self.heights.clear()
+            self.height = self.spacing
+            for paragraph in self.get_buffer().paragraphs:
+                text = paragraph.get_plain_text()
+                if line == cursor.get_line() and self._has_preedit():
+                    cursor_offset = cursor.get_plain_line_offset()
+                    text = text[:cursor_offset] + self.preedit[0] + text[cursor_offset:]
+                layout.set_text(text, -1)
+                w, h = layout.get_pixel_size()
+                h += self.spacing
+                self.heights.append(h)
+                self.height += h
+
+        if self._vadjustment:
+            # TODO: Adjust _vadjustment value as well
+            self._vadjustment.set_properties(
+                lower=0,
+                upper=self.height,
+                page_size=self.get_allocated_height()
+            )
+
+        if redraw:
+            self.queue_draw()
+
+    def scroll_mark_onscreen(self, mark):
+        if not self._vadjustment:
+            return
+
+        width = self.get_allocated_width()
+        height = self.get_allocated_height()
+        offset = self._get_offset()
+
+        y = 0
+        line = mark.iter.get_line()
+        for i in range(line):
+            y += self.heights[i]
+
+        context = self.create_pango_context()
+        layout = Pango.Layout(context)
+        desc = self.get_font()
+        layout.set_font_description(desc)
+        layout.set_width(width * Pango.SCALE)
+        layout.set_spacing(self.spacing * Pango.SCALE)
+        text = self.buffer.paragraphs[line].get_plain_text()
+        layout.set_text(text, -1)
+
+        current = text[:mark.iter.get_plain_line_offset()]
+        st, we = layout.get_cursor_pos(len(current.encode()))
+        st.x, st.y, st.width, st.height = \
+            st.x / Pango.SCALE - 1, st.y / Pango.SCALE, st.width / Pango.SCALE + 2, st.height / Pango.SCALE
+        y += st.y
+        h = self.spacing + self.caret.height
+
+        if y < offset:
+            self._vadjustment.set_value(y)
+        elif offset + height <= y + h:
+            y += h
+            lines = height // h
+            y = (y + h - 1) // h
+            self._vadjustment.set_value(h * (y - lines))
+
         self.queue_draw()
 
-    def on_delete(self, textbuffer, start, end):
-        if start.get_line() == end.get_line():
-            self.reflow_line = start.get_line()
+    def set_check_sentences(self, value):
+        if value != self.highlight_sentences:
+            self.highlight_sentences = value
+            self.queue_draw()
+
+    def set_font(self, font_desc):
+        self.font_desc = font_desc
+        if font_desc.get_size_is_absolute():
+            self.spacing = font_desc.get_size() / Pango.SCALE * 7 / 8
         else:
-            self.reflow_line = -1
-
-    def on_deleted(self, textbuffer, start, end):
-        self.reflow(self.reflow_line)
-        self.queue_draw()
-
-    def on_mouse_move(self, wid, event):
-        if (event.state & Gdk.ModifierType.BUTTON1_MASK):
-            inside, cursor = self.get_iter_at_location(event.x, self._get_offset() + event.y)
-            self.buffer.move_cursor(cursor, True)
-            self.place_cursor_onscreen()
-        return True
-
-    def on_mouse_press(self, wid, event):
-        if event.button == Gdk.BUTTON_PRIMARY:
-            is_selection = (event.state & Gdk.ModifierType.SHIFT_MASK)
-            inside, cursor = self.get_iter_at_location(event.x, self._get_offset() + event.y)
-            self.buffer.move_cursor(cursor, is_selection)
-            self.place_cursor_onscreen()
-        return True
-
-    def on_mouse_release(self, wid, event):
-        return True
-
-    def get_hadjustment(self):
-        return self._hadjustment
-
-    def get_vadjustment(self):
-        return self._vadjustment
+            context = self.create_pango_context()
+            dpi = PangoCairo.context_get_resolution(context)
+            self.spacing = font_desc.get_size() / Pango.SCALE * dpi / 72 * 7 / 8
+        self.reflow()
 
     def set_hadjustment(self, adjustment):
         if self._hadjustment:
@@ -688,27 +709,6 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                 page_size=self.get_allocated_height()
             )
             self._vadjust_signal = adjustment.connect("value-changed", self.on_value_changed)
-
-    def do_cut_clipboard(self):
-        clipboard = self.get_clipboard(Gdk.SELECTION_CLIPBOARD)
-        self.buffer.cut_clipboard(clipboard, self.get_editable())
-        self.place_cursor_onscreen()
-
-    def do_copy_clipboard(self):
-        clipboard = self.get_clipboard(Gdk.SELECTION_CLIPBOARD)
-        self.buffer.copy_clipboard(clipboard)
-
-    def do_paste_clipboard(self):
-        clipboard = self.get_clipboard(Gdk.SELECTION_CLIPBOARD)
-        text = clipboard.wait_for_text()
-        if text is not None:
-            self.buffer.begin_user_action()
-            self.buffer.insert_at_cursor(text)
-            self.buffer.end_user_action()
-
-    def do_select_all(self, select):
-        self.buffer.select_all()
-        self.queue_draw()
 
     hadjustment = GObject.property(
         get_hadjustment, set_hadjustment, type=Gtk.Adjustment
