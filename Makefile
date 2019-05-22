@@ -13,4 +13,7 @@ README.md : README.txt
 data/furiganapad.json : $(src)
 	./gettext.py $^ -o $@
 
-.PHONY: all
+clean :
+	rm -rf __pycache__ esrille_furiganapad/__pycache__
+
+.PHONY: all clean
