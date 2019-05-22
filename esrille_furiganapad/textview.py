@@ -127,8 +127,9 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         st, we = layout.get_cursor_pos(len(current[:offset].encode()))
         self.caret.x, self.caret.y, self.caret.width, self.caret.height = \
             st.x / Pango.SCALE - 1, y + st.y / Pango.SCALE, st.width / Pango.SCALE + 2, st.height / Pango.SCALE
-        cr.set_operator(cairo.Operator.DIFFERENCE)
-        cr.set_source_rgb(1, 1, 1)
+        if (1, 13) <= cairo.version_info:
+            cr.set_operator(cairo.Operator.DIFFERENCE)
+            cr.set_source_rgb(1, 1, 1)
         cr.rectangle(self.caret.x, self.caret.y, self.caret.width, self.caret.height)
         cr.fill()
         self.im.set_cursor_location(self.caret)
