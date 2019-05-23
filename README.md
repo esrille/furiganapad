@@ -66,7 +66,7 @@ $ ./furiganapad.py
 
 　そのかわり、ユニコードのルビをHTMLのrubyタグに<ruby>変換<rp>(</rp><rt>へんかん</rt><rp>)</rp></ruby>したりするのはかんたんです。つぎの<ruby>例<rp>(</rp><rt>れい</rt><rp>)</rp></ruby>では、「ふりがなパッド」でかいたREADME.txtを、スクリプトをつかって、README.mdに<ruby>変換<rp>(</rp><rt>へんかん</rt><rp>)</rp></ruby>しています。
 ```
-$ ./convert_to_tag.py README.txt > README.md
+$ ./convert_to_tag.py README.txt README.md
 ```
 convert_to_tag.pyスクリプトもこのレポジトリのなかにおいてあります。
 
