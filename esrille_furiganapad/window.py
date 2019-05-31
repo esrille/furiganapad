@@ -293,21 +293,19 @@ class Window(Gtk.ApplicationWindow):
         return False
 
     def on_replace(self, entry):
-        match = self.select_text(self.replace_from.get_text())
-        if match is None:
-            return
-        self.buffer.begin_user_action()
-        self.buffer.delete(match[0], match[1])
-        text = self.replace_to.get_text()
-        if text is not None:
-            self.buffer.insert_at_cursor(text)
-            cursor_mark = self.buffer.get_insert()
-            end = self.buffer.get_iter_at_mark(cursor_mark)
-            start = end.copy()
-            start.backward_chars(len(text))
-            self.textview.scroll_mark_onscreen(cursor_mark)
-            self.buffer.select_range(start, end)
-        self.buffer.end_user_action()
+        text_from = self.replace_from.get_text()
+        (start, end) = self.buffer.get_selection_bounds()
+        if start != end:
+            selection = self.buffer.get_text(start, end, False)
+            if selection == text_from:
+                text_to = self.replace_to.get_text()
+                self.buffer.begin_user_action()
+                self.buffer.delete(start, end)
+                self.buffer.insert_at_cursor(text_to)
+                self.buffer.end_user_action()
+                cursor_mark = self.buffer.get_insert()
+                self.textview.scroll_mark_onscreen(cursor_mark)
+        self.select_text(text_from)
 
     def on_ruby(self, entry):
         start, end = self.buffer.get_selection_bounds()
@@ -367,7 +365,7 @@ class Window(Gtk.ApplicationWindow):
         self.buffer.set_ruby_mode(ruby)
 
     def save(self):
-        [start, end] = self.buffer.get_bounds()
+        (start, end) = self.buffer.get_bounds()
         current_contents = self.buffer.get_text(start, end, True)
         if current_contents:
             current_contents += '\n'
