@@ -235,6 +235,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
             self.buffer.begin_user_action()
             self.buffer.insert_at_cursor(text)
             self.buffer.end_user_action()
+            self.place_cursor_onscreen()
 
     def do_select_all(self, select):
         self.buffer.select_all()
