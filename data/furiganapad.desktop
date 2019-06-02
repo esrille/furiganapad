@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=FuriganaPad
+Name[ja]=ふりがなパッド
 Comment=Write Japanese texts with Furigana easily
 Comment[ja]=ふりがなつきの文章をかんたんにかけます
 Icon=furiganapad
