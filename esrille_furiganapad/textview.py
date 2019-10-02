@@ -326,7 +326,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
             self.reflow(redraw=False)
         height = wid.get_allocated_height()
 
-        cr.set_source_rgb(255, 255, 255)
+        cr.set_source_rgb(1, 1, 1)
         cr.rectangle(0, 0, self.width, height)
         cr.fill()
         cr.move_to(0, 0)
