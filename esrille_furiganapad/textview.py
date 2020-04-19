@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019  Esrille Inc.
+# Copyright (C) 2019, 2020  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@ gi.require_version('Pango', '1.0')
 gi.require_version('PangoCairo', '1.0')
 from gi.repository import Gtk, Gdk, GObject, Pango, PangoCairo
 
-from .textbuffer import TextBuffer, has_newline
+from .textbuffer import TextBuffer, has_newline, remove_dangling_annotations
 
 # A sentence with more than SENTENCE_SHORT characters is not short.
 SENTENCE_SHORT = 50
@@ -231,6 +231,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
     def do_paste_clipboard(self):
         clipboard = self.get_clipboard(Gdk.SELECTION_CLIPBOARD)
         text = clipboard.wait_for_text()
+        text = remove_dangling_annotations(text)
         if text is not None:
             self.buffer.begin_user_action()
             self.buffer.insert_at_cursor(text)

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019  Esrille Inc.
+# Copyright (C) 2019, 2020  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,10 @@ NEWLINES = "\n\r\v\f\x1c\x1d\x1e\x85\u2028\u2029"
 
 HIRAGANA = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんゔがぎぐげござじずぜぞだぢづでどばびぶべぼぁぃぅぇぉゃゅょっぱぴぷぺぽゎゐゑ・ーゝゞ"
 KATAKANA = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンヴガギグゲゴザジズゼゾダヂヅデドバビブベボァィゥェォャュョッパピプペポヮヰヱ・ーヽヾ"
+
+PLAIN = 0
+BASE = 1
+RUBY = 2
 
 
 def to_hiragana(s):
@@ -65,12 +69,56 @@ def has_newline(s):
     return False
 
 
+def remove_dangling_annotations(s):
+    t = ''
+    i = 0
+    mode = PLAIN
+    for c in s:
+        if c == IAA:
+            if mode != PLAIN:
+                continue
+            break
+        elif c == IAS:
+            mode = RUBY
+        elif c == IAT:
+            if mode != RUBY:
+                t = ''
+            i = i + 1
+            break
+        elif mode == PLAIN:
+            t += c
+        i += 1
+    mode = PLAIN
+    s = s[i:]
+    a = ''
+    for c in s:
+        if c == IAA:
+            if mode != PLAIN:
+                continue
+            mode = BASE
+            a += c
+        elif c == IAS:
+            if mode != BASE:
+                continue
+            mode = RUBY
+            a += c
+        elif c == IAT:
+            if mode != RUBY:
+                continue
+            mode = PLAIN
+            a += c
+            t += a
+            a = ''
+        elif mode == PLAIN:
+            t += c
+        else:
+            a += c
+    if mode != PLAIN:
+        t += remove_dangling_annotations(a[1:])
+    return t
+
+
 class Paragraph:
-
-    PLAIN = 0
-    BASE = 1
-    RUBY = 2
-
     def __init__(self, text=''):
         self.text = text
         self.plain = ''
@@ -79,16 +127,16 @@ class Paragraph:
     def _backward_cursor_position(self, offset):
         if offset <= 0:
             return -1
-        mode = self.PLAIN
+        mode = PLAIN
         for c in reversed(self.text[:offset]):
             offset -= 1
             if c == IAA:
-                mode = self.PLAIN
+                mode = PLAIN
             elif c == IAS:
-                mode = self.BASE
+                mode = BASE
             elif c == IAT:
-                mode = self.RUBY
-            elif mode == self.RUBY:
+                mode = RUBY
+            elif mode == RUBY:
                 pass
             else:
                 if 0 < offset and self.text[offset - 1] == IAA:
@@ -97,7 +145,7 @@ class Paragraph:
         return -1
 
     def _expand_plain_offset(self, offset):
-        mode = self.PLAIN
+        mode = PLAIN
         i = 0
         length = 0
         for c in self.text:
@@ -106,12 +154,12 @@ class Paragraph:
                     i = self.text.find(IAT, i + 1) + 1
                 break
             if c == IAA:
-                mode = self.BASE
+                mode = BASE
             elif c == IAS:
-                mode = self.RUBY
+                mode = RUBY
             elif c == IAT:
-                mode = self.PLAIN
-            elif mode == self.RUBY:
+                mode = PLAIN
+            elif mode == RUBY:
                 pass
             else:
                 length += 1
@@ -121,7 +169,7 @@ class Paragraph:
     def _forward_cursor_position(self, offset):
         if len(self.text) <= offset:
             return len(self.text) + 1
-        mode = self.PLAIN
+        mode = PLAIN
         if self.text[offset] == IAA:
             offset += 1
         offset += 1
@@ -129,10 +177,10 @@ class Paragraph:
             if c == IAA:
                 return offset
             elif c == IAS:
-                mode = self.RUBY
+                mode = RUBY
             elif c == IAT:
-                mode = self.PLAIN
-            elif mode == self.RUBY:
+                mode = PLAIN
+            elif mode == RUBY:
                 pass
             else:
                 return offset
@@ -150,19 +198,19 @@ class Paragraph:
         return (offset, end)
 
     def _get_plain_offset(self, offset):
-        mode = self.PLAIN
+        mode = PLAIN
         i = 0
         len = 0
         for c in self.text:
             if i == offset:
                 break
             if c == IAA:
-                mode = self.BASE
+                mode = BASE
             elif c == IAS:
-                mode = self.RUBY
+                mode = RUBY
             elif c == IAT:
-                mode = self.PLAIN
-            elif mode == self.RUBY:
+                mode = PLAIN
+            elif mode == RUBY:
                 pass
             else:
                 len += 1
@@ -191,21 +239,21 @@ class Paragraph:
     def get_plain_text(self):
         if self.plain:
             return self.plain
-        mode = self.PLAIN
-        i = 0
+        mode = PLAIN
+        i = pos = len = 0
         ruby = ''
         for c in self.text:
             if c == IAA:
-                mode = self.BASE
+                mode = BASE
                 pos = i
             elif c == IAS:
-                mode = self.RUBY
+                mode = RUBY
                 len = i - pos
             elif c == IAT:
-                mode = self.PLAIN
+                mode = PLAIN
                 self.rubies.append([pos, len, ruby])
                 ruby = ''
-            elif mode == self.RUBY:
+            elif mode == RUBY:
                 ruby += c
             else:
                 self.plain += c
@@ -539,6 +587,7 @@ class TextBuffer(GObject.Object):
         if start == end:
             return
         text = self.get_text(start, end, True)
+        text = remove_dangling_annotations(text)
         clipboard.set_text(text, -1)
 
     def create_mark(self, mark_name, where):
@@ -549,6 +598,7 @@ class TextBuffer(GObject.Object):
         if start == end:
             return
         text = self.get_text(start, end, True)
+        text = remove_dangling_annotations(text)
         self.delete_selection(True, default_editable)
         clipboard.set_text(text, -1)
 
