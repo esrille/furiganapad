@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019  Esrille Inc.
+# Copyright (C) 2019, 2020  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,7 @@ from gi.repository import GLib, Gio, Gtk, Gdk, GObject, Pango
 
 from . import _
 from .textview import TextView
-
+from .textbuffer import remove_dangling_annotations
 
 IAA = '\uFFF9'  # IAA (INTERLINEAR ANNOTATION ANCHOR)
 IAS = '\uFFFA'  # IAS (INTERLINEAR ANNOTATION SEPARATOR)
@@ -41,6 +41,7 @@ class Window(Gtk.ApplicationWindow):
             try:
                 [success, content, etags] = file.load_contents(None)
                 content = content.decode("utf-8", "ignore")
+                content = remove_dangling_annotations(content)
             except GObject.GError as e:
                 file = None
                 print("Error: " + e.message)
