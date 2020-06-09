@@ -88,7 +88,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
 
     def _check_sentences(self, text):
         if not self.highlight_sentences:
-            return text
+            return self._escape(text)
         markup = ''
         sentence = ''
         start = end = 0
@@ -106,7 +106,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                 if c in "　 ":
                     end -= 1
                 else:
-                    sentence += c
+                    sentence += self._escape(c)
                 count = end - start
                 if SENTENCE_LONG < count:
                     markup += '<span background="light pink">' + sentence + '</span>'
