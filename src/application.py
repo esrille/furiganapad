@@ -31,18 +31,16 @@ class Application(Gtk.Application):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args,
+                         application_id="com.esrille.furiganapad",
                          flags=Gio.ApplicationFlags.HANDLES_OPEN,
                          **kwargs)
-
         self.resourcedir = os.path.join(os.path.dirname(__file__))
-        print(self.resourcedir)
-
         self.lang = locale.getdefaultlocale()[0]
         filename = os.path.join(self.resourcedir, "furiganapad." + self.lang + ".json")
         try:
             with open(filename, 'r') as file:
                 i18n_set_dictionary(json.load(file))
-        except OSError as e:
+        except Exception:
             pass
 
     def do_activate(self):
