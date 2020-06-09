@@ -80,15 +80,9 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         # desc = self.get_style().font_desc
         self.set_font(desc)
 
-        self.tr = str.maketrans({
-            '<': '&lt;',
-            '>': '&gt;',
-            '&': '&amp;'
-        })
-
-    def _check_sentences(self, text):
+    def _check_sentences(self, text, attrList):
         if not self.highlight_sentences:
-            return self._escape(text)
+            return text
         markup = ''
         sentence = ''
         start = end = 0
@@ -106,20 +100,23 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                 if c in "　 ":
                     end -= 1
                 else:
-                    sentence += self._escape(c)
+                    sentence += c
                 count = end - start
-                if SENTENCE_LONG < count:
-                    markup += '<span background="light pink">' + sentence + '</span>'
-                elif SENTENCE_SHORT < count:
-                    markup += '<span background="light yellow">' + sentence + '</span>'
-                else:
-                    markup += sentence
+                if SENTENCE_SHORT < count:
+                    if SENTENCE_LONG < count:
+                        attr = Pango.attr_background_new(0xffff, 0xb600, 0xc100)
+                    else:
+                        attr = Pango.attr_background_new(0xffff, 0xffff, 0xed00)
+                    attr.start_index = len(markup.encode())
+                    attr.end_index = attr.start_index + len(sentence.encode())
+                    attrList.insert(attr)
+                markup += sentence
                 if c in "　 ":
                     markup += c
                 start = end = i + 1
                 sentence = ''
             else:
-                sentence += self._escape(c)
+                sentence += c
         return markup
 
     def _draw_caret(self, cr, layout, current, y, offset):
@@ -192,9 +189,6 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                     cr.move_to(x, y)
                     PangoCairo.show_layout(cr, lt)
                     cr.restore()
-
-    def _escape(self, str):
-        return str.translate(self.tr)
 
     def _get_offset(self):
         offset = 0
@@ -350,40 +344,43 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
             if y < height and 0 <= y + h:
                 text = paragraph.get_plain_text()
                 cursor_offset = len(text)
+                attrList = Pango.AttrList.new()
                 if lineno == cursor.get_line():
                     cursor_offset = cursor.get_plain_line_offset()
                     if self._has_preedit():
                         text = text[:cursor_offset] + self.preedit[0] + text[cursor_offset:]
+                        attrList.splice(self.preedit[1], len(text[:cursor_offset].encode()), len(self.preedit[0].encode()))
+                        cursor_offset += self.preedit[2]
                 if start == end or lineno < start.get_line() or end.get_line() < lineno:
-                    # Note set_text() does not reset the existing markups.
-                    markup = self._check_sentences(text)
-                    layout.set_markup(markup, -1)
-                elif start.get_line() < lineno and lineno < end.get_line():
-                    markup = self._escape(text)
-                    markup = '<span background="#ACCEF7">' + markup + '</span>'
-                    layout.set_markup(markup, -1)
-                elif start.get_line() == end.get_line():
-                    assert lineno == end.get_line()
-                    so = start.get_plain_line_offset()
-                    eo = end.get_plain_line_offset()
-                    markup = self._escape(text[:so]) + \
-                        '<span background="#ACCEF7">' + self._escape(text[so:eo]) + '</span>' + \
-                        self._escape(text[eo:])
-                    layout.set_markup(markup, -1)
-                elif start.get_line() == lineno:
-                    o = start.get_plain_line_offset()
-                    markup = self._escape(text[:o]) + '<span background="#ACCEF7">' + self._escape(text[o:]) + '</span>'
-                    layout.set_markup(markup, -1)
-                elif lineno == end.get_line():
-                    o = end.get_plain_line_offset()
-                    markup = '<span background="#ACCEF7">' + self._escape(text[:o]) + '</span>' + self._escape(text[o:])
-                    layout.set_markup(markup, -1)
+                    text = self._check_sentences(text, attrList)
+                else:
+                    attr = Pango.attr_background_new(0xac00, 0xce00, 0xf700)
+                    if start.get_line() < lineno and lineno < end.get_line():
+                        attr.start_index = 0
+                        attr.end_index = len(text.encode())
+                    elif start.get_line() == end.get_line():
+                        assert lineno == end.get_line()
+                        so = start.get_plain_line_offset()
+                        eo = end.get_plain_line_offset()
+                        attr.start_index = len(text[:so].encode())
+                        attr.end_index = attr.start_index + len(text[so:eo].encode())
+                    elif start.get_line() == lineno:
+                        o = start.get_plain_line_offset()
+                        attr.start_index = len(text[:o].encode())
+                        attr.end_index = attr.start_index + len(text[o:].encode())
+                    elif lineno == end.get_line():
+                        o = end.get_plain_line_offset()
+                        attr.start_index = 0
+                        attr.end_index = len(text[:o].encode())
+                    attrList.insert(attr)
+                layout.set_text(text, -1)
+                layout.set_attributes(attrList)
                 PangoCairo.update_layout(cr, layout)
                 cr.move_to(0, y)
                 PangoCairo.show_layout(cr, layout)
                 self._draw_rubies(cr, layout, paragraph, text, y, cursor_offset)
                 if lineno == cursor.get_line():
-                    self._draw_caret(cr, layout, text, y, cursor_offset + self.preedit[2])
+                    self._draw_caret(cr, layout, text, y, cursor_offset)
             y += h
             lineno += 1
 
