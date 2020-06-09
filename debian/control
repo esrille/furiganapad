@@ -10,7 +10,8 @@ Vcs-Browser: https://github.com/esrille/furiganapad
 
 Package: furiganapad
 Architecture: all
-Depends: gir1.2-glib-2.0,
+Depends: fonts-noto-cjk,
+         gir1.2-glib-2.0,
          gir1.2-gtk-3.0,
          gir1.2-pango-1.0,
          python3,
