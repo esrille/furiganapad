@@ -2,10 +2,7 @@ Source: furiganapad
 Section: editors
 Priority: optional
 Maintainer: Esrille Inc. <info@esrille.com>
-Build-Depends: debhelper (>=11),
-               dh-python,
-               meson (>= 0.40.0),
-               python3
+Build-Depends: debhelper (>=11),dh-python,autotools-dev,python3-dev,pkg-config
 Standards-Version: 4.1.2
 Homepage: https://github.com/esrille/furiganapad
 Vcs-Git: https://github.com/esrille/furiganapad.git

@@ -19,9 +19,9 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Pango', '1.0')
 from gi.repository import GLib, Gio, Gtk, Gdk, GObject, Pango
 
-from . import _
-from .textview import TextView
-from .textbuffer import remove_dangling_annotations
+from i18n import _
+from textview import TextView
+from textbuffer import remove_dangling_annotations
 
 IAA = '\uFFF9'  # IAA (INTERLINEAR ANNOTATION ANCHOR)
 IAS = '\uFFFA'  # IAS (INTERLINEAR ANNOTATION SEPARATOR)

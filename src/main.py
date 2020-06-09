@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
 #
-# Copyright (C) 2019  Esrille Inc.
+# Copyright (C) 2019-2020  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,23 +14,13 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-import os
 import signal
 import sys
 
-DATA_DIR = "@DATADIR@"
-PYTHON_DIR = "@PYTHONDIR@"
+from application import Application
 
 if __name__ == '__main__':
-
-    # Append /usr/local/lib/pythonX.Y/site-packages manually to sys.path
-    # if it is not included; see https://wiki.debian.org/Python
-    if PYTHON_DIR not in sys.path:
-        sys.path.append(PYTHON_DIR)
-    from esrille_furiganapad.application import Application
-
-    resourcedir = os.path.join(DATA_DIR, "furiganapad")
-    app = Application(resourcedir)
+    app = Application()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     exit_status = app.run(sys.argv)
     sys.exit(exit_status)

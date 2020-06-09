@@ -23,21 +23,18 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio, Gtk, GObject
 
-from . import i18n_set_dictionary
-from .window import Window
+from i18n import i18n_set_dictionary
+from window import Window
 
 
 class Application(Gtk.Application):
 
-    def __init__(self, resourcedir='', *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args,
                          flags=Gio.ApplicationFlags.HANDLES_OPEN,
                          **kwargs)
 
-        if resourcedir:
-            self.resourcedir = resourcedir
-        else:
-            self.resourcedir = os.path.join(os.path.dirname(sys.argv[0]), "data")
+        self.resourcedir = os.path.join(os.path.dirname(__file__))
         print(self.resourcedir)
 
         self.lang = locale.getdefaultlocale()[0]

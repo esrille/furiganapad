@@ -22,7 +22,7 @@ gi.require_version('Pango', '1.0')
 gi.require_version('PangoCairo', '1.0')
 from gi.repository import Gtk, Gdk, GObject, Pango, PangoCairo
 
-from .textbuffer import TextBuffer, has_newline, remove_dangling_annotations
+from textbuffer import TextBuffer, has_newline, remove_dangling_annotations
 
 # A sentence with more than SENTENCE_SHORT characters is not short.
 SENTENCE_SHORT = 50
