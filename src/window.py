@@ -154,6 +154,7 @@ class Window(Gtk.ApplicationWindow):
     def about_callback(self, action, parameter):
         dialog = Gtk.AboutDialog()
         dialog.set_transient_for(self)
+        dialog.set_modal(True)
         dialog.set_program_name(self.title)
         dialog.set_copyright("Copyright 2019, 2020 Esrille Inc.")
         dialog.set_authors(["Esrille Inc."])
