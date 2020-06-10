@@ -14,6 +14,7 @@
 
 SUBDIRS = \
 	icons \
+	po \
 	src\
 	tools\
 	$(NULL)
@@ -44,6 +45,10 @@ README.md : README.txt
 
 src/furiganapad.json : $(src)
 	tools/gettext.py $^ -o $@
+
+DISTCLEANFILES = \
+	po/stamp-it \
+	$(NULL)
 
 uninstall-hook:
 	-rmdir $(pkgdatadir)

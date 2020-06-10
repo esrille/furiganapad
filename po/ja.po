@@ -1,0 +1,167 @@
+# Furiganapad
+# Copyright (C) 2020 Esrille Inc. <info@esrille.com>
+# This file is distributed under the same license as the furiganapad package.
+# Esrille Inc. <info@esrille.com>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: furiganapad 0.2.0\n"
+"Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
+"POT-Creation-Date: 2020-06-11 07:10+0900\n"
+"PO-Revision-Date: 2020-06-11 05:38+0900\n"
+"Last-Translator: Esrille Inc. <info@esrille.com>\n"
+"Language-Team: Japanese <info@esrille.com>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/window.py:43 src/window.py:45
+msgid "FuriganaPad"
+msgstr "ふりがなパット"
+
+#: src/window.py:98
+msgid "Ruby"
+msgstr "ルビ"
+
+#: src/window.py:175
+msgid "Text files"
+msgstr "テキスト ファイル"
+
+#: src/window.py:180
+msgid "Python files"
+msgstr "Pythonのファイル"
+
+#: src/window.py:185
+msgid "Any files"
+msgstr "すべてのファイル"
+
+#: src/window.py:207
+msgid "Save changes to this document?"
+msgstr "かきかえた文章をセーブしますか？"
+
+#: src/window.py:209
+msgid "If you don't, changes will be lost."
+msgstr "セーブしないと、かきかえた文章はのこりません。"
+
+#: src/window.py:210
+msgid "Close _Without Saving"
+msgstr "セーブしないでとじる(_W)"
+
+#: src/window.py:238
+msgid "Font"
+msgstr "フォント"
+
+#: src/window.py:239
+msgid "The quick brown fox jumps over the lazy dog."
+msgstr "ひさかたのひかりのどけきはるの日に しづごころなく花のちるらむ"
+
+#: src/window.py:333
+msgid "Open File"
+msgstr "ファイルをひらく"
+
+#: src/window.py:398
+msgid "Save File"
+msgstr "なまえをつけてセーブ"
+
+#: src/furiganapad.menu.ui:6
+msgid "_File"
+msgstr "ファイル(_F)"
+
+#: src/furiganapad.menu.ui:9
+msgid "_New Window"
+msgstr "あたらしいウィンドウ(_N)"
+
+#
+#: src/furiganapad.menu.ui:14
+msgid "_Open…"
+msgstr "ひらく(_O)…"
+
+#: src/furiganapad.menu.ui:21
+msgid "_Save"
+msgstr "セーブ(_S)"
+
+#
+#: src/furiganapad.menu.ui:26
+msgid "Save _As…"
+msgstr "なまえをつけてセーブ(_A)…"
+
+#: src/furiganapad.menu.ui:32
+msgid "_Close"
+msgstr "とじる(_C)"
+
+#: src/furiganapad.menu.ui:37
+msgid "Clos_e All"
+msgstr "すべてとじる(_A)"
+
+#: src/furiganapad.menu.ui:43
+msgid "_Edit"
+msgstr "へんしゅう(_E)"
+
+#: src/furiganapad.menu.ui:46
+msgid "_Undo"
+msgstr "もとにもどす(_U)"
+
+#: src/furiganapad.menu.ui:51
+msgid "Re_do"
+msgstr "やりなおす(_R)"
+
+#: src/furiganapad.menu.ui:58
+msgid "Cu_t"
+msgstr "きりとる(_T)"
+
+#: src/furiganapad.menu.ui:62
+msgid "_Copy"
+msgstr "かきうつす(_C)"
+
+#: src/furiganapad.menu.ui:66
+msgid "_Paste"
+msgstr "はりつける(_P)"
+
+#: src/furiganapad.menu.ui:72
+msgid "Select _All"
+msgstr "すべてえらぶ(_A)"
+
+#
+#: src/furiganapad.menu.ui:78
+msgid "_Find…"
+msgstr "さがす(_F)…"
+
+#
+#: src/furiganapad.menu.ui:83
+msgid "_Replace…"
+msgstr "おきかえる(_R)…"
+
+#
+#: src/furiganapad.menu.ui:90
+msgid "Ru_by…"
+msgstr "ルビをふる(_B)…"
+
+#: src/furiganapad.menu.ui:95
+msgid "Revert to _Hiragana"
+msgstr "ひらがなにもどす(_H)"
+
+#: src/furiganapad.menu.ui:102
+msgid "_Settings"
+msgstr "せってい(_S)"
+
+#
+#: src/furiganapad.menu.ui:105
+msgid "_Font…"
+msgstr "フォントをかえる(_F)…"
+
+#: src/furiganapad.menu.ui:109
+msgid "_Ruby"
+msgstr "ルビをふる(_R)"
+
+#: src/furiganapad.menu.ui:114
+msgid "Highlight _Long Sentences"
+msgstr "ながい文をめだたせる(_L)"
+
+#: src/furiganapad.menu.ui:120
+msgid "_Help"
+msgstr "ヘルプ(_H)"
+
+#: src/furiganapad.menu.ui:123
+msgid "_About Furiganapad"
+msgstr "ふりがなパッドについて(_A)"

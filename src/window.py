@@ -21,13 +21,14 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Pango', '1.0')
 from gi.repository import GLib, Gio, Gtk, Gdk, GObject, Pango
 
-from i18n import _
 from textview import TextView
 from textbuffer import remove_dangling_annotations
 
+import gettext
 import logging
 
 
+_ = lambda a : gettext.dgettext(package.get_name(), a)
 logger = logging.getLogger(__name__)
 
 IAA = '\uFFF9'  # IAA (INTERLINEAR ANNOTATION ANCHOR)

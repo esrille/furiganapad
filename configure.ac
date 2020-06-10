@@ -15,12 +15,24 @@
 AC_INIT([furiganapad], [0.2.0], [https://github.com/esrille/furiganapad/issues])
 AM_INIT_AUTOMAKE([foreign tar-ustar])
 
+AM_GNU_GETTEXT_REQUIRE_VERSION([0.19.8])
+AM_GNU_GETTEXT([external])
+
+# define GETTEXT_* variables
+GETTEXT_PACKAGE=AC_PACKAGE_NAME
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(
+  GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",
+    [Define to the read-only architecture-independent data directory.]
+)
+
 # Check Python
 AM_PATH_PYTHON([3.7])
 
 # OUTPUT files
 AC_CONFIG_FILES(
 icons/Makefile
+po/Makefile.in
 src/Makefile
 src/furiganapad.in
 src/package.py.in

@@ -15,7 +15,6 @@
 
 furiganapad_PYTHON = \
 	application.py \
-	i18n.py \
 	main.py \
 	textbuffer.py \
 	textview.py \
@@ -24,9 +23,6 @@ furiganapad_PYTHON = \
 BUILT_SOURCES = package.py
 nodist_furiganapad_PYTHON = package.py
 furiganapad_DATA = \
-	furiganapad.ja_JP.json \
-	furiganapad.json \
-	furiganapad.menu.ja_JP.ui \
 	furiganapad.menu.ui \
 	$(NULL)
 furiganapaddir = $(pkgdatadir)/src

@@ -14,38 +14,30 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
+import package
+
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gio, Gtk, GObject
+
+from window import Window
+
 import os
 import sys
 import locale
 import logging
 import json
 
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gio, Gtk, GObject
-
-from i18n import i18n_set_dictionary
-from window import Window
-
 
 logger = logging.getLogger(__name__)
 
 
 class Application(Gtk.Application):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args,
                          application_id="com.esrille.furiganapad",
                          flags=Gio.ApplicationFlags.HANDLES_OPEN,
                          **kwargs)
-        self.resourcedir = os.path.join(os.path.dirname(__file__))
-        self.lang = locale.getdefaultlocale()[0]
-        filename = os.path.join(self.resourcedir, "furiganapad." + self.lang + ".json")
-        try:
-            with open(filename, 'r') as file:
-                i18n_set_dictionary(json.load(file))
-        except Exception:
-            pass
 
     def do_activate(self):
         win = Window(self)
@@ -59,14 +51,7 @@ class Application(Gtk.Application):
     def do_startup(self):
         Gtk.Application.do_startup(self)
         builder = Gtk.Builder()
-        filename = os.path.join(self.resourcedir, "furiganapad.menu." + self.lang + ".ui")
-        try:
-            builder.add_from_file(filename)
-        except GObject.GError as e:
-            try:
-                filename = os.path.join(self.resourcedir, "furiganapad.menu.ui")
-                builder.add_from_file(filename)
-            except GObject.GError as e:
-                logger.error(e.message)
-                sys.exit()
+        builder.set_translation_domain(package.get_name())
+        filename = os.path.join(os.path.dirname(__file__), "furiganapad.menu.ui")
+        builder.add_from_file(filename)
         self.set_menubar(builder.get_object("menubar"))
