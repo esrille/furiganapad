@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
+import package
+
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('Pango', '1.0')
@@ -151,20 +153,16 @@ class Window(Gtk.ApplicationWindow):
     def about_callback(self, action, parameter):
         dialog = Gtk.AboutDialog()
         dialog.set_transient_for(self)
-
-        authors = ["Esrille Inc."]
-        documenters = ["Esrille Inc."]
-
         dialog.set_program_name(self.title)
-        dialog.set_copyright("Copyright 2019 Esrille Inc.")
-        dialog.set_authors(authors)
-        dialog.set_documenters(documenters)
+        dialog.set_copyright("Copyright 2019, 2020 Esrille Inc.")
+        dialog.set_authors(["Esrille Inc."])
+        dialog.set_documenters(["Esrille Inc."])
         dialog.set_website("http://www.esrille.com/")
         dialog.set_website_label("Esrille Inc.")
-        dialog.set_logo_icon_name("furiganapad")
-
-        # To close the dialog when "close" is clicked, e.g. on RPi,
-        # we connect the "response" signal to about_response_callback
+        dialog.set_logo_icon_name(package.get_name())
+        dialog.set_version(package.get_version())
+        # To close the dialog when "close" is clicked, e.g. on Raspberry Pi OS,
+        # the "response" signal needs to be connected about_response_callback
         dialog.connect("response", self.about_response_callback)
         dialog.show()
 
