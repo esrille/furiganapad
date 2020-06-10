@@ -64,6 +64,7 @@ furiganapad: furiganapad.in
 		s=`cat $<`; \
 		eval "echo \"$${s}\""; \
 	) > $@
+	chmod +x $@
 
 uninstall-hook:
 	-rmdir $(furiganapaddir)/__pycache__
