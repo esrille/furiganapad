@@ -1,35 +1,36 @@
 # ふりがなパッド (ベータ<ruby>版<rp>(</rp><rt>ばん</rt><rp>)</rp></ruby>)
-　「ふりがなパッド」は、<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ふりがなをうった<ruby>文章<rp>(</rp><rt>ぶんしょう</rt><rp>)</rp></ruby>をかんたんにつくれるテキストエディターです。[<ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby><ruby>置換<rp>(</rp><rt>ちかん</rt><rp>)</rp></ruby>インプットメソッド](https://github.com/esrille/ibus-replace-with-kanji)といっしょにつかうと、<ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby>に<ruby>自動的<rp>(</rp><rt>じどうてき</rt><rp>)</rp></ruby>にふりがなをふっていきます。
+　「ふりがなパッド」は、<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ふりがなをうった<ruby>文章<rp>(</rp><rt>ぶんしょう</rt><rp>)</rp></ruby>をかんたんにつくれるテキストエディターです。「[ひらがなIME](https://github.com/esrille/ibus-hiragana)」といっしょにつかうと、<ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby>に<ruby>自動的<rp>(</rp><rt>じどうてき</rt><rp>)</rp></ruby>にふりがなをふっていきます。
 
 ## つかいかた
+　プログラムのファイル名は"furiganapad"です。
+　GUIで起動するときは、アプリケーションの一覧から[ふりがなパッド]を選択してください。
+　コマンド ラインから<ruby>起動<rp>(</rp><rt>きどう</rt><rp>)</rp></ruby>するときは、つぎのようにタイプします。
 ```
-$ furiganapad [filename...]
+$ furiganapad [ファイル名...]
 ```
+　ファイル<ruby>名<rp>(</rp><rt>めい</rt><rp>)</rp></ruby>の<ruby>部分<rp>(</rp><rt>ぶぶん</rt><rp>)</rp></ruby>には、ひらきたいファイルのなまえをタイプします。あたらしいファイルをつくるときは、ファイル<ruby>名<rp>(</rp><rt>めい</rt><rp>)</rp></ruby>は<ruby>指定<rp>(</rp><rt>してい</rt><rp>)</rp></ruby>しなくてもかまいません。
+
 ## スクリーン ショット
 ![「ふりがなパッド」のスクリーンショット](screenshot.png)
 
 ## ふりがなパッドのインストール<ruby>方法<rp>(</rp><rt>ほうほう</rt><rp>)</rp></ruby>
-　つかっているOSがFedora, Ubuntu, Raspbianのどれかなら、インストール<ruby>用<rp>(</rp><rt>よう</rt><rp>)</rp></ruby>のソフトウェア パッケージを、[Releases](https://github.com/esrille/furiganapad/releases)ページからダウンロードできます。
+　つかっているOSがFedora, Ubuntu, Raspberry Pi OSのどれかなら、インストール<ruby>用<rp>(</rp><rt>よう</rt><rp>)</rp></ruby>のソフトウェア パッケージを、[Releases](https://github.com/esrille/furiganapad/releases)ページからダウンロードできます。
 
-　「ふりがなパッド」をじぶんでビルドしてインストールしたいときは、MesonとNinjaをつかいます。
+　「ふりがなパッド」をじぶんでビルドしてインストールしたいときは、つぎの<ruby>手順<rp>(</rp><rt>てじゅん</rt><rp>)</rp></ruby>でインストールできます。
 ```
-$ sudo apt install meson  # MesonとNinjaをインストールします
 $ git clone https://github.com/esrille/furiganapad.git
-$ meson . _build  # さいしょの一回目だけ
-$ ninja -C _build
-$ sudo ninja -C _build install
+$ ./autogen.sh
+$ make
+$ sudo make install
 ```
 　じぶんでビルドした「ふりがなパッド」をアンインストールするときは、つぎのようにします:
 ```
-$ sudo ninja -C _build uninstall
+$ sudo make uninstall
 ```
-　じぶんでソースコードを<ruby>改造<rp>(</rp><rt>かいぞう</rt><rp>)</rp></ruby>して、<ruby>実験<rp>(</rp><rt>じっけん</rt><rp>)</rp></ruby>したいときもあるかもしれません。
-そんなときは、「ふりがなパッド」をインストールしないで、ソースコードをちょくせつ<ruby>実行<rp>(</rp><rt>じっこう</rt><rp>)</rp></ruby>することもできます。
+　じぶんでソースコードを<ruby>改造<rp>(</rp><rt>かいぞう</rt><rp>)</rp></ruby>して<ruby>実験<rp>(</rp><rt>じっけん</rt><rp>)</rp></ruby>したいときもあるかもしれません。そういうときは、「ふりがなパッド」をインストールしないで、ソースコードをちょくせつ<ruby>実行<rp>(</rp><rt>じっこう</rt><rp>)</rp></ruby>することもできます。
 ```
-$ ./furiganapad.py
+$ src/furiganapad
 ```
-### ふりがなパッドのつかえる<ruby>環境<rp>(</rp><rt>かんきょう</rt><rp>)</rp></ruby>
-　「ふりがなパッド」は、いまのところ、Fedora 30、Ubuntu 18.04、それからRaspbian Stretchで<ruby>動作<rp>(</rp><rt>どうさ</rt><rp>)</rp></ruby>を<ruby>確認<rp>(</rp><rt>かくにん</rt><rp>)</rp></ruby>をしています。
 
 ## ふりがなについて
 　こども<ruby>用<rp>(</rp><rt>よう</rt><rp>)</rp></ruby>の<ruby>本<rp>(</rp><rt>ほん</rt><rp>)</rp></ruby>には、すべての<ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby>にふりがながふってある<ruby>本<rp>(</rp><rt>ほん</rt><rp>)</rp></ruby>もすくなくありません。そうしたふりがなのつけかたを「<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ふりがな」とか「<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ルビ」といいます。
@@ -64,11 +65,11 @@ $ ./furiganapad.py
 
 　ふりがなは、ユニコードのルビ<ruby>用<rp>(</rp><rt>よう</rt><rp>)</rp></ruby>のコードポイントU+FFF9からU+FFFBをつかって<ruby>保存<rp>(</rp><rt>ほぞん</rt><rp>)</rp></ruby>しています。ただし、このコードポイントに<ruby>対応<rp>(</rp><rt>たいおう</rt><rp>)</rp></ruby>しているソフトウェアはあまりおおくありません。
 
-　そのかわり、ユニコードのルビをHTMLのrubyタグに<ruby>変換<rp>(</rp><rt>へんかん</rt><rp>)</rp></ruby>したりするのはかんたんです。つぎの<ruby>例<rp>(</rp><rt>れい</rt><rp>)</rp></ruby>では、「ふりがなパッド」でかいたREADME.txtを、スクリプトをつかって、README.mdに<ruby>変換<rp>(</rp><rt>へんかん</rt><rp>)</rp></ruby>しています。
+　それでも、ユニコードのルビをHTMLのrubyタグに<ruby>変換<rp>(</rp><rt>へんかん</rt><rp>)</rp></ruby>したりするのはかんたんです。つぎの<ruby>例<rp>(</rp><rt>れい</rt><rp>)</rp></ruby>では、「ふりがなパッド」でかいたREADME.txtを、スクリプトをつかって、README.mdに<ruby>変換<rp>(</rp><rt>へんかん</rt><rp>)</rp></ruby>しています。
 ```
-$ ./convert_to_tag.py README.txt README.md
+$ tools/convert_to_tag.py README.txt README.md
 ```
 convert_to_tag.pyスクリプトもこのレポジトリのなかにおいてあります。
 
 ## ふりがなパッドのプログラム
-　「ふりがなパッド」は、<ruby>Python<rp>(</rp><rt>パイソン</rt><rp>)</rp></ruby>でかいたGTKのプログラムです。<ruby>標準<rp>(</rp><rt>ひょうじゅん</rt><rp>)</rp></ruby>のGtk.TextViewのかわりに、ふりがなに<ruby>対応<rp>(</rp><rt>たいおう</rt><rp>)</rp></ruby>したTextViewをGtk.DrawingAreaをつかってつくっています。<ruby>文字<rp>(</rp><rt>もじ</rt><rp>)</rp></ruby>の<ruby>描画<rp>(</rp><rt>びょうが</rt><rp>)</rp></ruby>には、Pangoをつかっています。ぜんたいでは2,000<ruby>行<rp>(</rp><rt>ぎょう</rt><rp>)</rp></ruby>あまりのプログラムです。
+　「ふりがなパッド」は、<ruby>Python<rp>(</rp><rt>パイソン</rt><rp>)</rp></ruby>でかいたGTKのプログラムです。<ruby>標準<rp>(</rp><rt>ひょうじゅん</rt><rp>)</rp></ruby>の[Gtk.TextView](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/TextView.html)のかわりに、ふりがなに<ruby>対応<rp>(</rp><rt>たいおう</rt><rp>)</rp></ruby>したTextViewを[Gtk.DrawingArea](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/DrawingArea.html)をつかってつくっています。<ruby>文字<rp>(</rp><rt>もじ</rt><rp>)</rp></ruby>の<ruby>描画<rp>(</rp><rt>びょうが</rt><rp>)</rp></ruby>には、[Pango](https://lazka.github.io/pgi-docs/index.html#Pango-1.0)をつかっています。ぜんたいでは2,400<ruby>行<rp>(</rp><rt>ぎょう</rt><rp>)</rp></ruby>ほどのプログラムです(2020<ruby>年<rp>(</rp><rt>ねん</rt><rp>)</rp></ruby>6<ruby>月<rp>(</rp><rt>がつ</rt><rp>)</rp></ruby><ruby>現在<rp>(</rp><rt>げんざい</rt><rp>)</rp></ruby>)。

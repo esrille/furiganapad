@@ -1,35 +1,36 @@
 # ふりがなパッド (ベータ￹版￺ばん￻)
-　「ふりがなパッド」は、￹総￺そう￻ふりがなをうった￹文章￺ぶんしょう￻をかんたんにつくれるテキストエディターです。[￹漢字￺かんじ￻￹置換￺ちかん￻インプットメソッド](https://github.com/esrille/ibus-replace-with-kanji)といっしょにつかうと、￹漢字￺かんじ￻に￹自動的￺じどうてき￻にふりがなをふっていきます。
+　「ふりがなパッド」は、￹総￺そう￻ふりがなをうった￹文章￺ぶんしょう￻をかんたんにつくれるテキストエディターです。「[ひらがなIME](https://github.com/esrille/ibus-hiragana)」といっしょにつかうと、￹漢字￺かんじ￻に￹自動的￺じどうてき￻にふりがなをふっていきます。
 
 ## つかいかた
+　プログラムのファイル名は"furiganapad"です。
+　GUIで起動するときは、アプリケーションの一覧から[ふりがなパッド]を選択してください。
+　コマンド ラインから￹起動￺きどう￻するときは、つぎのようにタイプします。
 ```
-$ furiganapad [filename...]
+$ furiganapad [ファイル名...]
 ```
+　ファイル￹名￺めい￻の￹部分￺ぶぶん￻には、ひらきたいファイルのなまえをタイプします。あたらしいファイルをつくるときは、ファイル￹名￺めい￻は￹指定￺してい￻しなくてもかまいません。
+
 ## スクリーン ショット
 ![「ふりがなパッド」のスクリーンショット](screenshot.png)
 
 ## ふりがなパッドのインストール￹方法￺ほうほう￻
-　つかっているOSがFedora, Ubuntu, Raspbianのどれかなら、インストール￹用￺よう￻のソフトウェア パッケージを、[Releases](https://github.com/esrille/furiganapad/releases)ページからダウンロードできます。
+　つかっているOSがFedora, Ubuntu, Raspberry Pi OSのどれかなら、インストール￹用￺よう￻のソフトウェア パッケージを、[Releases](https://github.com/esrille/furiganapad/releases)ページからダウンロードできます。
 
-　「ふりがなパッド」をじぶんでビルドしてインストールしたいときは、MesonとNinjaをつかいます。
+　「ふりがなパッド」をじぶんでビルドしてインストールしたいときは、つぎの￹手順￺てじゅん￻でインストールできます。
 ```
-$ sudo apt install meson  # MesonとNinjaをインストールします
 $ git clone https://github.com/esrille/furiganapad.git
-$ meson . _build  # さいしょの一回目だけ
-$ ninja -C _build
-$ sudo ninja -C _build install
+$ ./autogen.sh
+$ make
+$ sudo make install
 ```
 　じぶんでビルドした「ふりがなパッド」をアンインストールするときは、つぎのようにします:
 ```
-$ sudo ninja -C _build uninstall
+$ sudo make uninstall
 ```
-　じぶんでソースコードを￹改造￺かいぞう￻して、￹実験￺じっけん￻したいときもあるかもしれません。
-そんなときは、「ふりがなパッド」をインストールしないで、ソースコードをちょくせつ￹実行￺じっこう￻することもできます。
+　じぶんでソースコードを￹改造￺かいぞう￻して￹実験￺じっけん￻したいときもあるかもしれません。そういうときは、「ふりがなパッド」をインストールしないで、ソースコードをちょくせつ￹実行￺じっこう￻することもできます。
 ```
-$ ./furiganapad.py
+$ src/furiganapad
 ```
-### ふりがなパッドのつかえる￹環境￺かんきょう￻
-　「ふりがなパッド」は、いまのところ、Fedora 30、Ubuntu 18.04、それからRaspbian Stretchで￹動作￺どうさ￻を￹確認￺かくにん￻をしています。
 
 ## ふりがなについて
 　こども￹用￺よう￻の￹本￺ほん￻には、すべての￹漢字￺かんじ￻にふりがながふってある￹本￺ほん￻もすくなくありません。そうしたふりがなのつけかたを「￹総￺そう￻ふりがな」とか「￹総￺そう￻ルビ」といいます。
@@ -64,11 +65,11 @@ $ ./furiganapad.py
 
 　ふりがなは、ユニコードのルビ￹用￺よう￻のコードポイントU+FFF9からU+FFFBをつかって￹保存￺ほぞん￻しています。ただし、このコードポイントに￹対応￺たいおう￻しているソフトウェアはあまりおおくありません。
 
-　そのかわり、ユニコードのルビをHTMLのrubyタグに￹変換￺へんかん￻したりするのはかんたんです。つぎの￹例￺れい￻では、「ふりがなパッド」でかいたREADME.txtを、スクリプトをつかって、README.mdに￹変換￺へんかん￻しています。
+　それでも、ユニコードのルビをHTMLのrubyタグに￹変換￺へんかん￻したりするのはかんたんです。つぎの￹例￺れい￻では、「ふりがなパッド」でかいたREADME.txtを、スクリプトをつかって、README.mdに￹変換￺へんかん￻しています。
 ```
-$ ./convert_to_tag.py README.txt README.md
+$ tools/convert_to_tag.py README.txt README.md
 ```
 convert_to_tag.pyスクリプトもこのレポジトリのなかにおいてあります。
 
 ## ふりがなパッドのプログラム
-　「ふりがなパッド」は、￹Python￺パイソン￻でかいたGTKのプログラムです。￹標準￺ひょうじゅん￻のGtk.TextViewのかわりに、ふりがなに￹対応￺たいおう￻したTextViewをGtk.DrawingAreaをつかってつくっています。￹文字￺もじ￻の￹描画￺びょうが￻には、Pangoをつかっています。ぜんたいでは2,000￹行￺ぎょう￻あまりのプログラムです。
+　「ふりがなパッド」は、￹Python￺パイソン￻でかいたGTKのプログラムです。￹標準￺ひょうじゅん￻の[Gtk.TextView](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/TextView.html)のかわりに、ふりがなに￹対応￺たいおう￻したTextViewを[Gtk.DrawingArea](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/DrawingArea.html)をつかってつくっています。￹文字￺もじ￻の￹描画￺びょうが￻には、[Pango](https://lazka.github.io/pgi-docs/index.html#Pango-1.0)をつかっています。ぜんたいでは2,400￹行￺ぎょう￻ほどのプログラムです(2020￹年￺ねん￻6￹月￺がつ￻￹現在￺げんざい￻)。
