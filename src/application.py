@@ -17,6 +17,7 @@
 import os
 import sys
 import locale
+import logging
 import json
 
 import gi
@@ -25,6 +26,9 @@ from gi.repository import Gio, Gtk, GObject
 
 from i18n import i18n_set_dictionary
 from window import Window
+
+
+logger = logging.getLogger(__name__)
 
 
 class Application(Gtk.Application):
@@ -63,6 +67,6 @@ class Application(Gtk.Application):
                 filename = os.path.join(self.resourcedir, "furiganapad.menu.ui")
                 builder.add_from_file(filename)
             except GObject.GError as e:
-                print("Error: " + e.message)
+                logger.error(e.message)
                 sys.exit()
         self.set_menubar(builder.get_object("menubar"))

@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-import cairo
-
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('Pango', '1.0')
@@ -23,6 +21,12 @@ gi.require_version('PangoCairo', '1.0')
 from gi.repository import Gtk, Gdk, GObject, Pango, PangoCairo
 
 from textbuffer import TextBuffer, has_newline, remove_dangling_annotations
+
+import cairo
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 # A sentence with more than SENTENCE_SHORT characters is not short.
 SENTENCE_SHORT = 50
@@ -397,13 +401,13 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                 )
 
     def on_focus_in(self, wid, event):
-        print("on_focus_in")
+        logger.info("on_focus_in")
         self.im.set_client_window(wid.get_window())
         self.im.focus_in()
         return True
 
     def on_focus_out(self, wid, event):
-        print("on_focus_out")
+        logger.info("on_focus_out")
         self.im.focus_out()
         return True
 
@@ -417,7 +421,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
     def on_key_press(self, wid, event):
         is_selection = (event.state & Gdk.ModifierType.SHIFT_MASK)
         is_control = (event.state & Gdk.ModifierType.CONTROL_MASK)
-        print("on_key_press:", Gdk.keyval_name(event.keyval), event.state)
+        logger.info("on_key_press: '%s', %08x", Gdk.keyval_name(event.keyval), event.state)
         if self.im.filter_keypress(event):
             return True
         # Process shortcut keys firstly
@@ -528,7 +532,6 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         return False
 
     def on_key_release(self, wid, event):
-        # print("on_key_release: '", Gdk.keyval_name(event.keyval), "', ", event.state, sep='')
         if self.im.filter_keypress(event):
             return True
         return False
@@ -556,17 +559,17 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         cursor = self.buffer.get_cursor()
         self.buffer.delete_selection(True, True)
         self.reflow(cursor.get_line())
-        print('on_preedit_changed', self.preedit)
+        logger.info('on_preedit_changed: "%s" %d', self.preedit[0], self.preedit[2])
 
     def on_preedit_end(self, wid):
         self.preedit = self.im.get_preedit_string()
         self.buffer.delete_selection(True, True)
-        print('on_preedit_end', self.preedit)
+        logger.info('_end(self, w: "%s" %d', self.preedit[0], self.preedit[2])
 
     def on_preedit_start(self, wid):
         self.preedit = self.im.get_preedit_string()
         self.buffer.delete_selection(True, True)
-        print('on_preedit_start', self.preedit)
+        logger.info('on_preedit_start: "%s" %d', self.preedit[0], self.preedit[2])
 
     def on_retrieve_surrounding(self, wid):
         text, offset = self.buffer.get_surrounding()

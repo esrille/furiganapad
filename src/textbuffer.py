@@ -14,14 +14,17 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-import time
-
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('Pango', '1.0')
 gi.require_version('PangoCairo', '1.0')
 from gi.repository import GObject
 
+import logging
+import time
+
+
+logger = logging.getLogger(__name__)
 
 IAA = '\uFFF9'  # IAA (INTERLINEAR ANNOTATION ANCHOR)
 IAS = '\uFFFA'  # IAS (INTERLINEAR ANNOTATION SEPARATOR)
@@ -695,7 +698,7 @@ class TextBuffer(GObject.Object):
         reading = self.paragraphs[start.get_line()].get_text()[start.get_line_offset():end.get_line_offset()]
         if is_reading(reading):
             self.reading = reading
-            print('よみ:', self.reading)
+            logger.info('よみ: %s', self.reading)
         self.surround_deleted = True
         self.delete(start, end)
 
@@ -766,7 +769,7 @@ class TextBuffer(GObject.Object):
     def do_redo(self):
         if not self.redo:
             return
-        print("do_redo")
+        logger.info("do_redo")
         action = self.redo.pop()
         if action[0] == "insert_text":
             start = self.get_iter_at_line_offset(action[1], action[2])
@@ -782,7 +785,7 @@ class TextBuffer(GObject.Object):
                 if prev[0] == "insert_text" and action[6] - prev[6] < 0.005:
                     self.undo.append(action)
                     action = self.redo.pop()
-                    print("do_redo", action)
+                    logger.info("do_redo: %s", action)
                     start = self.get_iter_at_line_offset(action[1], action[2])
                     self.insert(start, action[5])
         self.place_cursor(start)
@@ -791,7 +794,7 @@ class TextBuffer(GObject.Object):
     def do_undo(self):
         if not self.undo:
             return
-        print("do_undo")
+        logger.info("do_undo")
         action = self.undo.pop()
         if action[0] == "insert_text":
             start = self.get_iter_at_line_offset(action[1], action[2])
@@ -804,7 +807,7 @@ class TextBuffer(GObject.Object):
                 if prev[0] == "delete_range" and action[6] - prev[6] < 0.005:
                     self.redo.append(action)
                     action = self.undo.pop()
-                    print("do_undo", action)
+                    logger.info("do_undo: %s", action)
                     start = self.get_iter_at_line_offset(action[1], action[2])
                     self.insert(start, action[5])
         elif action[0] == "delete_range":
@@ -944,7 +947,7 @@ class TextBuffer(GObject.Object):
                       end.get_line(), end.get_line_offset(),
                       text,
                       time.perf_counter()]
-            print("on_delete", action)
+            logger.info("on_delete: %s", action)
             self.undo.append(action)
             self.redo.clear()
 
@@ -959,7 +962,7 @@ class TextBuffer(GObject.Object):
                       iter.get_line(), iter.get_line_offset(),
                       text,
                       time.perf_counter()]
-            print("on_inserted", action)
+            logger.info("on_inserted: %s", action)
             self.undo.append(action)
             self.redo.clear()
             self.inserting = None

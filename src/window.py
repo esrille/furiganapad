@@ -23,6 +23,11 @@ from i18n import _
 from textview import TextView
 from textbuffer import remove_dangling_annotations
 
+import logging
+
+
+logger = logging.getLogger(__name__)
+
 IAA = '\uFFF9'  # IAA (INTERLINEAR ANNOTATION ANCHOR)
 IAS = '\uFFFA'  # IAS (INTERLINEAR ANNOTATION SEPARATOR)
 IAT = '\uFFFB'  # IAT (INTERLINEAR ANNOTATION TERMINATOR)
@@ -44,7 +49,7 @@ class Window(Gtk.ApplicationWindow):
                 content = remove_dangling_annotations(content)
             except GObject.GError as e:
                 file = None
-                print("Error: " + e.message)
+                logger.error(e.message)
         self.set_default_size(720, 400)
 
         grid = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -401,7 +406,7 @@ class Window(Gtk.ApplicationWindow):
             try:
                 dialog.set_file(self.file)
             except GObject.GError as e:
-                print("Error: " + e.message)
+                logger.error(e.message)
         response = dialog.run()
         if response == Gtk.ResponseType.ACCEPT:
             self.file = dialog.get_file()

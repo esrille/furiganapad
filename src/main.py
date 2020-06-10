@@ -22,12 +22,14 @@ from gi.repository import GLib
 
 GLib.set_prgname(package.get_name())
 
+from application import Application
+
+import logging
 import signal
 import sys
 
-from application import Application
-
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     app = Application()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     exit_status = app.run(sys.argv)
