@@ -412,7 +412,7 @@ class Window(Gtk.ApplicationWindow):
             dialog.destroy()
             return self.save()
         dialog.destroy()
-        return self.set_file(None)
+        return True
 
     def save_as_callback(self, action, parameter):
         self.save_as()
