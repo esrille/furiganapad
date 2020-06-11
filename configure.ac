@@ -32,6 +32,7 @@ AM_PATH_PYTHON([3.7])
 # OUTPUT files
 AC_CONFIG_FILES(
 icons/Makefile
+locale/Makefile
 po/Makefile.in
 src/Makefile
 src/furiganapad.in

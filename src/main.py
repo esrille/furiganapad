@@ -32,10 +32,10 @@ import sys
 
 if __name__ == '__main__':
     try:
-        locale.bindtextdomain(package.get_name(), package.get_localedir())
+        locale.bindtextdomain(package.get_domain(), package.get_localedir())
     except Exception:
         pass
-    gettext.bindtextdomain(package.get_name(), package.get_localedir())
+    gettext.bindtextdomain(package.get_domain(), package.get_localedir())
     logging.basicConfig(level=logging.DEBUG)
     app = Application()
     signal.signal(signal.SIGINT, signal.SIG_DFL)

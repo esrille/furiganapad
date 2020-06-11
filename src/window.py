@@ -28,7 +28,7 @@ import gettext
 import logging
 
 
-_ = lambda a : gettext.dgettext(package.get_name(), a)
+_ = lambda a : gettext.dgettext(package.get_domain(), a)
 logger = logging.getLogger(__name__)
 
 IAA = '\uFFF9'  # IAA (INTERLINEAR ANNOTATION ANCHOR)

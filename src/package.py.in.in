@@ -19,7 +19,10 @@
 
 import os
 import gi
-from gi.repository import GLib
+from gi.repository import Gio, GLib
+
+
+HIRAGANA_IME_KEY = 'org.freedesktop.ibus.engine.hiragana'
 
 
 def get_name():
@@ -44,3 +47,14 @@ def get_user_datadir():
 
 def get_localedir():
     return '${localedir}'
+
+
+def get_domain():
+    source = Gio.SettingsSchemaSource.get_default()
+    if source.lookup(HIRAGANA_IME_KEY, True):
+        config = Gio.Settings.new(HIRAGANA_IME_KEY)
+        path = config.get_string('dictionary')
+        path = os.path.basename(path)
+        if path in ('restrained.1.dic', 'restrained.2.dic', 'restrained.3.dic', 'restrained.4.dic', 'restrained.5.dic', 'restrained.6.dic'):
+            return get_name() + '.kids'
+    return get_name()

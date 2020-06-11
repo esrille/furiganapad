@@ -38,15 +38,15 @@ msgstr "すべてのファイル"
 
 #: src/window.py:208
 msgid "Save changes to this document?"
-msgstr "書きかえた文章を保存しますか？"
+msgstr "かきかえた文章をセーブしますか？"
 
 #: src/window.py:210
 msgid "If you don't, changes will be lost."
-msgstr "保存しないと、書きかえた文章は残りません。"
+msgstr "セーブしないと、かきかえた文章はのこりません。"
 
 #: src/window.py:211
 msgid "Close _Without Saving"
-msgstr "保存しないで閉じる(_W)"
+msgstr "セーブしないでとじる(_W)"
 
 #: src/window.py:239
 msgid "Font"
@@ -58,11 +58,11 @@ msgstr "ひさかたのひかりのどけきはるの日に しづごころな�
 
 #: src/window.py:334
 msgid "Open File"
-msgstr "ファイルを開く"
+msgstr "ファイルをひらく"
 
 #: src/window.py:399
 msgid "Save File"
-msgstr "名前をつけて保存"
+msgstr "なまえをつけてセーブ"
 
 #: src/furiganapad.menu.ui:6
 msgid "_File"
@@ -70,67 +70,67 @@ msgstr "ファイル(_F)"
 
 #: src/furiganapad.menu.ui:9
 msgid "_New Window"
-msgstr "新しいウィンドウ(_N)"
+msgstr "あたらしいウィンドウ(_N)"
 
 #
 #: src/furiganapad.menu.ui:14
 msgid "_Open…"
-msgstr "開く(_O)…"
+msgstr "ひらく(_O)…"
 
 #: src/furiganapad.menu.ui:21
 msgid "_Save"
-msgstr "保存(_S)"
+msgstr "セーブ(_S)"
 
 #
 #: src/furiganapad.menu.ui:26
 msgid "Save _As…"
-msgstr "名前をつけて保存(_A)…"
+msgstr "なまえをつけてセーブ(_A)…"
 
 #: src/furiganapad.menu.ui:32
 msgid "_Close"
-msgstr "閉じる(_C)"
+msgstr "とじる(_C)"
 
 #: src/furiganapad.menu.ui:37
 msgid "Clos_e All"
-msgstr "すべて閉じる(_A)"
+msgstr "すべてとじる(_A)"
 
 #: src/furiganapad.menu.ui:43
 msgid "_Edit"
-msgstr "編集(_E)"
+msgstr "へんしゅう(_E)"
 
 #: src/furiganapad.menu.ui:46
 msgid "_Undo"
-msgstr "元に戻す(_U)"
+msgstr "もとにもどす(_U)"
 
 #: src/furiganapad.menu.ui:51
 msgid "Re_do"
-msgstr "やり直す(_R)"
+msgstr "やりなおす(_R)"
 
 #: src/furiganapad.menu.ui:58
 msgid "Cu_t"
-msgstr "切り取り(_T)"
+msgstr "きりとる(_T)"
 
 #: src/furiganapad.menu.ui:62
 msgid "_Copy"
-msgstr "コピー(_C)"
+msgstr "かきうつす(_C)"
 
 #: src/furiganapad.menu.ui:66
 msgid "_Paste"
-msgstr "貼り付け(_P)"
+msgstr "はりつける(_P)"
 
 #: src/furiganapad.menu.ui:72
 msgid "Select _All"
-msgstr "すべて選択(_A)"
+msgstr "すべてえらぶ(_A)"
 
 #
 #: src/furiganapad.menu.ui:78
 msgid "_Find…"
-msgstr "検索(_F)…"
+msgstr "さがす(_F)…"
 
 #
 #: src/furiganapad.menu.ui:83
 msgid "_Replace…"
-msgstr "置換(_R)…"
+msgstr "おきかえる(_R)…"
 
 #
 #: src/furiganapad.menu.ui:90
@@ -139,16 +139,16 @@ msgstr "ルビをふる(_B)…"
 
 #: src/furiganapad.menu.ui:95
 msgid "Revert to _Hiragana"
-msgstr "ひらがなに戻す(_H)"
+msgstr "ひらがなにもどす(_H)"
 
 #: src/furiganapad.menu.ui:102
 msgid "_Settings"
-msgstr "設定(_S)"
+msgstr "せってい(_S)"
 
 #
 #: src/furiganapad.menu.ui:105
 msgid "_Font…"
-msgstr "フォントを変える(_F)…"
+msgstr "フォントをかえる(_F)…"
 
 #: src/furiganapad.menu.ui:109
 msgid "_Ruby"
@@ -156,7 +156,7 @@ msgstr "ルビをふる(_R)"
 
 #: src/furiganapad.menu.ui:114
 msgid "Highlight _Long Sentences"
-msgstr "長い文を目立たせる(_L)"
+msgstr "ながい文をめだたせる(_L)"
 
 #: src/furiganapad.menu.ui:120
 msgid "_Help"

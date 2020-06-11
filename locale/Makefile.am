@@ -12,44 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SUBDIRS = \
-	icons \
-	locale \
-	po \
-	src\
-	tools\
-	$(NULL)
+kids_DATA = furiganapad.kids.mo
+kidsdir = $(datadir)/locale/ja/LC_MESSAGES/
 
 EXTRA_DIST = \
-	debian/changelog \
-	debian/compat \
-	debian/control \
-	debian/copyright \
-	debian/rules \
-	debian/source/format \
-	autogen.sh \
-	@PACKAGE_NAME@.spec \
-	@PACKAGE_NAME@.spec.in \
-	CONTRIBUTING.md \
-	COPYING \
-	NOTICE\
-	README.md \
-	README.txt \
+	furiganapad.kids.po \
 	$(NULL)
 
 CLEANFILES = \
-	README.md \
+	furiganapad.kids.mo \
 	$(NULL)
 
-README.md : README.txt
-	tools/convert_to_tag.py README.txt README.md
-
-src/furiganapad.json : $(src)
-	tools/gettext.py $^ -o $@
-
-DISTCLEANFILES = \
-	po/stamp-it \
-	$(NULL)
-
-uninstall-hook:
-	-rmdir $(pkgdatadir)
+furiganapad.kids.mo : $(srcdir)/../po/furiganapad.pot
+	msgmerge --update --lang=ja furiganapad.kids.po $<
+	rm -f $@
+	msgfmt -c --statistics --verbose -o $@ furiganapad.kids.po

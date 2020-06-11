@@ -51,7 +51,7 @@ class Application(Gtk.Application):
     def do_startup(self):
         Gtk.Application.do_startup(self)
         builder = Gtk.Builder()
-        builder.set_translation_domain(package.get_name())
+        builder.set_translation_domain(package.get_domain())
         filename = os.path.join(os.path.dirname(__file__), "furiganapad.menu.ui")
         builder.add_from_file(filename)
         self.set_menubar(builder.get_object("menubar"))
