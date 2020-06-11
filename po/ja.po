@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: furiganapad 0.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2020-06-11 07:12+0900\n"
+"POT-Creation-Date: 2020-06-11 18:27+0900\n"
 "PO-Revision-Date: 2020-06-11 05:38+0900\n"
 "Last-Translator: Esrille Inc. <info@esrille.com>\n"
 "Language-Team: Japanese <info@esrille.com>\n"
@@ -40,27 +40,27 @@ msgstr "すべてのファイル"
 msgid "Save changes to this document?"
 msgstr "書きかえた文章を保存しますか？"
 
-#: src/window.py:210
+#: src/window.py:209
 msgid "If you don't, changes will be lost."
 msgstr "保存しないと、書きかえた文章は残りません。"
 
-#: src/window.py:211
+#: src/window.py:210
 msgid "Close _Without Saving"
 msgstr "保存しないで閉じる(_W)"
 
-#: src/window.py:239
+#: src/window.py:238
 msgid "Font"
 msgstr "フォント"
 
-#: src/window.py:240
+#: src/window.py:239
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr "ひさかたのひかりのどけきはるの日に しづごころなく花のちるらむ"
 
-#: src/window.py:334
+#: src/window.py:333
 msgid "Open File"
 msgstr "ファイルを開く"
 
-#: src/window.py:399
+#: src/window.py:398
 msgid "Save File"
 msgstr "名前をつけて保存"
 
@@ -92,7 +92,7 @@ msgstr "閉じる(_C)"
 
 #: src/furiganapad.menu.ui:37
 msgid "Clos_e All"
-msgstr "すべて閉じる(_A)"
+msgstr "すべて閉じる(_E)"
 
 #: src/furiganapad.menu.ui:43
 msgid "_Edit"

@@ -206,8 +206,7 @@ class Window(Gtk.ApplicationWindow):
         dialog = Gtk.MessageDialog(
             self, 0, Gtk.MessageType.QUESTION,
             Gtk.ButtonsType.NONE, _("Save changes to this document?"))
-        dialog.format_secondary_text(
-            _("If you don't, changes will be lost."))
+        dialog.format_secondary_text(_("If you don't, changes will be lost."))
         dialog.add_button(_("Close _Without Saving"), Gtk.ResponseType.NO)
         dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
         dialog.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.YES)
