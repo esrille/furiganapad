@@ -45,8 +45,12 @@ class Application(Gtk.Application):
 
     def do_open(self, files, *hint):
         for file in files:
-            win = Window(self, file=file)
-            win.show_all()
+            win = self.is_opened(file)
+            if win:
+                win.present()
+            else:
+                win = Window(self, file=file)
+                win.show_all()
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
@@ -55,3 +59,10 @@ class Application(Gtk.Application):
         filename = os.path.join(os.path.dirname(__file__), "furiganapad.menu.ui")
         builder.add_from_file(filename)
         self.set_menubar(builder.get_object("menubar"))
+
+    def is_opened(self, file):
+        windows = self.get_windows()
+        for window in windows:
+            if window.get_file() and window.get_file().equal(file):
+                return window
+        return None

@@ -39,7 +39,6 @@ IAT = '\uFFFB'  # IAT (INTERLINEAR ANNOTATION TERMINATOR)
 class Window(Gtk.ApplicationWindow):
 
     def __init__(self, app, file=None):
-
         super().__init__(application=app, title=_("FuriganaPad"))
 
         self.title = _("FuriganaPad")
@@ -247,17 +246,13 @@ class Window(Gtk.ApplicationWindow):
                 self.textview.set_font(desc)
         dialog.destroy()
 
+    def get_file(self):
+        return self.file
+
     def highlightlongsentences_callback(self, action, parameter):
         highlight = not action.get_state()
         action.set_state(GLib.Variant.new_boolean(highlight))
         self.textview.set_check_sentences(highlight)
-
-    def is_opened(self, file):
-        windows = self.get_application().get_windows()
-        for window in windows:
-            if window.file and window.file.equal(file):
-                return window
-        return None
 
     def new_callback(self, action, parameter):
         win = Window(self.get_application())
@@ -348,7 +343,7 @@ class Window(Gtk.ApplicationWindow):
         # Open new window after closing dialog to raise the new window
         # in the stacking order.
         if file:
-            win = self.is_opened(file)
+            win = self.get_application().is_opened(file)
             if win:
                 win.present()
                 return
