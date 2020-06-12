@@ -42,7 +42,9 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         'cut-clipboard': (GObject.SIGNAL_RUN_LAST, None, ()),
         'copy-clipboard': (GObject.SIGNAL_RUN_LAST, None, ()),
         'paste-clipboard': (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'select-all': (GObject.SIGNAL_RUN_FIRST, None, (bool,))
+        'redo': (GObject.SIGNAL_RUN_LAST, None, ()),
+        'select-all': (GObject.SIGNAL_RUN_FIRST, None, (bool,)),
+        'undo': (GObject.SIGNAL_RUN_LAST, None, ())
     }
 
     def __init__(self):
@@ -236,9 +238,16 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
             self.buffer.end_user_action()
             self.place_cursor_onscreen()
 
+    def do_redo(self):
+        self.buffer.emit('redo')
+
     def do_select_all(self, select):
         self.buffer.select_all()
         self.queue_draw()
+
+    def do_undo(self):
+        self.im.reset()
+        self.buffer.emit('undo')
 
     def get_buffer(self):
         return self.buffer

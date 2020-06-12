@@ -362,7 +362,7 @@ class Window(Gtk.ApplicationWindow):
         self.textview.emit('paste-clipboard')
 
     def redo_callback(self, action, parameter):
-        self.buffer.emit('redo')
+        self.textview.emit('redo')
 
     def replace_callback(self, action, parameter):
         self.replacebar.set_search_mode(True)
@@ -462,4 +462,4 @@ class Window(Gtk.ApplicationWindow):
         self.buffer.end_user_action()
 
     def undo_callback(self, action, parameter):
-        self.buffer.emit('undo')
+        self.textview.emit('undo')
