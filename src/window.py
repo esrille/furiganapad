@@ -22,7 +22,7 @@ gi.require_version('Pango', '1.0')
 from gi.repository import GLib, Gio, Gtk, Gdk, GObject, Pango
 
 from textview import TextView
-from textbuffer import remove_dangling_annotations
+from textbuffer import remove_dangling_annotations, get_plain_text
 
 import gettext
 import logging
@@ -270,7 +270,7 @@ class Window(Gtk.ApplicationWindow):
         return self.confirm_save_changes()
 
     def on_find(self, entry):
-        self.select_text(entry.get_text())
+        self.select_text(get_plain_text(entry.get_text()))
 
     def on_key_press_event(self, wid, event):
         # Control focus around search bars by checking keys typed into the
@@ -301,7 +301,7 @@ class Window(Gtk.ApplicationWindow):
         return False
 
     def on_replace(self, entry):
-        text_from = self.replace_from.get_text()
+        text_from = get_plain_text(self.replace_from.get_text())
         (start, end) = self.buffer.get_selection_bounds()
         if start != end:
             selection = self.buffer.get_text(start, end, False)

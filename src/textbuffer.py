@@ -65,6 +65,21 @@ def is_reading(s):
     return True
 
 
+def get_plain_text(s):
+    mode = PLAIN
+    plain = ''
+    for c in s:
+        if c == IAA:
+            mode = BASE
+        elif c == IAS:
+            mode = RUBY
+        elif c == IAT:
+            mode = PLAIN
+        elif mode != RUBY:
+            plain += c
+    return plain
+
+
 def has_newline(s):
     for c in s:
         if c in NEWLINES:
