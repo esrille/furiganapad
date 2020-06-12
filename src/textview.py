@@ -553,6 +553,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         return True
 
     def on_mouse_press(self, wid, event):
+        self.im.reset()
         if event.button == Gdk.BUTTON_PRIMARY:
             is_selection = (event.state & Gdk.ModifierType.SHIFT_MASK)
             inside, cursor = self.get_iter_at_location(event.x, self._get_offset() + event.y)
