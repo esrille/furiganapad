@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: furiganapad 0.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2020-06-11 18:27+0900\n"
+"POT-Creation-Date: 2020-06-12 01:13+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,43 +25,43 @@ msgstr ""
 msgid "Ruby"
 msgstr ""
 
-#: src/window.py:176
+#: src/window.py:183
 msgid "Text files"
 msgstr ""
 
-#: src/window.py:181
+#: src/window.py:188
 msgid "Python files"
 msgstr ""
 
-#: src/window.py:186
+#: src/window.py:193
 msgid "Any files"
 msgstr ""
 
-#: src/window.py:208
+#: src/window.py:215
 msgid "Save changes to this document?"
 msgstr ""
 
-#: src/window.py:209
+#: src/window.py:216
 msgid "If you don't, changes will be lost."
 msgstr ""
 
-#: src/window.py:210
+#: src/window.py:217
 msgid "Close _Without Saving"
 msgstr ""
 
-#: src/window.py:238
+#: src/window.py:245
 msgid "Font"
 msgstr ""
 
-#: src/window.py:239
+#: src/window.py:246
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr ""
 
-#: src/window.py:333
+#: src/window.py:336
 msgid "Open File"
 msgstr ""
 
-#: src/window.py:398
+#: src/window.py:401
 msgid "Save File"
 msgstr ""
 
@@ -153,10 +153,10 @@ msgstr ""
 msgid "Highlight _Long Sentences"
 msgstr ""
 
-#: src/furiganapad.menu.ui:120
+#: src/furiganapad.menu.ui:120 src/furiganapad.menu.ui:123
 msgid "_Help"
 msgstr ""
 
-#: src/furiganapad.menu.ui:123
+#: src/furiganapad.menu.ui:128
 msgid "_About Furiganapad"
 msgstr ""

@@ -26,6 +26,7 @@ from textbuffer import remove_dangling_annotations
 
 import gettext
 import logging
+import os
 
 
 _ = lambda a : gettext.dgettext(package.get_domain(), a)
@@ -129,6 +130,7 @@ class Window(Gtk.ApplicationWindow):
             "unconvert": self.unconvert_callback,
             "selectall": self.select_all_callback,
             "font": self.font_callback,
+            "help": self.help_callback,
             "about": self.about_callback,
         }
         for name, method in actions.items():
@@ -149,6 +151,12 @@ class Window(Gtk.ApplicationWindow):
         self.add_action(self.highlightlongsentences_action)
 
         self.set_file(file)
+
+    def help_callback(self, action, parameter):
+        url = "file://" + os.path.join(package.get_datadir(), "help/index.html")
+        Gtk.show_uri_on_window(self, url, Gdk.CURRENT_TIME)
+        # see https://gitlab.gnome.org/GNOME/gtk/-/issues/1211
+        self.get_window().set_cursor(self.get_application().get_default_cursor())
 
     def about_callback(self, action, parameter):
         dialog = Gtk.AboutDialog()

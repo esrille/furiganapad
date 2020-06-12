@@ -17,8 +17,9 @@
 import package
 
 import gi
+gi.require_version('Gdk', '3.0')
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gio, Gtk, GObject
+from gi.repository import Gdk, Gio, Gtk, GObject
 
 from window import Window
 
@@ -38,6 +39,7 @@ class Application(Gtk.Application):
                          application_id="com.esrille.furiganapad",
                          flags=Gio.ApplicationFlags.HANDLES_OPEN,
                          **kwargs)
+        self.cursor = None
 
     def do_activate(self):
         win = Window(self)
@@ -51,6 +53,8 @@ class Application(Gtk.Application):
             else:
                 win = Window(self, file=file)
                 win.show_all()
+            if not self.cursor:
+                self.cursor = Gdk.Cursor.new_from_name(win.get_display(), "default")
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
@@ -66,3 +70,6 @@ class Application(Gtk.Application):
             if window.get_file() and window.get_file().equal(file):
                 return window
         return None
+
+    def get_default_cursor(self):
+        return self.cursor

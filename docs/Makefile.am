@@ -12,45 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SUBDIRS = \
-	docs \
-	icons \
-	locale \
-	po \
-	src\
-	tools\
+help_DATA = \
+	default.css \
+	hiragana_ime.html \
+	index.html \
+	install.html \
+	specification.html \
+	usage.html \
+	icon.png \
+	kids.png \
+	normal.png \
+	screenshot.mp4 \
 	$(NULL)
+
+helpdir = $(pkgdatadir)/help
 
 EXTRA_DIST = \
-	debian/changelog \
-	debian/compat \
-	debian/control \
-	debian/copyright \
-	debian/rules \
-	debian/source/format \
-	autogen.sh \
-	@PACKAGE_NAME@.spec \
-	@PACKAGE_NAME@.spec.in \
-	CONTRIBUTING.md \
-	COPYING \
-	NOTICE\
-	README.md \
-	README.txt \
-	$(NULL)
-
-CLEANFILES = \
-	README.md \
-	$(NULL)
-
-README.md : README.txt
-	tools/convert_to_tag.py README.txt README.md
-
-src/furiganapad.json : $(src)
-	tools/gettext.py $^ -o $@
-
-DISTCLEANFILES = \
-	po/stamp-it \
+	$(help_DATA) \
+	update \
+	Makefile.am \
+	md2html.py \
+	hiragana_ime.md \
+	index.md \
+	install.md \
+	specification.md \
+	usage.md \
+	template.html \
 	$(NULL)
 
 uninstall-hook:
-	-rmdir $(pkgdatadir)
+	-rmdir $(helpdir)

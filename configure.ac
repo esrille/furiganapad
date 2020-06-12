@@ -31,6 +31,7 @@ AM_PATH_PYTHON([3.7])
 
 # OUTPUT files
 AC_CONFIG_FILES(
+docs/Makefile
 icons/Makefile
 locale/Makefile
 po/Makefile.in

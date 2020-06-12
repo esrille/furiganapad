@@ -1,0 +1,6 @@
+#!/bin/sh
+./md2html.py index.md specification.md install.md
+./md2html.py install.md index.md usage.md
+./md2html.py usage.md install.md hiragana_ime.md
+./md2html.py hiragana_ime.md usage.md specification.md
+./md2html.py specification.md hiragana_ime.md index.md
