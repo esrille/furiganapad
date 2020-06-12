@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang='ja'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, maximum-scale=1.0, user-scalable=yes'>
+<title>ファイルの仕様と応用 ― ふりがなパッド</title>
+<link href='icon.png' rel='icon'>
+<link rel='stylesheet' type='text/css' href='default.css'>
+<meta content='ファイルの仕様と応用' name='description'>
+<meta content='https://esrille.github.io/furiganapad/specification.html' property='og:url'>
+<meta content='ファイルの仕様と応用 ― ふりがなパッド' property='og:title'>
+<meta content='ファイルの仕様と応用' property='og:description'>
+<meta content='https://esrille.github.io/ibus-hiragana/screenshot.png' property='og:image'>
+<meta content='product' property='og:type'>
+<meta content='summary_large_image' name='twitter:card'>
+<meta content='@esrille' name='twitter:creator'>
+<style>
+aside a:hover {
+  text-decoration: none;
+}
+.title {
+  font-size: 20pt;
+}
+</style>
+</head>
+<body>
+<div id='sidebar'>
+<aside>
+<a class='title' href='https://github.com/esrille/furiganapad'><img alt="アイコン" src="icon.png"><br>
+ふりがなパッド</a>
+<hr>
+<ul>
+<li><a href='index.html'>はじめに</a>
+<li><a href='install.html'>インストール<ruby>方法<rp>(</rp><rt>ほうほう</rt><rp>)</rp></ruby></a>
+<li><a href='usage.html'>つかいかた</a>
+<li><a href='hiragana_ime.html'>「ひらがなIME」との<ruby>連動<rp>(</rp><rt>れんどう</rt><rp>)</rp></ruby></a>
+<li><a href='specification.html'>ファイルの<ruby>仕様<rp>(</rp><rt>しよう</rt><rp>)</rp></ruby>と<ruby>応用<rp>(</rp><rt>おうよう</rt><rp>)</rp></ruby></a>
+</ul>
+<footer>
+</footer>
+</aside>
+</div>
+<main>
+<h1>ファイルの<ruby>仕様<rp>(</rp><rt>しよう</rt><rp>)</rp></ruby>と<ruby>応用<rp>(</rp><rt>おうよう</rt><rp>)</rp></ruby></h1>
+<h2>ファイルの<ruby>仕様<rp>(</rp><rt>しよう</rt><rp>)</rp></ruby></h2>
+<p>&#x3000;「ふりがなパッド」は、UTF-8でエンコードされたテキストファイルのよみかきができます。</p>
+<p>&#x3000;ふりがなは、<a href="https://www.unicode.org/charts/nameslist/n_FFF0.html">ユニコードのルビ<ruby>用<rp>(</rp><rt>よう</rt><rp>)</rp></ruby>のコードポイントU+FFF9からU+FFFB</a>をつかって<ruby>保存<rp>(</rp><rt>ほぞん</rt><rp>)</rp></ruby>しています。</p>
+<h2><ruby>応用<rp>(</rp><rt>おうよう</rt><rp>)</rp></ruby></h2>
+<p>&#x3000;ユニコードのルビをHTMLのrubyタグに<ruby>変換<rp>(</rp><rt>へんかん</rt><rp>)</rp></ruby>したりするのはかんたんです。つぎの<ruby>例<rp>(</rp><rt>れい</rt><rp>)</rp></ruby>では、「ふりがなパッド」でかいたREADME.txtを、スクリプトをつかって、README.mdに<ruby>変換<rp>(</rp><rt>へんかん</rt><rp>)</rp></ruby>しています。</p>
+<pre><code>$ tools/convert_to_tag.py README.txt README.md
+</code></pre>
+
+<p><a href="https://github.com/esrille/furiganapad/blob/master/tools/convert_to_tag.py">convert_to_tag.py</a>スクリプトも「ふりがなパッド」のレポジトリのなかにおいてあります。</p>
+</main>
+<nav>
+<a href=hiragana_ime.html id='nav-prev'><div>&lt;</div></a>
+<a href=index.html id='nav-next'><div>&gt;</div></a>
+</nav>
+</body>
+</html>
