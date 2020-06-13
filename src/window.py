@@ -36,6 +36,9 @@ IAA = '\uFFF9'  # IAA (INTERLINEAR ANNOTATION ANCHOR)
 IAS = '\uFFFA'  # IAS (INTERLINEAR ANNOTATION SEPARATOR)
 IAT = '\uFFFB'  # IAT (INTERLINEAR ANNOTATION TERMINATOR)
 
+DEFAULT_WIDTH = 720
+DEFAULT_HEIGHT = 512
+
 
 class Window(Gtk.ApplicationWindow):
 
@@ -53,7 +56,7 @@ class Window(Gtk.ApplicationWindow):
             except GObject.GError as e:
                 file = None
                 logger.error(e.message)
-        self.set_default_size(720, 400)
+        self.set_default_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
         grid = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.add(grid)
