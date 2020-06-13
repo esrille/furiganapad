@@ -33,7 +33,8 @@ SENTENCE_SHORT = 50
 # A sentence with more than SENTENCE_LONG characters is long.
 SENTENCE_LONG = 60
 
-DEFAULT_FONT = "Noto Sans Mono CJK JP 16px"
+DEFAULT_FONT = "Noto Sans Mono CJK JP 18px"
+RUBY_DIV = 2.7
 
 
 class TextView(Gtk.DrawingArea, Gtk.Scrollable):
@@ -142,7 +143,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         lt = PangoCairo.create_layout(cr)
         desc = self.get_font().copy_static()
         size = desc.get_size()
-        desc.set_size(size // 2)
+        desc.set_size(size // RUBY_DIV)
         lt.set_font_description(desc)
         for pos, length, ruby in paragraph.rubies:
             if self._has_preedit() and cursor_offset <= pos:
