@@ -46,16 +46,6 @@ class Window(Gtk.ApplicationWindow):
         super().__init__(application=app, title=_("FuriganaPad"))
 
         self.title = _("FuriganaPad")
-
-        content = ""
-        if file:
-            try:
-                [success, content, etags] = file.load_contents(None)
-                content = content.decode("utf-8", "ignore")
-                content = remove_dangling_annotations(content)
-            except GObject.GError as e:
-                file = None
-                logger.error(e.message)
         self.set_default_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
         grid = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -68,6 +58,7 @@ class Window(Gtk.ApplicationWindow):
             Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
         self.textview = TextView()
+        self.buffer = self.textview.get_buffer()
 
         scrolled_window.add(self.textview)
         grid.pack_start(scrolled_window, True, True, 0)
@@ -109,12 +100,6 @@ class Window(Gtk.ApplicationWindow):
 
         self.connect("key-press-event", self.on_key_press_event)
 
-        self.buffer = self.textview.get_buffer()
-        if content:
-            self.buffer.set_text(content)
-            self.buffer.set_modified(False)
-            self.buffer.place_cursor(self.buffer.get_start_iter())
-
         actions = {
             "new": self.new_callback,
             "open": self.open_callback,
@@ -153,13 +138,22 @@ class Window(Gtk.ApplicationWindow):
             "activate", self.highlightlongsentences_callback)
         self.add_action(self.highlightlongsentences_action)
 
-        self.set_file(file)
+        self._load_file(file)
 
-    def help_callback(self, action, parameter):
-        url = "file://" + os.path.join(package.get_datadir(), "help/index.html")
-        Gtk.show_uri_on_window(self, url, Gdk.CURRENT_TIME)
-        # see https://gitlab.gnome.org/GNOME/gtk/-/issues/1211
-        self.get_window().set_cursor(self.get_application().get_default_cursor())
+    def _load_file(self, file):
+        if file:
+            try:
+                [success, content, etags] = file.load_contents(None)
+                content = content.decode("utf-8", "ignore")
+                content = remove_dangling_annotations(content)
+                if content:
+                    self.buffer.set_text(content)
+                    self.buffer.set_modified(False)
+                    self.buffer.place_cursor(self.buffer.get_start_iter())
+            except GObject.GError as e:
+                file = None
+                logger.error(e.message)
+        self.set_file(file)
 
     def about_callback(self, action, parameter):
         dialog = Gtk.AboutDialog()
@@ -260,6 +254,12 @@ class Window(Gtk.ApplicationWindow):
     def get_file(self):
         return self.file
 
+    def help_callback(self, action, parameter):
+        url = "file://" + os.path.join(package.get_datadir(), "help/index.html")
+        Gtk.show_uri_on_window(self, url, Gdk.CURRENT_TIME)
+        # see https://gitlab.gnome.org/GNOME/gtk/-/issues/1211
+        self.get_window().set_cursor(self.get_application().get_default_cursor())
+
     def highlightlongsentences_callback(self, action, parameter):
         highlight = not action.get_state()
         action.set_state(GLib.Variant.new_boolean(highlight))
@@ -357,9 +357,11 @@ class Window(Gtk.ApplicationWindow):
             win = self.get_application().is_opened(file)
             if win:
                 win.present()
-                return
-            win = Window(self.get_application(), file=file)
-            win.show_all()
+            elif not self.buffer.empty():
+                win = Window(self.get_application(), file=file)
+                win.show_all()
+            else:
+                self._load_file(file)
 
     def paste_callback(self, action, parameter):
         self.textview.emit('paste-clipboard')

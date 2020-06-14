@@ -531,7 +531,7 @@ class TextBuffer(GObject.Object):
             return True
         return False
 
-    def _empty(self):
+    def empty(self):
         if 1 < self.get_line_count():
             return False
         return self.paragraphs[0].get_length() == 1
@@ -927,7 +927,7 @@ class TextBuffer(GObject.Object):
         if not text:
             self.surround_deleted = False
             return
-        if self._empty():
+        if self.empty():
             if text.endswith('\r\n'):
                 text = text[:-2]
             elif text[-1] in NEWLINES:
