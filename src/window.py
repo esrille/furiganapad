@@ -72,6 +72,7 @@ class Window(Gtk.ApplicationWindow):
         grid.pack_start(self.searchbar, False, False, 0)
         self.searchbar.set_search_mode(False)
         self.search_entry.connect("activate", self.on_find)
+        self.search_entry_text = ''
 
         self.replacebar = Gtk.SearchBar()
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -85,6 +86,8 @@ class Window(Gtk.ApplicationWindow):
         self.replacebar.set_search_mode(False)
         self.replace_from.connect("activate", self.on_find)
         self.replace_to.connect("activate", self.on_replace)
+        self.replace_from_text = ''
+        self.replace_to_text = ''
 
         self.rubybar = Gtk.SearchBar()
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
@@ -236,7 +239,12 @@ class Window(Gtk.ApplicationWindow):
         self.textview.emit('cut-clipboard')
 
     def find_callback(self, action, parameter):
+        start, end = self.buffer.get_selection_bounds()
+        if start != end:
+            self.search_entry_text = self.buffer.get_text(start, end, False).replace('\n', '')
+        self.search_entry.set_text(self.search_entry_text)
         self.searchbar.set_search_mode(True)
+        self.search_entry.grab_focus()
 
     def font_callback(self, action, parameter):
         dialog = Gtk.FontChooserDialog(_("Font"), self)
@@ -280,6 +288,7 @@ class Window(Gtk.ApplicationWindow):
         # main window
         if self.search_entry.is_focus():
             if event.keyval == Gdk.KEY_Escape:
+                self.search_entry_text = self.search_entry.get_text()
                 self.searchbar.set_search_mode(False)
                 self.textview.grab_focus()
                 return True
@@ -293,6 +302,8 @@ class Window(Gtk.ApplicationWindow):
                     self.replace_to.grab_focus()
                 return True
             if event.keyval == Gdk.KEY_Escape:
+                self.replace_from_text = self.replace_from.get_text()
+                self.replace_to_text = self.replace_to.get_text()
                 self.replacebar.set_search_mode(False)
                 self.textview.grab_focus()
                 return True
@@ -370,7 +381,13 @@ class Window(Gtk.ApplicationWindow):
         self.textview.emit('redo')
 
     def replace_callback(self, action, parameter):
+        start, end = self.buffer.get_selection_bounds()
+        if start != end:
+            self.replace_from_text = self.buffer.get_text(start, end, False).replace('\n', '')
+        self.replace_from.set_text(self.replace_from_text)
+        self.replace_to.set_text(self.replace_to_text)
         self.replacebar.set_search_mode(True)
+        self.replace_from.grab_focus()
 
     def ruby_callback(self, action, parameter):
         ruby = not action.get_state()
