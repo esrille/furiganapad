@@ -13,7 +13,7 @@
 # limitations under the License.
 
 kids_DATA = furiganapad.kids.mo
-kidsdir = $(datadir)/locale/ja/LC_MESSAGES/
+kidsdir = $(datadir)/locale/ja/LC_MESSAGES
 
 EXTRA_DIST = \
 	furiganapad.kids.po \

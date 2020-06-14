@@ -22,14 +22,14 @@ furiganapad_PYTHON = \
 	$(NULL)
 BUILT_SOURCES = package.py
 nodist_furiganapad_PYTHON = package.py
-furiganapad_DATA = \
+dist_furiganapad_DATA = \
 	furiganapad.menu.ui \
 	$(NULL)
 furiganapaddir = $(pkgdatadir)/src
 
 bin_SCRIPTS = furiganapad
 
-desktop_DATA = furiganapad.desktop
+dist_desktop_DATA = furiganapad.desktop
 desktopdir = $(datadir)/applications
 
 CLEANFILES = \

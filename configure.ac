@@ -15,8 +15,9 @@
 AC_INIT([furiganapad], [0.2.0], [https://github.com/esrille/furiganapad/issues])
 AM_INIT_AUTOMAKE([foreign tar-ustar])
 
-AM_GNU_GETTEXT_REQUIRE_VERSION([0.19.8])
 AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.19.8])
+AM_GNU_GETTEXT_REQUIRE_VERSION([0.19.8])
 
 # define GETTEXT_* variables
 GETTEXT_PACKAGE=AC_PACKAGE_NAME

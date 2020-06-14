@@ -4,7 +4,7 @@ Release:    1%{?dist}
 Summary:    A text editor for Japanese texts with ruby characters
 License:    LGPLv2+
 URL:        https://github.com/esrille/%{name}
-Source0:    https://github.com/esrille/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.xz
+Source0:    https://github.com/esrille/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.gz
 Requires:   gobject-introspection
 Requires:   google-noto-sans-cjk-ttc-fonts
 Requires:   gtk3
@@ -13,6 +13,9 @@ Requires:   python3
 Requires:   python3-cairo
 Requires:   python3-gobject
 BuildRequires: python3-devel
+BuildRequires: gettext-devel
+BuildRequires: libtool
+BuildRequires: pkgconfig
 BuildArch:     noarch
 
 %description
@@ -35,13 +38,14 @@ make install DESTDIR=${RPM_BUILD_ROOT} install
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc README.md CONTRIBUTING.md
 %license COPYING NOTICE
 %{_bindir}/%{name}
-%{_datadir}/%{name}/
+%{_datadir}/%{name}
 %{_datadir}/applications
 %{_datadir}/icons
+%{_datadir}/locale/ja/LC_MESSAGES/furiganapad.kids.mo
 
 %changelog
