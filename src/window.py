@@ -337,11 +337,10 @@ class Window(Gtk.ApplicationWindow):
             return
         text = self.buffer.get_text(start, end, False)
         ruby = entry.get_text()
-        # TODO: remove IAA, IAS, IAT from ruby
         self.buffer.begin_user_action()
         self.buffer.delete(start, end)
         if ruby:
-            text = IAA + text + IAS + ruby + IAT
+            text = IAA + text + IAS + get_plain_text(ruby) + IAT
         self.buffer.insert_at_cursor(text)
         self.buffer.end_user_action()
 
