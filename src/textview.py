@@ -36,6 +36,12 @@ SENTENCE_LONG = 60
 DEFAULT_FONT = "Noto Sans Mono CJK JP 18px"
 RUBY_DIV = 2.7
 
+ESCAPE = str.maketrans({
+    '<': '&lt;',
+    '>': '&gt;',
+    '&': '&amp;'
+})
+
 
 class TextView(Gtk.DrawingArea, Gtk.Scrollable):
 
@@ -84,12 +90,11 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                         Gdk.EventMask.SCROLL_MASK)
 
         desc = Pango.font_description_from_string(DEFAULT_FONT)
-        # desc = self.get_style().font_desc
         self.set_font(desc)
 
-    def _check_sentences(self, text, attrList):
+    def _check_sentences(self, text):
         if not self.highlight_sentences:
-            return text
+            return text.translate(ESCAPE)
         markup = ''
         sentence = ''
         start = end = 0
@@ -109,15 +114,13 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                 else:
                     sentence += c
                 count = end - start
-                if SENTENCE_SHORT < count:
-                    if SENTENCE_LONG < count:
-                        attr = Pango.attr_background_new(0xffff, 0xb600, 0xc100)
-                    else:
-                        attr = Pango.attr_background_new(0xffff, 0xffff, 0xed00)
-                    attr.start_index = len(markup.encode())
-                    attr.end_index = attr.start_index + len(sentence.encode())
-                    attrList.insert(attr)
-                markup += sentence
+                sentence = sentence.translate(ESCAPE)
+                if SENTENCE_LONG < count:
+                    markup += '<span background="#faa">' + sentence + '</span>'
+                elif SENTENCE_SHORT < count:
+                    markup += '<span background="#ffa">' + sentence + '</span>'
+                else:
+                    markup += sentence
                 if c in "　 ":
                     markup += c
                 start = end = i + 1
@@ -358,37 +361,37 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
             if y < height and 0 <= y + h:
                 text = paragraph.get_plain_text()
                 cursor_offset = len(text)
-                attrList = Pango.AttrList.new()
+                attrListPreedit = Pango.AttrList().new()
                 if lineno == cursor.get_line():
                     cursor_offset = cursor.get_plain_line_offset()
                     if self._has_preedit():
                         text = text[:cursor_offset] + self.preedit[0] + text[cursor_offset:]
-                        attrList.splice(self.preedit[1], len(text[:cursor_offset].encode()), len(self.preedit[0].encode()))
+                        attrListPreedit.splice(self.preedit[1], len(text[:cursor_offset].encode()), len(self.preedit[0].encode()))
                         cursor_offset += self.preedit[2]
                 if start == end or lineno < start.get_line() or end.get_line() < lineno:
-                    text = self._check_sentences(text, attrList)
-                else:
-                    attr = Pango.attr_background_new(0xac00, 0xce00, 0xf700)
-                    if start.get_line() < lineno and lineno < end.get_line():
-                        attr.start_index = 0
-                        attr.end_index = len(text.encode())
-                    elif start.get_line() == end.get_line():
-                        assert lineno == end.get_line()
-                        so = start.get_plain_line_offset()
-                        eo = end.get_plain_line_offset()
-                        attr.start_index = len(text[:so].encode())
-                        attr.end_index = attr.start_index + len(text[so:eo].encode())
-                    elif start.get_line() == lineno:
-                        o = start.get_plain_line_offset()
-                        attr.start_index = len(text[:o].encode())
-                        attr.end_index = attr.start_index + len(text[o:].encode())
-                    elif lineno == end.get_line():
-                        o = end.get_plain_line_offset()
-                        attr.start_index = 0
-                        attr.end_index = len(text[:o].encode())
-                    attrList.insert(attr)
-                layout.set_text(text, -1)
-                layout.set_attributes(attrList)
+                    markup = self._check_sentences(text)
+                elif start.get_line() < lineno and lineno < end.get_line():
+                    markup = '<span background="#ACCEF7">' + text.translate(ESCAPE) + '</span>'
+                elif start.get_line() == end.get_line():
+                    assert lineno == end.get_line()
+                    so = start.get_plain_line_offset()
+                    eo = end.get_plain_line_offset()
+                    markup = text[:so].translate(ESCAPE) + \
+                             '<span background="#ACCEF7">' + text[so:eo].translate(ESCAPE) + '</span>' + \
+                             text[eo:].translate(ESCAPE)
+                elif start.get_line() == lineno:
+                    o = start.get_plain_line_offset()
+                    markup = text[:o].translate(ESCAPE) + \
+                             '<span background="#ACCEF7">' + text[o:].translate(ESCAPE) + '</span>'
+                elif lineno == end.get_line():
+                    o = end.get_plain_line_offset()
+                    markup = '<span background="#ACCEF7">' + text[:o].translate(ESCAPE) + '</span>' + \
+                             text[o:].translate(ESCAPE)
+                layout.set_markup(markup, -1)
+                if lineno == cursor.get_line() and self._has_preedit():
+                    attrList = layout.get_attributes()
+                    attrList.splice(attrListPreedit, 0, 0)
+                    layout.set_attributes(attrList)
                 PangoCairo.update_layout(cr, layout)
                 cr.move_to(0, y)
                 PangoCairo.show_layout(cr, layout)
