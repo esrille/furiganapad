@@ -394,28 +394,38 @@ class Window(Gtk.ApplicationWindow):
         self.buffer.set_ruby_mode(ruby)
 
     def save(self):
+        message = ''
         (start, end) = self.buffer.get_bounds()
         current_contents = self.buffer.get_text(start, end, True)
-        if current_contents:
-            current_contents += '\n'
-            try:
+        try:
+            if current_contents:
+                current_contents += '\n'
                 current_contents = current_contents.encode()
                 self.file.replace_contents(current_contents,
                                            None,
                                            False,
                                            Gio.FileCreateFlags.NONE,
                                            None)
-            except GObject.GError as e:
-                self.file = None
-        else:
-            try:
+            else:
                 self.file.replace_readwrite(None,
                                             False,
                                             Gio.FileCreateFlags.NONE,
                                             None)
-            except GObject.GError as e:
-                self.file = None
-        return self.set_file(self.file)
+        except GObject.GError as e:
+            message = e.message
+        except Exception as e:
+            message = str(e)
+        else:
+            return self.set_file(self.file)
+
+        dialog = Gtk.MessageDialog(
+            self, 0, Gtk.MessageType.ERROR,
+            Gtk.ButtonsType.OK, _("Could not save the file."))
+        dialog.format_secondary_text(message)
+        dialog.run()
+        dialog.destroy()
+        self.save_as()
+        return True
 
     def save_as(self):
         dialog = Gtk.FileChooserDialog(

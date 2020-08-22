@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: furiganapad 0.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2020-06-14 17:44+0900\n"
+"POT-Creation-Date: 2020-08-22 23:01+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,7 +61,11 @@ msgstr ""
 msgid "Open File"
 msgstr ""
 
-#: src/window.py:422
+#: src/window.py:423
+msgid "Could not save the file."
+msgstr ""
+
+#: src/window.py:432
 msgid "Save File"
 msgstr ""
 
