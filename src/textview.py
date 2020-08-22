@@ -309,7 +309,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
     def get_vadjustment(self):
         return self._vadjustment
 
-    def on_commit(self, wid, str):
+    def on_commit(self, im, str):
         self.buffer.begin_user_action()
         self.buffer.insert_at_cursor(str)
         self.buffer.end_user_action()
@@ -322,7 +322,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         else:
             self.reflow_line = -1
 
-    def on_delete_surrounding(self, wid, offset, n_chars):
+    def on_delete_surrounding(self, im, offset, n_chars):
         self.buffer.begin_user_action()
         self.buffer.delete_surrounding(offset, n_chars)
         self.buffer.end_user_action()
@@ -568,24 +568,24 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
     def on_mouse_release(self, wid, event):
         return True
 
-    def on_preedit_changed(self, wid):
+    def on_preedit_changed(self, im):
         self.preedit = self.im.get_preedit_string()
         cursor = self.buffer.get_cursor()
         self.buffer.delete_selection(True, True)
         self.reflow(cursor.get_line())
         logger.info('on_preedit_changed: "%s" %d', self.preedit[0], self.preedit[2])
 
-    def on_preedit_end(self, wid):
+    def on_preedit_end(self, im):
         self.preedit = self.im.get_preedit_string()
         self.buffer.delete_selection(True, True)
         logger.info('_end(self, w: "%s" %d', self.preedit[0], self.preedit[2])
 
-    def on_preedit_start(self, wid):
+    def on_preedit_start(self, im):
         self.preedit = self.im.get_preedit_string()
         self.buffer.delete_selection(True, True)
         logger.info('on_preedit_start: "%s" %d', self.preedit[0], self.preedit[2])
 
-    def on_retrieve_surrounding(self, wid):
+    def on_retrieve_surrounding(self, im):
         text, offset = self.buffer.get_surrounding()
         self.im.set_surrounding(text, len(text.encode()), len(text[:offset].encode()))
         return True
