@@ -43,9 +43,9 @@ DEFAULT_HEIGHT = 512
 class Window(Gtk.ApplicationWindow):
 
     def __init__(self, app, file=None):
-        super().__init__(application=app, title=_("FuriganaPad"))
-
         self.title = _("FuriganaPad")
+        super().__init__(application=app, title=self.title)
+        self.set_default_icon_name(package.get_name())
         self.set_default_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
         grid = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
