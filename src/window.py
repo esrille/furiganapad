@@ -59,6 +59,7 @@ class Window(Gtk.ApplicationWindow):
 
         self.textview = TextView()
         self.buffer = self.textview.get_buffer()
+        self.buffer.connect_after('modified-changed', self.on_modified_changed)
 
         scrolled_window.add(self.textview)
         grid.pack_start(scrolled_window, True, True, 0)
@@ -284,6 +285,7 @@ class Window(Gtk.ApplicationWindow):
         self.select_text(get_plain_text(entry.get_text()))
 
     def on_key_press_event(self, wid, event):
+        logger.debug("on_key_press: '%s', %08x", Gdk.keyval_name(event.keyval), event.state)
         # Control focus around search bars by checking keys typed into the
         # main window
         if self.search_entry.is_focus():
@@ -313,6 +315,14 @@ class Window(Gtk.ApplicationWindow):
                 self.textview.grab_focus()
                 return True
         return False
+
+    def on_modified_changed(self, buffer):
+        title = self.title
+        if self.file:
+            title = self.file.get_basename() + " – " + title
+        if self.buffer.get_modified():
+            title = '*' + title
+        self.set_title(title)
 
     def on_replace(self, entry):
         text_from = get_plain_text(self.replace_from.get_text())
@@ -479,13 +489,10 @@ class Window(Gtk.ApplicationWindow):
 
     def set_file(self, file):
         self.file = file
-        if self.file:
-            self.buffer.set_modified(False)
-            self.set_title(file.get_basename() + " ― " + self.title)
-            return False
+        if self.buffer:
+            return self.buffer.set_modified(not file)
         else:
-            self.set_title(self.title)
-            return True
+            return False
 
     def unconvert_callback(self, action, parameter):
         self.buffer.begin_user_action()

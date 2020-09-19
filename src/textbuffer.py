@@ -451,17 +451,17 @@ class TextMark():
 class TextBuffer(GObject.Object):
 
     __gsignals__ = {
-        'insert_text': (GObject.SIGNAL_RUN_LAST, None, (object, str, )),
-        'delete_range': (GObject.SIGNAL_RUN_LAST, None, (object, object, )),
         'begin_user_action': (GObject.SIGNAL_RUN_FIRST, None, ()),
+        'delete_range': (GObject.SIGNAL_RUN_LAST, None, (object, object, )),
         'end_user_action': (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'undo': (GObject.SIGNAL_RUN_LAST, None, ()),
+        'insert_text': (GObject.SIGNAL_RUN_LAST, None, (object, str, )),
+        'modified-changed': (GObject.SIGNAL_RUN_LAST, None, ()),
         'redo': (GObject.SIGNAL_RUN_LAST, None, ()),
+        'undo': (GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
     def __init__(self):
         super().__init__()
-        self.modified = False
         self.marks = {}
         self.paragraphs = list()
         self.reading = ''
@@ -718,8 +718,6 @@ class TextBuffer(GObject.Object):
         self.delete(start, end)
 
     def do_delete_range(self, start, end):
-        self.set_modified(True)
-
         if start.get_line() == end.get_line():
             text = self.paragraphs[start.get_line()].get_text()
             text = text[:start.get_line_offset()] + text[end.get_line_offset():]
@@ -746,8 +744,6 @@ class TextBuffer(GObject.Object):
 
     def do_insert_text(self, iter, text):
         assert 0 < len(text)
-        self.set_modified(True)
-
         lines = text.splitlines(keepends=True)
         lineno = iter.get_line()
         if 1 == len(lines) and lines[0][-1] not in NEWLINES:
@@ -784,6 +780,7 @@ class TextBuffer(GObject.Object):
     def do_redo(self):
         if not self.redo:
             return
+        was_modified = self.get_modified()
         logger.info("do_redo")
         action = self.redo.pop()
         if action[0] == "insert_text":
@@ -805,9 +802,11 @@ class TextBuffer(GObject.Object):
                     self.insert(start, action[5])
         self.place_cursor(start)
         self.undo.append(action)
+        if not was_modified:
+            self.emit('modified-changed')
 
     def do_undo(self):
-        if not self.undo:
+        if not self.get_modified():
             return
         logger.info("do_undo")
         action = self.undo.pop()
@@ -830,6 +829,8 @@ class TextBuffer(GObject.Object):
             self.insert(start, action[5])
         self.place_cursor(start)
         self.redo.append(action)
+        if not self.get_modified():
+            self.emit('modified-changed')
 
     def end_user_action(self):
         self.emit('end_user_action')
@@ -868,7 +869,7 @@ class TextBuffer(GObject.Object):
         return len(self.paragraphs)
 
     def get_modified(self):
-        return self.modified
+        return 0 < len(self.undo)
 
     def get_selection_bound(self):
         return self.marks["selection_bound"]
@@ -956,6 +957,7 @@ class TextBuffer(GObject.Object):
 
     def on_delete(self, textbuffer, start, end):
         if self.user_action:
+            was_modified = self.get_modified()
             text = self.get_text(start, end, True)
             action = ["delete_range",
                       start.get_line(), start.get_line_offset(),
@@ -965,6 +967,8 @@ class TextBuffer(GObject.Object):
             logger.info("on_delete: %s", action)
             self.undo.append(action)
             self.redo.clear()
+            if not was_modified:
+                self.emit('modified-changed')
 
     def on_insert(self, textbuffer, iter, text):
         if self.user_action:
@@ -972,6 +976,7 @@ class TextBuffer(GObject.Object):
 
     def on_inserted(self, textbuffer, iter, text):
         if self.user_action:
+            was_modified = self.get_modified()
             action = ["insert_text",
                       self.inserting.get_line(), self.inserting.get_line_offset(),
                       iter.get_line(), iter.get_line_offset(),
@@ -981,6 +986,8 @@ class TextBuffer(GObject.Object):
             self.undo.append(action)
             self.redo.clear()
             self.inserting = None
+            if not was_modified:
+                self.emit('modified-changed')
 
     def place_cursor(self, where):
         self.select_range(where, where)
@@ -993,13 +1000,14 @@ class TextBuffer(GObject.Object):
         self.move_mark(self.get_insert(), ins)
         self.move_mark(self.get_selection_bound(), bound)
 
-    def set_modified(self, setting):
-        if self.modified == setting:
-            return
-        self.modified = setting
-        if not self.modified:
+    def set_modified(self, modified):
+        current = self.get_modified()
+        if current and not modified:
             self.undo = []
             self.redo = []
+        if current != self.get_modified():
+            self.emit('modified-changed')
+        return self.get_modified()
 
     def set_ruby_mode(self, ruby):
         self.ruby_mode = ruby
