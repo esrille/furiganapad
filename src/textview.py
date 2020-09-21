@@ -24,6 +24,7 @@ from textbuffer import TextBuffer, has_newline, remove_dangling_annotations
 
 import cairo
 import logging
+import math
 
 
 logger = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ SENTENCE_SHORT = 50
 SENTENCE_LONG = 60
 
 DEFAULT_FONT = "Noto Sans Mono CJK JP 18px"
-RUBY_DIV = 2.7
+RUBY_DIV = 2.75
 
 ESCAPE = str.maketrans({
     '<': '&lt;',
@@ -55,15 +56,13 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
     }
 
     def __init__(self):
-        Gtk.DrawingArea.__init__(self)
+        super().__init__()
         self._init_scrollable()
         self._init_immultiontext()
 
         self.buffer = TextBuffer()
-        self.spacing = 12
         self.width = 0
         self.height = 0
-        self.allocated_height = 0
         self.caret = Gdk.Rectangle()
         self.heights = list()
         self.highlight_sentences = True
@@ -73,6 +72,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         self.buffer.connect("delete_range", self.on_delete)
         self.buffer.connect_after("delete_range", self.on_deleted)
 
+        self.connect('configure-event', self.on_configure)
         self.connect("draw", self.on_draw)
         self.connect("key-press-event", self.on_key_press)
         self.connect("key-release-event", self.on_key_release)
@@ -89,6 +89,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                         Gdk.EventMask.BUTTON_RELEASE_MASK |
                         Gdk.EventMask.SCROLL_MASK)
 
+        logger.debug("Pango.version: %d", Pango.version())
         desc = Pango.font_description_from_string(DEFAULT_FONT)
         self.set_font(desc)
 
@@ -201,10 +202,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                     cr.restore()
 
     def _get_offset(self):
-        offset = 0
-        if self._vadjustment:
-            offset = self._vadjustment.get_value()
-        return offset
+        return self._vadjustment.get_value() if self._vadjustment else 0
 
     def _has_preedit(self):
         return self.preedit[0]
@@ -244,6 +242,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
 
     def do_redo(self):
         self.buffer.emit('redo')
+        self.place_cursor_onscreen()
 
     def do_select_all(self, select):
         self.buffer.select_all()
@@ -252,6 +251,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
     def do_undo(self):
         self.im.reset()
         self.buffer.emit('undo')
+        self.place_cursor_onscreen()
 
     def get_buffer(self):
         return self.buffer
@@ -316,6 +316,13 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         self.place_cursor_onscreen()
         return True
 
+    def on_configure(self, wid, event):
+        if self._vadjustment:
+            self._vadjustment.set_page_size(self.get_allocated_height())
+            self.reflow()
+            self.place_cursor_onscreen()
+        return True
+
     def on_delete(self, textbuffer, start, end):
         if start.get_line() == end.get_line():
             self.reflow_line = start.get_line()
@@ -331,19 +338,14 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
 
     def on_deleted(self, textbuffer, start, end):
         self.reflow(self.reflow_line)
-        self.queue_draw()
 
     def on_draw(self, wid, cr):
-        if wid.get_allocated_width() != self.width:
-            self.reflow(redraw=False)
-        height = wid.get_allocated_height()
-
         cr.set_source_rgb(1, 1, 1)
-        cr.rectangle(0, 0, self.width, height)
-        cr.fill()
+        cr.paint()
         cr.move_to(0, 0)
         cr.set_source_rgb(0, 0, 0)
 
+        height = wid.get_allocated_height()
         cursor = self.buffer.get_cursor()
         start, end = self.buffer.get_selection_bounds()
 
@@ -403,24 +405,16 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
 
         self.caret.y += offset
 
-        if height != self.allocated_height:
-            self.allocated_height = height
-            if self._vadjustment:
-                # TODO: Adjust _vadjustment value as well
-                self._vadjustment.set_properties(
-                    lower=0,
-                    upper=self.height,
-                    page_size=height
-                )
+        return True
 
     def on_focus_in(self, wid, event):
-        logger.info("on_focus_in")
+        logger.debug("on_focus_in")
         self.im.set_client_window(wid.get_window())
         self.im.focus_in()
         return True
 
     def on_focus_out(self, wid, event):
-        logger.info("on_focus_out")
+        logger.debug("on_focus_out")
         self.im.focus_out()
         return True
 
@@ -429,12 +423,11 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
             self.reflow()
         else:
             self.reflow(iter.get_line())
-        self.queue_draw()
 
     def on_key_press(self, wid, event):
         is_selection = (event.state & Gdk.ModifierType.SHIFT_MASK)
         is_control = (event.state & Gdk.ModifierType.CONTROL_MASK)
-        logger.info("on_key_press: '%s', %08x", Gdk.keyval_name(event.keyval), event.state)
+        logger.debug("on_key_press: '%s', %08x", Gdk.keyval_name(event.keyval), event.state)
         if self.im.filter_keypress(event):
             return True
         # Process shortcut keys firstly
@@ -453,6 +446,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                 return True
         if event.keyval == Gdk.KEY_BackSpace:
             if self.buffer.delete_selection(True, True):
+                self.place_cursor_onscreen()
                 return True
             end = self.buffer.get_cursor()
             start = end.copy()
@@ -464,6 +458,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
             return True
         elif event.keyval == Gdk.KEY_Delete:
             if self.buffer.delete_selection(True, True):
+                self.place_cursor_onscreen()
                 return True
             start = self.buffer.get_cursor()
             end = start.copy()
@@ -498,14 +493,14 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                 self.place_cursor_onscreen()
             return True
         elif event.keyval == Gdk.KEY_Up:
-            y = self.caret.y - self.caret.height - self.spacing
+            y = self.caret.y - self.line_height
             if 0 <= y:
                 inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
                 self.buffer.move_cursor(cursor, is_selection)
                 self.place_cursor_onscreen()
             return True
         elif event.keyval == Gdk.KEY_Down:
-            y = self.caret.y + self.caret.height + self.spacing
+            y = self.caret.y + self.line_height
             if y < self.height:
                 inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
                 self.buffer.move_cursor(cursor, is_selection)
@@ -573,17 +568,17 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         cursor = self.buffer.get_cursor()
         self.buffer.delete_selection(True, True)
         self.reflow(cursor.get_line())
-        logger.info('on_preedit_changed: "%s" %d', self.preedit[0], self.preedit[2])
+        logger.debug('on_preedit_changed: "%s" %d', self.preedit[0], self.preedit[2])
 
     def on_preedit_end(self, im):
         self.preedit = self.im.get_preedit_string()
         self.buffer.delete_selection(True, True)
-        logger.info('_end(self, w: "%s" %d', self.preedit[0], self.preedit[2])
+        logger.debug('_end(self, w: "%s" %d', self.preedit[0], self.preedit[2])
 
     def on_preedit_start(self, im):
         self.preedit = self.im.get_preedit_string()
         self.buffer.delete_selection(True, True)
-        logger.info('on_preedit_start: "%s" %d', self.preedit[0], self.preedit[2])
+        logger.debug('on_preedit_start: "%s" %d', self.preedit[0], self.preedit[2])
 
     def on_retrieve_surrounding(self, im):
         text, offset = self.buffer.get_surrounding()
@@ -608,6 +603,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         layout.set_width(self.width * Pango.SCALE)
         layout.set_spacing(self.spacing * Pango.SCALE)
 
+        prev_height = self.height
         paragraph = self.get_paragraph(line)
         if paragraph and self.heights:
             self.height -= self.heights[line]
@@ -635,12 +631,12 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
                 self.height += h
 
         if self._vadjustment:
-            # TODO: Adjust _vadjustment value as well
-            self._vadjustment.set_properties(
-                lower=0,
-                upper=self.height,
-                page_size=self.get_allocated_height()
-            )
+            height = self.get_allocated_height()
+            if self.height < height:
+                upper = height
+            else:
+                upper = self.height
+            self._vadjustment.set_upper(upper)
 
         if redraw:
             self.queue_draw()
@@ -651,7 +647,7 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
 
         width = self.get_allocated_width()
         height = self.get_allocated_height()
-        offset = self._get_offset()
+        offset = self._vadjustment.get_value()
 
         y = 0
         line = mark.iter.get_line()
@@ -668,20 +664,25 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         layout.set_text(text, -1)
 
         current = text[:mark.iter.get_plain_line_offset()]
-        st, we = layout.get_cursor_pos(len(current.encode()))
-        st.x, st.y, st.width, st.height = \
-            st.x / Pango.SCALE - 1, st.y / Pango.SCALE, st.width / Pango.SCALE + 2, st.height / Pango.SCALE
-        y += st.y
-        h = self.spacing + self.caret.height
+        line, pos = layout.index_to_line_x(len(current.encode()), False)
+        y += self.line_height * line
+        upper = self._vadjustment.get_upper()
+        if offset <= y and y + self.line_height <= offset + height <= upper:
+            self.queue_draw()
+            return
 
+        lines = height // self.line_height
         if y < offset:
-            self._vadjustment.set_value(y)
-        elif offset + height <= y + h:
-            y += h
-            lines = height // h
-            y = (y + h - 1) // h
-            self._vadjustment.set_value(h * (y - lines))
-
+            if upper < y + height:
+                d = (y + height) - upper
+                y -= self.line_height * (d // self.line_height + 1)
+                y = max(0, y)
+        else:
+            y //= self.line_height
+            y -= lines - 1
+            y = self.line_height * max(0, y)
+        assert y % self.line_height == 0
+        self._vadjustment.set_value(y)
         self.queue_draw()
 
     def set_check_sentences(self, value):
@@ -691,15 +692,19 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
 
     def set_font(self, font_desc):
         self.font_desc = font_desc
-        if font_desc.get_size_is_absolute():
-            self.spacing = font_desc.get_size() / Pango.SCALE * 7 / 8
+        context = self.create_pango_context()
+        metrics = context.get_metrics(font_desc, None)
+        if not Pango.version_check(1, 44, 0):
+            self.spacing = math.ceil(metrics.get_height() / Pango.SCALE * 0.6)
+            self.line_height = math.ceil(metrics.get_height() / Pango.SCALE) + self.spacing
         else:
-            context = self.create_pango_context()
-            dpi = PangoCairo.context_get_resolution(context)
-            self.spacing = font_desc.get_size() / Pango.SCALE * dpi / 72 * 7 / 8
+            self.line_height = (metrics.get_ascent() + metrics.get_descent()) / Pango.SCALE
+            self.spacing = math.ceil(self.line_height * 0.6)
+            self.line_height = math.ceil(self.line_height) + self.spacing
         self.reflow()
 
     def set_hadjustment(self, adjustment):
+        logger.debug('set_hadjustment')
         if self._hadjustment:
             self._hadjustment.disconnect(self._hadjust_signal)
             self._hadjust_signal = None
@@ -707,23 +712,31 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         self._hadjustment = adjustment
         if adjustment:
             adjustment.set_properties(
+                value=0,
                 lower=0,
-                upper=self.get_allocated_width(),
-                page_size=self.get_allocated_width()
+                upper=0,
+                page_size=0
             )
             self._hadjust_signal = adjustment.connect("value-changed", self.on_value_changed)
 
     def set_vadjustment(self, adjustment):
+        logger.debug('set_vadjustment')
         if self._vadjustment:
             self._vadjustment.disconnect(self._vadjust_signal)
             self._vadjust_signal = None
 
         self._vadjustment = adjustment
         if adjustment:
+            height = self.get_allocated_height()
+            if self.height < height:
+                upper = height
+            else:
+                upper = self.height
             adjustment.set_properties(
+                value=0,
                 lower=0,
-                upper=self.height,
-                page_size=self.get_allocated_height()
+                upper=upper,
+                page_size=height
             )
             self._vadjust_signal = adjustment.connect("value-changed", self.on_value_changed)
 
