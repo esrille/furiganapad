@@ -65,12 +65,15 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         self._init_immultiontext()
 
         self.buffer = FuriganaBuffer()
-        self.width = 0
+        self.width = 1
         self.height = 0
         self.caret = Gdk.Rectangle()
         self.heights = list()
         self.highlight_sentences = True
         self.reflow_line = -1   # line number to reflow after "delete_range"; -1 to reflow every line
+
+        style = self.get_style_context()
+        self.padding = style.get_padding(Gtk.StateFlags.NORMAL)
 
         self.buffer.connect_after("insert_text", self.on_inserted)
         self.buffer.connect("delete_range", self.on_delete)
@@ -287,8 +290,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                 if cursor != self.buffer.get_cursor():
                     self.buffer.move_cursor(cursor, extend_selection)
             elif 0 < count:   # End
-                width = self.get_allocated_width()
-                inside, cursor = self.get_iter_at_location(width, self.caret.y)
+                inside, cursor = self.get_iter_at_location(self.width, self.caret.y)
                 if cursor != self.buffer.get_cursor():
                     self.buffer.move_cursor(cursor, extend_selection)
         elif step == Gtk.MovementStep.PAGES:
@@ -355,7 +357,6 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
 
     def get_iter_at_location(self, x, y):
         cursor = self.buffer.get_cursor()
-        width = self.get_allocated_width()
         height = 0
         i = 0
         for h in self.heights:
@@ -364,7 +365,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                 layout = Pango.Layout(context)
                 desc = self.get_font()
                 layout.set_font_description(desc)
-                layout.set_width(width * Pango.SCALE)
+                layout.set_width(self.width * Pango.SCALE)
                 layout.set_spacing(self.spacing * Pango.SCALE)
                 paragraph = self.get_paragraph(i)
                 text = paragraph.get_plain_text()
@@ -429,6 +430,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         cr.paint()
         cr.move_to(0, 0)
         cr.set_source_rgb(0, 0, 0)
+        cr.translate(self.padding.left, 0)
 
         height = wid.get_allocated_height()
         cursor = self.buffer.get_cursor()
@@ -574,7 +576,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         self.scroll_mark_onscreen(self.buffer.get_insert())
 
     def reflow(self, line=-1, redraw=True):
-        self.width = self.get_allocated_width()
+        self.width = max(1, self.get_allocated_width() - self.padding.left - self.padding.right)
 
         cursor = self.buffer.get_cursor()
 
@@ -627,7 +629,6 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         if not self._vadjustment:
             return
 
-        width = self.get_allocated_width()
         height = self.get_allocated_height()
         offset = self._vadjustment.get_value()
 
@@ -640,7 +641,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         layout = Pango.Layout(context)
         desc = self.get_font()
         layout.set_font_description(desc)
-        layout.set_width(width * Pango.SCALE)
+        layout.set_width(self.width * Pango.SCALE)
         layout.set_spacing(self.spacing * Pango.SCALE)
         text = self.buffer.paragraphs[line].get_plain_text()
         layout.set_text(text, -1)

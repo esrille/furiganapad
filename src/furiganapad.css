@@ -34,4 +34,6 @@
 }
 FuriganaView {
     -gtk-key-bindings: FuriganaViewBindings;
+    padding-left: 8px;
+    padding-right: 8px;
 }
