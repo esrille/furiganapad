@@ -448,7 +448,7 @@ class TextMark():
         self.iter.set_line_offset(end.get_line_offset() + d)
 
 
-class TextBuffer(GObject.Object):
+class FuriganaBuffer(GObject.Object):
 
     __gsignals__ = {
         'begin_user_action': (GObject.SIGNAL_RUN_FIRST, None, ()),

@@ -1,0 +1,37 @@
+@binding-set FuriganaViewBindings {
+    bind "BackSpace" { "backspace" () };
+    bind "Delete" { "delete-from-cursor" (chars, 1) };
+    bind "Left" { "move-cursor" (logical-positions, -1, 0) };
+    bind "Right" { "move-cursor" (logical-positions, 1, 0) };
+    bind "Up" { "move-cursor" (display-lines, -1, 0) };
+    bind "Down" { "move-cursor" (display-lines, 1, 0) };
+    bind "Page_Up" { "move-cursor" (pages, -1, 0) };
+    bind "Page_Down" { "move-cursor" (pages, 1, 0) };
+    bind "Home" { "move-cursor" (paragraph-ends, -1, 0) };
+    bind "End" { "move-cursor" (paragraph-ends, 1, 0) };
+    bind "<Primary>Home" { "move-cursor" (buffer-ends, -1, 0) };
+    bind "<Primary>End" { "move-cursor" (buffer-ends, 1, 0) };
+
+    bind "<Shift>Left" { "move-cursor" (logical-positions, -1, 1) };
+    bind "<Shift>Right" { "move-cursor" (logical-positions, 1, 1) };
+    bind "<Shift>Up" { "move-cursor" (display-lines, -1, 1) };
+    bind "<Shift>Down" { "move-cursor" (display-lines, 1, 1) };
+    bind "<Shift>Page_Up" { "move-cursor" (pages, -1, 1) };
+    bind "<Shift>Page_Down" { "move-cursor" (pages, 1, 1) };
+    bind "<Shift>Home" { "move-cursor" (paragraph-ends, -1, 1) };
+    bind "<Shift>End" { "move-cursor" (paragraph-ends, 1, 1) };
+    bind "<Shift><Primary>Home" { "move-cursor" (buffer-ends, -1, 1) };
+    bind "<Shift><Primary>End" { "move-cursor" (buffer-ends, 1, 1) };
+
+    bind "<Primary>A" { "select-all" (1) };
+    bind "<Primary>backslash" { "select-all" (0) };
+    bind "<Primary>Z" { "undo" () };
+    bind "<Primary>X" { "cut-clipboard" () };
+    bind "<Primary>C" { "copy-clipboard" () };
+    bind "<Primary>V" { "paste-clipboard" () };
+
+    bind "<Shift><Primary>Z" { "redo" () };
+}
+FuriganaView {
+    -gtk-key-bindings: FuriganaViewBindings;
+}

@@ -37,6 +37,7 @@ if __name__ == '__main__':
         pass
     gettext.bindtextdomain(package.get_domain(), package.get_localedir())
     logging.basicConfig(level=logging.DEBUG)
+
     app = Application()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     exit_status = app.run(sys.argv)

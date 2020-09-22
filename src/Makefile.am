@@ -23,6 +23,7 @@ furiganapad_PYTHON = \
 BUILT_SOURCES = package.py
 nodist_furiganapad_PYTHON = package.py
 dist_furiganapad_DATA = \
+	furiganapad.css \
 	furiganapad.menu.ui \
 	$(NULL)
 furiganapaddir = $(pkgdatadir)/src

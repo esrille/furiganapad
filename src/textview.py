@@ -20,7 +20,7 @@ gi.require_version('Pango', '1.0')
 gi.require_version('PangoCairo', '1.0')
 from gi.repository import Gtk, Gdk, GObject, Pango, PangoCairo
 
-from textbuffer import TextBuffer, has_newline, remove_dangling_annotations
+from textbuffer import FuriganaBuffer, has_newline, remove_dangling_annotations
 
 import cairo
 import logging
@@ -44,23 +44,27 @@ ESCAPE = str.maketrans({
 })
 
 
-class TextView(Gtk.DrawingArea, Gtk.Scrollable):
-
+class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
     __gsignals__ = {
-        'cut-clipboard': (GObject.SIGNAL_RUN_LAST, None, ()),
-        'copy-clipboard': (GObject.SIGNAL_RUN_LAST, None, ()),
-        'paste-clipboard': (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'redo': (GObject.SIGNAL_RUN_LAST, None, ()),
-        'select-all': (GObject.SIGNAL_RUN_FIRST, None, (bool,)),
-        'undo': (GObject.SIGNAL_RUN_LAST, None, ())
+        'backspace': (GObject.SIGNAL_ACTION | GObject.SIGNAL_RUN_LAST, None, ()),
+        'cut-clipboard': (GObject.SIGNAL_ACTION | GObject.SIGNAL_RUN_LAST, None, ()),
+        'copy-clipboard': (GObject.SIGNAL_ACTION | GObject.SIGNAL_RUN_LAST, None, ()),
+        'delete-from-cursor': (GObject.SIGNAL_ACTION | GObject.SIGNAL_RUN_LAST, None, (Gtk.DeleteType, int, )),
+        'move-cursor': (GObject.SIGNAL_ACTION | GObject.SIGNAL_RUN_LAST, None, (Gtk.MovementStep, int, bool, )),
+        'paste-clipboard': (GObject.SIGNAL_ACTION | GObject.SIGNAL_RUN_FIRST, None, ()),
+        'redo': (GObject.SIGNAL_ACTION | GObject.SIGNAL_RUN_LAST, None, ()),
+        'select-all': (GObject.SIGNAL_ACTION | GObject.SIGNAL_RUN_FIRST, None, (bool, )),
+        'undo': (GObject.SIGNAL_ACTION | GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
-    def __init__(self):
-        super().__init__()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
         self._init_scrollable()
         self._init_immultiontext()
 
-        self.buffer = TextBuffer()
+        self.buffer = FuriganaBuffer()
         self.width = 0
         self.height = 0
         self.caret = Gdk.Rectangle()
@@ -221,6 +225,18 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         self._hadjustment = self._vadjustment = None
         self._hadjust_signal = self._vadjust_signal = None
 
+    def do_backspace(self):
+        if self.buffer.delete_selection(True, True):
+            self.place_cursor_onscreen()
+            return
+        end = self.buffer.get_cursor()
+        start = end.copy()
+        if start.backward_cursor_position():
+            self.buffer.begin_user_action()
+            self.buffer.delete(start, end)
+            self.buffer.end_user_action()
+            self.place_cursor_onscreen()
+
     def do_copy_clipboard(self):
         clipboard = self.get_clipboard(Gdk.SELECTION_CLIPBOARD)
         self.buffer.copy_clipboard(clipboard)
@@ -228,6 +244,71 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
     def do_cut_clipboard(self):
         clipboard = self.get_clipboard(Gdk.SELECTION_CLIPBOARD)
         self.buffer.cut_clipboard(clipboard, self.get_editable())
+        self.place_cursor_onscreen()
+
+    def do_delete_from_cursor(self, type, count):
+        if type == Gtk.DeleteType.CHARS:
+            if self.buffer.delete_selection(True, True):
+                self.place_cursor_onscreen()
+                return
+            start = self.buffer.get_cursor()
+            end = start.copy()
+            if start.forward_cursor_position():
+                self.buffer.begin_user_action()
+                self.buffer.delete(start, end)
+                self.buffer.end_user_action()
+                self.buffer.place_cursor(start)
+                self.place_cursor_onscreen()
+
+    def do_move_cursor(self, step, count, extend_selection):
+        logger.debug("do_move_cursor(%d, %d, %d)", int(step), count, extend_selection)
+        if step == Gtk.MovementStep.LOGICAL_POSITIONS:
+            cursor = self.buffer.get_cursor()
+            if count < 0:     # Left
+                if cursor.backward_cursor_position():
+                    self.buffer.move_cursor(cursor, extend_selection)
+            elif 0 < count:   # Right
+                if cursor.forward_cursor_position():
+                    self.buffer.move_cursor(cursor, extend_selection)
+        elif step == Gtk.MovementStep.DISPLAY_LINES:
+            if count < 0:     # Up
+                y = self.caret.y - self.line_height
+                if 0 <= y:
+                    inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
+                    self.buffer.move_cursor(cursor, extend_selection)
+            elif 0 < count:   # Down
+                y = self.caret.y + self.line_height
+                if y < self.height:
+                    inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
+                    self.buffer.move_cursor(cursor, extend_selection)
+        elif step == Gtk.MovementStep.PARAGRAPH_ENDS:
+            if count < 0:     # Home
+                inside, cursor = self.get_iter_at_location(0, self.caret.y)
+                if cursor != self.buffer.get_cursor():
+                    self.buffer.move_cursor(cursor, extend_selection)
+            elif 0 < count:   # End
+                width = self.get_allocated_width()
+                inside, cursor = self.get_iter_at_location(width, self.caret.y)
+                if cursor != self.buffer.get_cursor():
+                    self.buffer.move_cursor(cursor, extend_selection)
+        elif step == Gtk.MovementStep.PAGES:
+            if count < 0:     # Page_Up
+                y = self.caret.y - self.get_allocated_height()
+                inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
+                self.buffer.move_cursor(cursor, extend_selection)
+            elif 0 < count:   # Page_Down
+                y = self.caret.y + self.get_allocated_height()
+                inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
+                self.buffer.move_cursor(cursor, extend_selection)
+        elif step == Gtk.MovementStep.BUFFER_ENDS:
+            if count < 0:     # Control-Home
+                cursor = self.buffer.get_start_iter()
+                if cursor != self.buffer.get_cursor():
+                    self.buffer.move_cursor(cursor, extend_selection)
+            elif 0 < count:   # Control-End
+                cursor = self.buffer.get_end_iter()
+                if cursor != self.buffer.get_cursor():
+                    self.buffer.move_cursor(cursor, extend_selection)
         self.place_cursor_onscreen()
 
     def do_paste_clipboard(self):
@@ -245,7 +326,11 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
         self.place_cursor_onscreen()
 
     def do_select_all(self, select):
-        self.buffer.select_all()
+        if select:
+            self.buffer.select_all()
+        else:
+            cursor = self.buffer.get_cursor()
+            self.buffer.place_cursor(cursor)
         self.queue_draw()
 
     def do_undo(self):
@@ -425,116 +510,13 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
             self.reflow(iter.get_line())
 
     def on_key_press(self, wid, event):
-        is_selection = (event.state & Gdk.ModifierType.SHIFT_MASK)
-        is_control = (event.state & Gdk.ModifierType.CONTROL_MASK)
         logger.debug("on_key_press: '%s', %08x", Gdk.keyval_name(event.keyval), event.state)
         if self.im.filter_keypress(event):
             return True
-        # Process shortcut keys firstly
-        if is_control:
-            if event.keyval == Gdk.KEY_A or event.keyval == Gdk.KEY_a:
-                self.emit('select-all', True)
-                return True
-            elif event.keyval == Gdk.KEY_X or event.keyval == Gdk.KEY_x:
-                self.emit('cut-clipboard')
-                return True
-            elif event.keyval == Gdk.KEY_C or event.keyval == Gdk.KEY_c:
-                self.emit('copy-clipboard')
-                return True
-            elif event.keyval == Gdk.KEY_V or event.keyval == Gdk.KEY_v:
-                self.emit('paste-clipboard')
-                return True
-        if event.keyval == Gdk.KEY_BackSpace:
-            if self.buffer.delete_selection(True, True):
-                self.place_cursor_onscreen()
-                return True
-            end = self.buffer.get_cursor()
-            start = end.copy()
-            if start.backward_cursor_position():
-                self.buffer.begin_user_action()
-                self.buffer.delete(start, end)
-                self.buffer.end_user_action()
-                self.place_cursor_onscreen()
-            return True
-        elif event.keyval == Gdk.KEY_Delete:
-            if self.buffer.delete_selection(True, True):
-                self.place_cursor_onscreen()
-                return True
-            start = self.buffer.get_cursor()
-            end = start.copy()
-            if start.forward_cursor_position():
-                self.buffer.begin_user_action()
-                self.buffer.delete(start, end)
-                self.buffer.end_user_action()
-                self.buffer.place_cursor(start)
-                self.place_cursor_onscreen()
-            return True
-        elif event.keyval == Gdk.KEY_Return:
+        if event.keyval == Gdk.KEY_Return:
             self.buffer.begin_user_action()
             self.buffer.insert_at_cursor('\n')
             self.buffer.end_user_action()
-            self.place_cursor_onscreen()
-            return True
-        elif event.keyval == Gdk.KEY_Escape:
-            cursor = self.buffer.get_cursor()
-            self.buffer.place_cursor(cursor)
-            self.queue_draw()
-            return True
-        elif event.keyval == Gdk.KEY_Left:
-            cursor = self.buffer.get_cursor()
-            if cursor.backward_cursor_position():
-                self.buffer.move_cursor(cursor, is_selection)
-                self.place_cursor_onscreen()
-            return True
-        elif event.keyval == Gdk.KEY_Right:
-            cursor = self.buffer.get_cursor()
-            if cursor.forward_cursor_position():
-                self.buffer.move_cursor(cursor, is_selection)
-                self.place_cursor_onscreen()
-            return True
-        elif event.keyval == Gdk.KEY_Up:
-            y = self.caret.y - self.line_height
-            if 0 <= y:
-                inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
-                self.buffer.move_cursor(cursor, is_selection)
-                self.place_cursor_onscreen()
-            return True
-        elif event.keyval == Gdk.KEY_Down:
-            y = self.caret.y + self.line_height
-            if y < self.height:
-                inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
-                self.buffer.move_cursor(cursor, is_selection)
-                self.place_cursor_onscreen()
-            return True
-        elif event.keyval == Gdk.KEY_Home:
-            if is_control:
-                cursor = self.buffer.get_start_iter()
-            else:
-                inside, cursor = self.get_iter_at_location(0, self.caret.y)
-            if cursor != self.buffer.get_cursor():
-                self.buffer.move_cursor(cursor, is_selection)
-                self.place_cursor_onscreen()
-            return True
-        elif event.keyval == Gdk.KEY_End:
-            if is_control:
-                cursor = self.buffer.get_end_iter()
-            else:
-                width = wid.get_allocated_width()
-                inside, cursor = self.get_iter_at_location(width, self.caret.y)
-            if cursor != self.buffer.get_cursor():
-                self.buffer.move_cursor(cursor, is_selection)
-                self.place_cursor_onscreen()
-            return True
-        elif event.keyval == Gdk.KEY_Page_Up:
-            y = self.caret.y - wid.get_allocated_height()
-            inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
-            self.buffer.move_cursor(cursor, is_selection)
-            self.place_cursor_onscreen()
-            return True
-        elif event.keyval == Gdk.KEY_Page_Down:
-            y = self.caret.y + wid.get_allocated_height()
-            inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
-            self.buffer.move_cursor(cursor, is_selection)
             self.place_cursor_onscreen()
             return True
         return False
@@ -752,3 +734,5 @@ class TextView(Gtk.DrawingArea, Gtk.Scrollable):
     vscroll_policy = GObject.property(
         default=Gtk.ScrollablePolicy.NATURAL, type=Gtk.ScrollablePolicy
     )
+
+FuriganaView.set_css_name('FuriganaView')

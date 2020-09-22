@@ -19,15 +19,12 @@ import package
 import gi
 gi.require_version('Gdk', '3.0')
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gdk, Gio, Gtk, GObject
+from gi.repository import Gdk, Gio, Gtk
 
 from window import Window
 
 import os
-import sys
-import locale
 import logging
-import json
 
 
 logger = logging.getLogger(__name__)
@@ -58,11 +55,19 @@ class Application(Gtk.Application):
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
+
         builder = Gtk.Builder()
         builder.set_translation_domain(package.get_domain())
         filename = os.path.join(os.path.dirname(__file__), "furiganapad.menu.ui")
         builder.add_from_file(filename)
         self.set_menubar(builder.get_object("menubar"))
+
+        style_provider = Gtk.CssProvider()
+        style_provider.load_from_path(os.path.join(os.path.dirname(__file__), 'furiganapad.css'))
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(),
+            style_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def is_opened(self, file):
         windows = self.get_windows()

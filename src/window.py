@@ -21,7 +21,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Pango', '1.0')
 from gi.repository import GLib, Gio, Gtk, Gdk, GObject, Pango
 
-from textview import TextView
+from textview import FuriganaView
 from textbuffer import remove_dangling_annotations, get_plain_text
 
 import gettext
@@ -57,7 +57,7 @@ class Window(Gtk.ApplicationWindow):
         scrolled_window.set_policy(
             Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
-        self.textview = TextView()
+        self.textview = FuriganaView()
         self.buffer = self.textview.get_buffer()
         self.buffer.connect_after('modified-changed', self.on_modified_changed)
 
