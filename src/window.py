@@ -144,6 +144,11 @@ class Window(Gtk.ApplicationWindow):
 
         self._load_file(file)
 
+    def _emit_to_focused(self, signal_name, *args):
+        focused = self.get_focus()
+        if focused:
+            focused.emit(signal_name, *args)
+
     def _load_file(self, file):
         if file:
             try:
@@ -234,10 +239,10 @@ class Window(Gtk.ApplicationWindow):
             return True
 
     def copy_callback(self, action, parameter):
-        self.textview.emit('copy-clipboard')
+        self._emit_to_focused('copy-clipboard')
 
     def cut_callback(self, action, parameter):
-        self.textview.emit('cut-clipboard')
+        self._emit_to_focused('cut-clipboard')
 
     def find_callback(self, action, parameter):
         start, end = self.buffer.get_selection_bounds()
@@ -384,7 +389,7 @@ class Window(Gtk.ApplicationWindow):
                 self._load_file(file)
 
     def paste_callback(self, action, parameter):
-        self.textview.emit('paste-clipboard')
+        self._emit_to_focused('paste-clipboard')
 
     def redo_callback(self, action, parameter):
         self.textview.emit('redo')

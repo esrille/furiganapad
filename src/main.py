@@ -36,7 +36,7 @@ if __name__ == '__main__':
     except Exception:
         pass
     gettext.bindtextdomain(package.get_domain(), package.get_localedir())
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.WARNING)
 
     app = Application()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
