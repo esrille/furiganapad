@@ -4,7 +4,7 @@
 「[ひらがなIME](https://github.com/esrille/ibus-hiragana)」といっしょにつかうと、￹漢字￺かんじ￻に￹自動的￺じどうてき￻にふりがなをふっていきます。
 
 <br>
-<video controls autoplay>
+<video controls autoplay muted playsinline>
 <source src='screenshot.mp4' type='video/mp4'>
 スクリーン ショット
 </video>
