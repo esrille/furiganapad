@@ -4,14 +4,14 @@
 ![「ふりがなパッド」のスクリーンショット](screenshot.png)
 
 ## ふりがなについて
-　こども￹用￺よう￻の￹本￺ほん￻には、すべての￹漢字￺かんじ￻にふりがながふってある￹本￺ほん￻もすくなくありません。そうしたふりがなのつけかたを「￹総￺そう￻ふりがな」とか「￹総￺そう￻ルビ」といいます。
+　こども￹用￺よう￻の￹本￺ほん￻には、すべての￹漢字￺かんじ￻にふりがなをふってある￹本￺ほん￻もすくなくありません。そうしたふりがなのつけかたを「￹総￺そう￻ふりがな」とか「￹総￺そう￻ルビ」といいます。
 
 　さいきんでは、「やさしい￹日本語￺にほんご￻」でかいた￹文章￺ぶんしょう￻をみたり、かいたりする￹機会￺きかい￻がふえてきました。「やさしい￹日本語￺にほんご￻」の￹文章￺ぶんしょう￻も￹漢字￺かんじ￻にふりがながふってあります。
 
 　いまではウェブブラウザも、ふりがなを￹表示￺ひょうじ￻できるようになっています。「ふりがなパッド」は、￹総￺そう￻ルビの￹文章￺ぶんしょう￻をかんたんに￹作成￺さくせい￻したり￹編集￺へんしゅう￻したりできるようにつくられています。
 
 ## ふりがなパッドのプログラム
-　「ふりがなパッド」は、￹Python￺パイソン￻でかいたGTKのプログラムです。￹標準￺ひょうじゅん￻の[Gtk.TextView](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/TextView.html)のかわりに、ふりがなに￹対応￺たいおう￻したTextViewを[Gtk.DrawingArea](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/DrawingArea.html)をつかってつくっています。￹文字￺もじ￻の￹描画￺びょうが￻には、[Pango](https://lazka.github.io/pgi-docs/index.html#Pango-1.0)をつかっています。ぜんたいでは2,400￹行￺ぎょう￻ほどのプログラムです(2020￹年￺ねん￻6￹月￺がつ￻￹現在￺げんざい￻)。
+　「ふりがなパッド」は、￹Python￺パイソン￻でかいたGTKのプログラムです。￹標準￺ひょうじゅん￻の[Gtk.TextView](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/TextView.html)のかわりに、ふりがなに￹対応￺たいおう￻したFuriganaViewを[Gtk.DrawingArea](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/DrawingArea.html)をつかってつくっています。￹文字￺もじ￻の￹描画￺びょうが￻には、[Pango](https://lazka.github.io/pgi-docs/index.html#Pango-1.0)をつかっています。ぜんたいでは2,500￹行￺ぎょう￻ほどのプログラムです(2020￹年￺ねん￻9￹月￺がつ￻￹現在￺げんざい￻)。
 
 ## ￹資料￺しりょう￻
 

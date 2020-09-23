@@ -4,14 +4,14 @@
 ![「ふりがなパッド」のスクリーンショット](screenshot.png)
 
 ## ふりがなについて
-　こども<ruby>用<rp>(</rp><rt>よう</rt><rp>)</rp></ruby>の<ruby>本<rp>(</rp><rt>ほん</rt><rp>)</rp></ruby>には、すべての<ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby>にふりがながふってある<ruby>本<rp>(</rp><rt>ほん</rt><rp>)</rp></ruby>もすくなくありません。そうしたふりがなのつけかたを「<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ふりがな」とか「<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ルビ」といいます。
+　こども<ruby>用<rp>(</rp><rt>よう</rt><rp>)</rp></ruby>の<ruby>本<rp>(</rp><rt>ほん</rt><rp>)</rp></ruby>には、すべての<ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby>にふりがなをふってある<ruby>本<rp>(</rp><rt>ほん</rt><rp>)</rp></ruby>もすくなくありません。そうしたふりがなのつけかたを「<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ふりがな」とか「<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ルビ」といいます。
 
 　さいきんでは、「やさしい<ruby>日本語<rp>(</rp><rt>にほんご</rt><rp>)</rp></ruby>」でかいた<ruby>文章<rp>(</rp><rt>ぶんしょう</rt><rp>)</rp></ruby>をみたり、かいたりする<ruby>機会<rp>(</rp><rt>きかい</rt><rp>)</rp></ruby>がふえてきました。「やさしい<ruby>日本語<rp>(</rp><rt>にほんご</rt><rp>)</rp></ruby>」の<ruby>文章<rp>(</rp><rt>ぶんしょう</rt><rp>)</rp></ruby>も<ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby>にふりがながふってあります。
 
 　いまではウェブブラウザも、ふりがなを<ruby>表示<rp>(</rp><rt>ひょうじ</rt><rp>)</rp></ruby>できるようになっています。「ふりがなパッド」は、<ruby>総<rp>(</rp><rt>そう</rt><rp>)</rp></ruby>ルビの<ruby>文章<rp>(</rp><rt>ぶんしょう</rt><rp>)</rp></ruby>をかんたんに<ruby>作成<rp>(</rp><rt>さくせい</rt><rp>)</rp></ruby>したり<ruby>編集<rp>(</rp><rt>へんしゅう</rt><rp>)</rp></ruby>したりできるようにつくられています。
 
 ## ふりがなパッドのプログラム
-　「ふりがなパッド」は、<ruby>Python<rp>(</rp><rt>パイソン</rt><rp>)</rp></ruby>でかいたGTKのプログラムです。<ruby>標準<rp>(</rp><rt>ひょうじゅん</rt><rp>)</rp></ruby>の[Gtk.TextView](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/TextView.html)のかわりに、ふりがなに<ruby>対応<rp>(</rp><rt>たいおう</rt><rp>)</rp></ruby>したTextViewを[Gtk.DrawingArea](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/DrawingArea.html)をつかってつくっています。<ruby>文字<rp>(</rp><rt>もじ</rt><rp>)</rp></ruby>の<ruby>描画<rp>(</rp><rt>びょうが</rt><rp>)</rp></ruby>には、[Pango](https://lazka.github.io/pgi-docs/index.html#Pango-1.0)をつかっています。ぜんたいでは2,400<ruby>行<rp>(</rp><rt>ぎょう</rt><rp>)</rp></ruby>ほどのプログラムです(2020<ruby>年<rp>(</rp><rt>ねん</rt><rp>)</rp></ruby>6<ruby>月<rp>(</rp><rt>がつ</rt><rp>)</rp></ruby><ruby>現在<rp>(</rp><rt>げんざい</rt><rp>)</rp></ruby>)。
+　「ふりがなパッド」は、<ruby>Python<rp>(</rp><rt>パイソン</rt><rp>)</rp></ruby>でかいたGTKのプログラムです。<ruby>標準<rp>(</rp><rt>ひょうじゅん</rt><rp>)</rp></ruby>の[Gtk.TextView](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/TextView.html)のかわりに、ふりがなに<ruby>対応<rp>(</rp><rt>たいおう</rt><rp>)</rp></ruby>したFuriganaViewを[Gtk.DrawingArea](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/DrawingArea.html)をつかってつくっています。<ruby>文字<rp>(</rp><rt>もじ</rt><rp>)</rp></ruby>の<ruby>描画<rp>(</rp><rt>びょうが</rt><rp>)</rp></ruby>には、[Pango](https://lazka.github.io/pgi-docs/index.html#Pango-1.0)をつかっています。ぜんたいでは2,500<ruby>行<rp>(</rp><rt>ぎょう</rt><rp>)</rp></ruby>ほどのプログラムです(2020<ruby>年<rp>(</rp><rt>ねん</rt><rp>)</rp></ruby>9<ruby>月<rp>(</rp><rt>がつ</rt><rp>)</rp></ruby><ruby>現在<rp>(</rp><rt>げんざい</rt><rp>)</rp></ruby>)。
 
 ## <ruby>資料<rp>(</rp><rt>しりょう</rt><rp>)</rp></ruby>
 
