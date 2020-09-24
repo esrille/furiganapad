@@ -156,8 +156,9 @@ class Window(Gtk.ApplicationWindow):
                 content = content.decode("utf-8", "ignore")
                 content = remove_dangling_annotations(content)
                 if content:
+                    self.buffer.begin_user_action()
                     self.buffer.set_text(content)
-                    self.buffer.set_modified(False)
+                    self.buffer.end_user_action()
                     self.buffer.place_cursor(self.buffer.get_start_iter())
             except GObject.GError as e:
                 file = None
@@ -494,10 +495,7 @@ class Window(Gtk.ApplicationWindow):
 
     def set_file(self, file):
         self.file = file
-        if self.buffer:
-            return self.buffer.set_modified(not file)
-        else:
-            return False
+        return self.buffer.set_modified(not file)
 
     def unconvert_callback(self, action, parameter):
         self.buffer.begin_user_action()
