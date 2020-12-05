@@ -933,6 +933,8 @@ class FuriganaBuffer(GObject.Object):
                 text = text[:-2]
             elif text[-1] in NEWLINES:
                 text = text[:-1]
+            if not text:
+                text = '\n'
         if self.surround_deleted and self.ruby_mode and not iter.inside_ruby():
             text = self._annotate(text, self.reading)
         self.surround_deleted = False
