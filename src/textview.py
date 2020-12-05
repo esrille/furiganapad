@@ -530,7 +530,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
 
     def on_mouse_move(self, wid, event):
         if (event.state & Gdk.ModifierType.BUTTON1_MASK):
-            inside, cursor = self.get_iter_at_location(event.x, self._get_offset() + event.y)
+            inside, cursor = self.get_iter_at_location(event.x - self.padding.left, self._get_offset() + event.y)
             self.buffer.move_cursor(cursor, True)
             self.place_cursor_onscreen()
         return True
@@ -539,7 +539,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         self.im.reset()
         if event.button == Gdk.BUTTON_PRIMARY:
             is_selection = (event.state & Gdk.ModifierType.SHIFT_MASK)
-            inside, cursor = self.get_iter_at_location(event.x, self._get_offset() + event.y)
+            inside, cursor = self.get_iter_at_location(event.x - self.padding.left, self._get_offset() + event.y)
             self.buffer.move_cursor(cursor, is_selection)
             self.place_cursor_onscreen()
         return True
