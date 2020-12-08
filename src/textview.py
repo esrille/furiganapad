@@ -147,7 +147,10 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
             cr.set_source_rgb(1, 1, 1)
         cr.rectangle(self.caret.x, self.caret.y, self.caret.width, self.caret.height)
         cr.fill()
-        self.im.set_cursor_location(self.caret)
+        im_caret = Gdk.Rectangle()
+        im_caret.x, im_caret.y, im_caret.width, im_caret.height = \
+            self.padding.left + self.caret.x, self.caret.y, self.caret.width, self.caret.height
+        self.im.set_cursor_location(im_caret)
         cr.restore()
 
     def _draw_rubies(self, cr, layout, paragraph, plain, height, cursor_offset):
