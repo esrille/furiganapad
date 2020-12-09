@@ -560,7 +560,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
     def on_preedit_end(self, im):
         self.preedit = self.im.get_preedit_string()
         self.buffer.delete_selection(True, True)
-        logger.debug('_end(self, w: "%s" %d', self.preedit[0], self.preedit[2])
+        logger.debug('on_preedit_end: "%s" %d', self.preedit[0], self.preedit[2])
 
     def on_preedit_start(self, im):
         self.preedit = self.im.get_preedit_string()
