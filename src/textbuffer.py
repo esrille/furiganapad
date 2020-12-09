@@ -59,8 +59,14 @@ def is_kana(s):
 
 
 def is_reading(s):
-    for c in s:
-        if c not in HIRAGANA + '―':
+    if not s:
+        return False
+    if s[0] not in HIRAGANA:
+        return False
+    for c in s[1:]:
+        if c == '―':
+            return True
+        if c not in HIRAGANA:
             return False
     return True
 
@@ -791,7 +797,7 @@ class FuriganaBuffer(GObject.Object):
             end = self.get_iter_at_line_offset(action[3], action[4])
             self.delete(start, end)
             # Redo previous insert_text that issued within 5 msec
-            # to cope with ibus-replace-with-kanji smoothly
+            # to cope with ibus-hiragana smoothly
             if self.redo:
                 prev = self.redo[-1]
                 if prev[0] == "insert_text" and action[6] - prev[6] < 0.005:
@@ -815,7 +821,7 @@ class FuriganaBuffer(GObject.Object):
             end = self.get_iter_at_line_offset(action[3], action[4])
             self.delete(start, end)
             # Undo previous delete_range that issued within 5 msec
-            # to cope with ibus-replace-with-kanji smoothly
+            # to cope with ibus-hiragana smoothly
             if self.undo:
                 prev = self.undo[-1]
                 if prev[0] == "delete_range" and action[6] - prev[6] < 0.005:
