@@ -496,6 +496,7 @@ class FuriganaBuffer(GObject.Object):
         self.connect("delete_range", self.on_delete)
 
     def _annotate(self, s, r):
+        logger.debug('_annotate("%s", "%s")', s, r)
         if is_kana(s):
             return s
         pos = r.find('―')
@@ -722,14 +723,14 @@ class FuriganaBuffer(GObject.Object):
             if self.reading and is_reading(reading + self.reading):
                 # Extend self.reading
                 self.reading = reading + self.reading
-                logger.info('reading: %s', self.reading)
+                logger.debug('reading: %s', self.reading)
             else:
                 self.surround_deleted = False
 
         if not self.surround_deleted:
             if is_reading(reading):
                 self.reading = reading
-                logger.info('reading: %s', self.reading)
+                logger.debug('reading: %s', self.reading)
             self.surround_deleted = True
 
         self.delete(start, end)
@@ -798,26 +799,33 @@ class FuriganaBuffer(GObject.Object):
         if not self.redo:
             return
         was_modified = self.get_modified()
-        logger.info("do_redo")
+        logger.debug("do_redo")
         action = self.redo.pop()
         if action[0] == "insert_text":
             start = self.get_iter_at_line_offset(action[1], action[2])
             self.insert(start, action[5])
-        elif action[0] == "delete_range":
+        else:
+            assert action[0] == "delete_range"
             start = self.get_iter_at_line_offset(action[1], action[2])
             end = self.get_iter_at_line_offset(action[3], action[4])
             self.delete(start, end)
-            # Redo previous insert_text that issued within 5 msec
-            # to cope with ibus-hiragana smoothly
-            if self.redo:
-                prev = self.redo[-1]
-                if prev[0] == "insert_text" and action[6] - prev[6] < 0.005:
+            # Redo previous actions that were issued by ibus-hiragana
+            if action[7]:    # during surround_deleted?
+                while self.redo:
+                    logger.debug("do_redo: %s", action)
                     self.undo.append(action)
                     action = self.redo.pop()
-                    logger.info("do_redo: %s", action)
-                    start = self.get_iter_at_line_offset(action[1], action[2])
-                    self.insert(start, action[5])
+                    if action[0] == "insert_text":
+                        start = self.get_iter_at_line_offset(action[1], action[2])
+                        self.insert(start, action[5])
+                    else:
+                        start = self.get_iter_at_line_offset(action[1], action[2])
+                        end = self.get_iter_at_line_offset(action[3], action[4])
+                        self.delete(start, end)
+                    if not action[7]:   # during surround_deleted?
+                        break
         self.place_cursor(start)
+        logger.debug("do_redo: %s", action)
         self.undo.append(action)
         if not was_modified:
             self.emit('modified-changed')
@@ -825,26 +833,33 @@ class FuriganaBuffer(GObject.Object):
     def do_undo(self):
         if not self.get_modified():
             return
-        logger.info("do_undo")
+        logger.debug("do_undo")
         action = self.undo.pop()
         if action[0] == "insert_text":
             start = self.get_iter_at_line_offset(action[1], action[2])
             end = self.get_iter_at_line_offset(action[3], action[4])
             self.delete(start, end)
-            # Undo previous delete_range that issued within 5 msec
-            # to cope with ibus-hiragana smoothly
-            if self.undo:
+            # Undo previous actions that were issued by ibus-hiragana
+            while self.undo:
                 prev = self.undo[-1]
-                if prev[0] == "delete_range" and action[6] - prev[6] < 0.005:
-                    self.redo.append(action)
-                    action = self.undo.pop()
-                    logger.info("do_undo: %s", action)
+                if not prev[7]:   # not during surround_deleted?
+                    break
+                logger.debug("do_undo: %s", action)
+                self.redo.append(action)
+                action = self.undo.pop()
+                if prev[0] == "delete_range":
                     start = self.get_iter_at_line_offset(action[1], action[2])
                     self.insert(start, action[5])
-        elif action[0] == "delete_range":
+                else:
+                    start = self.get_iter_at_line_offset(action[1], action[2])
+                    end = self.get_iter_at_line_offset(action[3], action[4])
+                    self.delete(start, end)
+        else:
+            assert action[0] == "delete_range"
             start = self.get_iter_at_line_offset(action[1], action[2])
             self.insert(start, action[5])
         self.place_cursor(start)
+        logger.debug("do_undo: %s", action)
         self.redo.append(action)
         if not self.get_modified():
             self.emit('modified-changed')
@@ -956,7 +971,7 @@ class FuriganaBuffer(GObject.Object):
             if self.reading.startswith(text) and is_reading(self.reading[len(text):]):
                 # Shrink self.reading
                 self.reading = self.reading[len(text):]
-                logger.info('reading: %s', self.reading)
+                logger.debug('reading: %s', self.reading)
             else:
                 if self.ruby_mode and not iter.inside_ruby():
                     text = self._annotate(text, self.reading)
@@ -988,8 +1003,9 @@ class FuriganaBuffer(GObject.Object):
                       start.get_line(), start.get_line_offset(),
                       end.get_line(), end.get_line_offset(),
                       text,
-                      time.perf_counter()]
-            logger.info("on_delete: %s", action)
+                      time.perf_counter(),
+                      self.surround_deleted]
+            logger.debug("on_delete: %s", action)
             self.undo.append(action)
             self.redo.clear()
             if not was_modified:
@@ -1006,8 +1022,9 @@ class FuriganaBuffer(GObject.Object):
                       self.inserting.get_line(), self.inserting.get_line_offset(),
                       iter.get_line(), iter.get_line_offset(),
                       text,
-                      time.perf_counter()]
-            logger.info("on_inserted: %s", action)
+                      time.perf_counter(),
+                      self.surround_deleted]
+            logger.debug("on_inserted: %s", action)
             self.undo.append(action)
             self.redo.clear()
             self.inserting = None
