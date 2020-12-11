@@ -717,10 +717,21 @@ class FuriganaBuffer(GObject.Object):
 
         assert start.get_line() == end.get_line()
         reading = self.paragraphs[start.get_line()].get_text()[start.get_line_offset():end.get_line_offset()]
-        if is_reading(reading):
-            self.reading = reading
-            logger.info('よみ: %s', self.reading)
-        self.surround_deleted = True
+
+        if self.surround_deleted:
+            if self.reading and is_reading(reading + self.reading):
+                # Extend self.reading
+                self.reading = reading + self.reading
+                logger.info('reading: %s', self.reading)
+            else:
+                self.surround_deleted = False
+
+        if not self.surround_deleted:
+            if is_reading(reading):
+                self.reading = reading
+                logger.info('reading: %s', self.reading)
+            self.surround_deleted = True
+
         self.delete(start, end)
 
     def do_delete_range(self, start, end):
@@ -941,9 +952,15 @@ class FuriganaBuffer(GObject.Object):
                 text = text[:-1]
             if not text:
                 text = '\n'
-        if self.surround_deleted and self.ruby_mode and not iter.inside_ruby():
-            text = self._annotate(text, self.reading)
-        self.surround_deleted = False
+        if self.surround_deleted:
+            if self.reading.startswith(text) and is_reading(self.reading[len(text):]):
+                # Shrink self.reading
+                self.reading = self.reading[len(text):]
+                logger.info('reading: %s', self.reading)
+            else:
+                if self.ruby_mode and not iter.inside_ruby():
+                    text = self._annotate(text, self.reading)
+                self.surround_deleted = False
         start = TextIter(self)
         start.assign(iter)
         self.emit('insert_text', iter, text)
