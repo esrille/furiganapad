@@ -160,7 +160,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         desc.set_size(size // RUBY_DIV)
         lt.set_font_description(desc)
         for pos, length, ruby in paragraph.rubies:
-            if self._has_preedit() and cursor_offset <= pos:
+            if self._has_preedit() and cursor_offset - self.preedit[2] <= pos:
                 pos += len(self.preedit[0])
             text = plain[:pos]
             left = layout.index_to_pos(len(text.encode()))
