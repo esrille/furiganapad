@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([furiganapad], [0.3.0], [https://github.com/esrille/furiganapad/issues])
+AC_INIT([furiganapad], [0.4.0], [https://github.com/esrille/furiganapad/issues])
 AM_INIT_AUTOMAKE([foreign tar-ustar])
 
 AM_GNU_GETTEXT([external])
