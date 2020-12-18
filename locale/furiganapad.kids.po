@@ -18,7 +18,7 @@ msgstr ""
 
 #: src/window.py:46
 msgid "FuriganaPad"
-msgstr "ふりがなパット"
+msgstr "ふりがなパッド"
 
 #: src/window.py:96
 msgid "Ruby"
