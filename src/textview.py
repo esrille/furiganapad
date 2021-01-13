@@ -153,14 +153,14 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         self.im.set_cursor_location(im_caret)
         cr.restore()
 
-    def _draw_rubies(self, cr, layout, paragraph, plain, height, cursor_offset):
+    def _draw_rubies(self, cr, layout, paragraph, plain, height, cursor_offset, current_line):
         lt = PangoCairo.create_layout(cr)
         desc = self.get_font().copy_static()
         size = desc.get_size()
         desc.set_size(size // RUBY_DIV)
         lt.set_font_description(desc)
         for pos, length, ruby in paragraph.rubies:
-            if self._has_preedit() and cursor_offset - self.preedit[2] <= pos:
+            if current_line and self._has_preedit() and cursor_offset - self.preedit[2] <= pos:
                 pos += len(self.preedit[0])
             text = plain[:pos]
             left = layout.index_to_pos(len(text.encode()))
@@ -487,9 +487,11 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                 PangoCairo.update_layout(cr, layout)
                 cr.move_to(0, y)
                 PangoCairo.show_layout(cr, layout)
-                self._draw_rubies(cr, layout, paragraph, text, y, cursor_offset)
                 if lineno == cursor.get_line():
+                    self._draw_rubies(cr, layout, paragraph, text, y, cursor_offset, True)
                     self._draw_caret(cr, layout, text, y, cursor_offset)
+                else:
+                    self._draw_rubies(cr, layout, paragraph, text, y, cursor_offset, False)
             y += h
             lineno += 1
 
