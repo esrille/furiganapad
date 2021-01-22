@@ -2,8 +2,8 @@
 set -e
 set -x
 
-aclocal
-autopoint
-automake --add-missing --copy
-autoconf
+aclocal --force
+autopoint --force
+automake --add-missing --force-missing --copy
+autoconf -f
 ./configure "$@"
