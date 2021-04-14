@@ -620,11 +620,8 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                 self.height += h
 
         if self._vadjustment:
-            height = self.get_allocated_height()
-            if self.height < height:
-                upper = height
-            else:
-                upper = self.height
+            allocated = self.get_allocated_height()
+            upper = allocated if self.height < allocated else self.height
             self._vadjustment.set_upper(upper)
 
         if redraw:
@@ -652,24 +649,23 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         layout.set_text(text, -1)
 
         current = text[:mark.iter.get_plain_line_offset()]
-        line, pos = layout.index_to_line_x(len(current.encode()), False)
-        y += self.line_height * line
+        pos = layout.index_to_pos(len(current.encode()))
+        y += pos.y / Pango.SCALE
+
         upper = self._vadjustment.get_upper()
         if offset <= y and y + self.line_height <= offset + height <= upper:
             self.queue_draw()
             return
 
-        lines = height // self.line_height
         if y < offset:
+            # Scroll up
             if upper < y + height:
-                d = (y + height) - upper
-                y -= self.line_height * (d // self.line_height + 1)
-                y = max(0, y)
+                lines = (y + height - upper) // self.line_height + 1
+                y = max(0, y - lines * self.line_height)
         else:
-            y //= self.line_height
-            y -= lines - 1
-            y = self.line_height * max(0, y)
-        assert y % self.line_height == 0
+            # Scroll down
+            lines = height // self.line_height - 1
+            y = max(0, y - lines * self.line_height)
         self._vadjustment.set_value(y)
         self.queue_draw()
 
@@ -681,14 +677,15 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
     def set_font(self, font_desc):
         self.font_desc = font_desc
         context = self.create_pango_context()
-        metrics = context.get_metrics(font_desc, None)
-        if not Pango.version_check(1, 44, 0):
-            self.spacing = math.ceil(metrics.get_height() / Pango.SCALE * 0.6)
-            self.line_height = math.ceil(metrics.get_height() / Pango.SCALE) + self.spacing
+        context.set_font_description(font_desc)
+        metrics = context.get_metrics(None, None)
+        if Pango.version_check(1, 44, 0) is None:
+            line_height = metrics.get_height()
         else:
-            self.line_height = (metrics.get_ascent() + metrics.get_descent()) / Pango.SCALE
-            self.spacing = math.ceil(self.line_height * 0.6)
-            self.line_height = math.ceil(self.line_height) + self.spacing
+            line_height = metrics.get_ascent() + metrics.get_descent()
+        self.line_height = math.ceil(line_height * 1.6 / Pango.SCALE)
+        self.spacing = math.ceil(line_height * 0.6 / Pango.SCALE)
+        logger.debug("set_font: spacing %d, line_height %d", self.spacing, self.line_height)
         self.reflow()
 
     def set_hadjustment(self, adjustment):
