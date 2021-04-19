@@ -297,14 +297,25 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                 if cursor != self.buffer.get_cursor():
                     self.buffer.move_cursor(cursor, extend_selection)
         elif step == Gtk.MovementStep.PAGES:
+            if not self._vadjustment:
+                return
+            offset = self._vadjustment.get_value()
+            height = self.get_allocated_height()
+            y = self.caret.y
             if count < 0:     # Page_Up
-                y = self.caret.y - self.get_allocated_height()
-                inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
-                self.buffer.move_cursor(cursor, extend_selection)
+                offset -= height
+                if offset < 0:
+                    return self.do_move_cursor(Gtk.MovementStep.BUFFER_ENDS, -1, extend_selection)
+                y -= height
             elif 0 < count:   # Page_Down
-                y = self.caret.y + self.get_allocated_height()
-                inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
-                self.buffer.move_cursor(cursor, extend_selection)
+                offset += height
+                upper = self._vadjustment.get_upper()
+                if upper <= offset:
+                    return self.do_move_cursor(Gtk.MovementStep.BUFFER_ENDS, 1, extend_selection)
+                y += height
+            self._vadjustment.set_value(offset)
+            inside, cursor = self.get_iter_at_location(self.caret.x + 1, y)
+            self.buffer.move_cursor(cursor, extend_selection)
         elif step == Gtk.MovementStep.BUFFER_ENDS:
             if count < 0:     # Control-Home
                 cursor = self.buffer.get_start_iter()
