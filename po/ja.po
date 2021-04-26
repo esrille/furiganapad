@@ -1,13 +1,13 @@
 # Furiganapad
-# Copyright (C) 2020 Esrille Inc. <info@esrille.com>
+# Copyright (C) 2020, 2021 Esrille Inc. <info@esrille.com>
 # This file is distributed under the same license as the furiganapad package.
-# Esrille Inc. <info@esrille.com>, 2020.
+# Esrille Inc. <info@esrille.com>, 2020, 2021.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: furiganapad 0.4.0\n"
+"Project-Id-Version: furiganapad 0.4.2\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2021-01-13 17:51+0900\n"
+"POT-Creation-Date: 2021-04-18 21:31+0900\n"
 "PO-Revision-Date: 2020-06-11 05:38+0900\n"
 "Last-Translator: Esrille Inc. <info@esrille.com>\n"
 "Language-Team: Japanese <info@esrille.com>\n"
