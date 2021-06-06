@@ -142,6 +142,7 @@ class Window(Gtk.ApplicationWindow):
             "activate", self.highlightlongsentences_callback)
         self.add_action(self.highlightlongsentences_action)
 
+        self.file = None
         self._load_file(file)
 
     def _emit_to_focused(self, signal_name, *args):
