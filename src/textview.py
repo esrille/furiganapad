@@ -231,21 +231,22 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
     def do_move_cursor(self, step, count, extend_selection):
         logger.debug("do_move_cursor(%d, %d, %d)", int(step), count, extend_selection)
         if step == Gtk.MovementStep.LOGICAL_POSITIONS:
-            cursor = self.buffer.get_cursor()
-            if count < 0:  # Left
-                if cursor.backward_cursor_positions(-count):
+            (start, end) = self.buffer.get_selection_bounds()
+            if start == end or extend_selection:
+                cursor = self.buffer.get_cursor()
+                if count < 0 and cursor.backward_cursor_positions(-count):  # Left
                     self.buffer.move_cursor(cursor, extend_selection)
-            elif 0 < count:  # Right
-                if cursor.forward_cursor_positions(count):
+                elif 0 < count and cursor.forward_cursor_positions(count):  # Right
                     self.buffer.move_cursor(cursor, extend_selection)
+            else:
+                cursor = start if count < 0 else end
+                self.buffer.move_cursor(cursor, extend_selection)
         elif step == Gtk.MovementStep.WORDS:
             cursor = self.buffer.get_cursor()
-            if count < 0:  # Left
-                if cursor.backward_visible_word_starts(-count):
-                    self.buffer.move_cursor(cursor, extend_selection)
-            elif 0 < count:  # Right
-                if cursor.forward_visible_word_ends(count):
-                    self.buffer.move_cursor(cursor, extend_selection)
+            if count < 0 and cursor.backward_visible_word_starts(-count):   # Left
+                self.buffer.move_cursor(cursor, extend_selection)
+            elif 0 < count and cursor.forward_visible_word_ends(count):     # Right
+                self.buffer.move_cursor(cursor, extend_selection)
         elif step == Gtk.MovementStep.DISPLAY_LINES:
             if count < 0:  # Up
                 y = self.caret.y - self.line_height
