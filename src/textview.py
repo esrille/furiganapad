@@ -233,10 +233,18 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         if step == Gtk.MovementStep.LOGICAL_POSITIONS:
             cursor = self.buffer.get_cursor()
             if count < 0:  # Left
-                if cursor.backward_cursor_position():
+                if cursor.backward_cursor_positions(-count):
                     self.buffer.move_cursor(cursor, extend_selection)
             elif 0 < count:  # Right
-                if cursor.forward_cursor_position():
+                if cursor.forward_cursor_positions(count):
+                    self.buffer.move_cursor(cursor, extend_selection)
+        elif step == Gtk.MovementStep.WORDS:
+            cursor = self.buffer.get_cursor()
+            if count < 0:  # Left
+                if cursor.backward_visible_word_starts(-count):
+                    self.buffer.move_cursor(cursor, extend_selection)
+            elif 0 < count:  # Right
+                if cursor.forward_visible_word_ends(count):
                     self.buffer.move_cursor(cursor, extend_selection)
         elif step == Gtk.MovementStep.DISPLAY_LINES:
             if count < 0:  # Up

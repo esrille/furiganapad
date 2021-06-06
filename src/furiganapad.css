@@ -11,6 +11,8 @@
     bind "End" { "move-cursor" (paragraph-ends, 1, 0) };
     bind "<Primary>Home" { "move-cursor" (buffer-ends, -1, 0) };
     bind "<Primary>End" { "move-cursor" (buffer-ends, 1, 0) };
+    bind "<Primary>Left" { "move-cursor" (words, -1, 0) };
+    bind "<Primary>Right" { "move-cursor" (words, 1, 0) };
 
     bind "<Shift>Left" { "move-cursor" (logical-positions, -1, 1) };
     bind "<Shift>Right" { "move-cursor" (logical-positions, 1, 1) };
@@ -22,6 +24,8 @@
     bind "<Shift>End" { "move-cursor" (paragraph-ends, 1, 1) };
     bind "<Shift><Primary>Home" { "move-cursor" (buffer-ends, -1, 1) };
     bind "<Shift><Primary>End" { "move-cursor" (buffer-ends, 1, 1) };
+    bind "<Shift><Primary>Left" { "move-cursor" (words, -1, 1) };
+    bind "<Shift><Primary>Right" { "move-cursor" (words, 1, 1) };
 
     bind "<Primary>A" { "select-all" (1) };
     bind "<Primary>backslash" { "select-all" (0) };

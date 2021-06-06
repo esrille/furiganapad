@@ -158,6 +158,10 @@ class Paragraph:
         assert 0 <= offset <= len(self.text)
         return self.breaker.preceding(offset)
 
+    def _backward_visible_word_start(self, offset):
+        assert 0 <= offset <= len(self.text)
+        return self.breaker.preceding_word_start(offset)
+
     def _expand_plain_offset(self, offset):
         mode = PLAIN
         i = 0
@@ -193,6 +197,10 @@ class Paragraph:
         end = self._expand_plain_offset(offset + len(str))
         offset = self._expand_plain_offset(offset)
         return (offset, end)
+
+    def _forward_visible_word_end(self, offset):
+        assert 0 <= offset <= len(self.text)
+        return self.breaker.following_word_end(offset)
 
     def _get_plain_offset(self, offset):
         mode = PLAIN
@@ -336,6 +344,19 @@ class TextIter:
                 return False
         return True
 
+    def backward_visible_word_start(self):
+        return self.buffer._backward_visible_word_start(self)
+
+    def backward_visible_word_starts(self, count):
+        if count == 0:
+            return False
+        if count < 0:
+            return self.forward_visible_word_ends(-count)
+        for i in range(count):
+            if not self.backward_visible_word_start():
+                return False
+        return True
+
     def copy(self):
         return TextIter(self.buffer, self.line, self.offset)
 
@@ -373,6 +394,19 @@ class TextIter:
         if limit and limit <= str:
             return None
         return self.buffer._forward_search(self, str, flags, limit)
+
+    def forward_visible_word_end(self):
+        return self.buffer._forward_visible_word_end(self)
+
+    def forward_visible_word_ends(self, count):
+        if count == 0:
+            return False
+        if count < 0:
+            return self.backward_visible_word_starts(-count)
+        for i in range(count):
+            if not self.forward_visible_word_end():
+                return False
+        return True
 
     def get_buffer(self):
         return self.buffer
@@ -514,6 +548,20 @@ class FuriganaBuffer(GObject.Object):
             return True
         return False
 
+    def _backward_visible_word_start(self, iter):
+        lineno = iter.get_line()
+        offset = iter.get_line_offset()
+        offset = self.paragraphs[lineno]._backward_visible_word_start(offset)
+        if 0 <= offset:
+            iter.set_line_offset(offset)
+            return True
+        lineno -= 1
+        if 0 <= lineno:
+            iter.set_line(lineno)
+            iter.set_line_offset(self.paragraphs[lineno].get_length() - 1)
+            return True
+        return False
+
     def empty(self):
         if 1 < self.get_line_count():
             return False
@@ -545,6 +593,20 @@ class FuriganaBuffer(GObject.Object):
         lineno = iter.get_line()
         offset = iter.get_line_offset()
         offset = self.paragraphs[lineno]._forward_cursor_position(offset)
+        if offset < self.paragraphs[lineno].get_length():
+            iter.set_line_offset(offset)
+            return True
+        lineno += 1
+        if lineno < len(self.paragraphs):
+            iter.set_line(lineno)
+            iter.set_line_offset(0)
+            return True
+        return False
+
+    def _forward_visible_word_end(self, iter):
+        lineno = iter.get_line()
+        offset = iter.get_line_offset()
+        offset = self.paragraphs[lineno]._forward_visible_word_end(offset)
         if offset < self.paragraphs[lineno].get_length():
             iter.set_line_offset(offset)
             return True

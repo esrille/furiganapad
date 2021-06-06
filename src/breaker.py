@@ -60,7 +60,7 @@ class Breaker:
             if self.cursor_positions[offset]:
                 return offset
 
-    def following_word_ends(self, offset):
+    def following_word_end(self, offset):
         assert 0 <= offset <= self.length
         while True:
             offset += 1
@@ -78,7 +78,7 @@ class Breaker:
             if self.cursor_positions[offset]:
                 return offset
 
-    def preceding_word_starts(self, offset):
+    def preceding_word_start(self, offset):
         assert 0 <= offset <= self.length
         while True:
             offset -= 1
