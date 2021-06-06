@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Esrille Inc.
+# Copyright (c) 2020, 2021 Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,6 +15,7 @@
 
 furiganapad_PYTHON = \
 	application.py \
+	breaker.py \
 	main.py \
 	textbuffer.py \
 	textview.py \

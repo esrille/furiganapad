@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019, 2020  Esrille Inc.
+# Copyright (c) 2019-2021  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,8 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Pango', '1.0')
 gi.require_version('PangoCairo', '1.0')
 from gi.repository import GObject
+
+from breaker import Breaker
 
 import logging
 import time
@@ -146,29 +148,15 @@ def remove_dangling_annotations(s):
 
 class Paragraph:
     def __init__(self, text=''):
-        self.text = text
+        self.text = ''
         self.plain = ''
         self.rubies = list()
+        self.breaker = Breaker()
+        self.set_text(text)
 
     def _backward_cursor_position(self, offset):
-        if offset <= 0:
-            return -1
-        mode = PLAIN
-        for c in reversed(self.text[:offset]):
-            offset -= 1
-            if c == IAA:
-                mode = PLAIN
-            elif c == IAS:
-                mode = BASE
-            elif c == IAT:
-                mode = RUBY
-            elif mode == RUBY:
-                pass
-            else:
-                if 0 < offset and self.text[offset - 1] == IAA:
-                    offset -= 1
-                return offset
-        return -1
+        assert 0 <= offset <= len(self.text)
+        return self.breaker.preceding(offset)
 
     def _expand_plain_offset(self, offset):
         mode = PLAIN
@@ -193,25 +181,8 @@ class Paragraph:
         return i
 
     def _forward_cursor_position(self, offset):
-        if len(self.text) <= offset:
-            return len(self.text) + 1
-        mode = PLAIN
-        if self.text[offset] == IAA:
-            offset += 1
-        offset += 1
-        for c in self.text[offset:]:
-            if c == IAA:
-                return offset
-            elif c == IAS:
-                mode = RUBY
-            elif c == IAT:
-                mode = PLAIN
-            elif mode == RUBY:
-                pass
-            else:
-                return offset
-            offset += 1
-        return len(self.text)
+        assert 0 <= offset <= len(self.text)
+        return self.breaker.following(offset)
 
     def _forward_search(self, offset, str, flags):
         plain = self.get_plain_text()
@@ -262,9 +233,9 @@ class Paragraph:
         # plus one as a newline at the end of the line
         return len(self.get_plain_text()) + 1
 
-    def get_plain_text(self):
-        if self.plain:
-            return self.plain
+    def _get_plain_text(self):
+        self.plain = ''
+        self.rubies.clear()
         mode = PLAIN
         i = pos = len = 0
         ruby = ''
@@ -286,6 +257,9 @@ class Paragraph:
                 i += 1
         return self.plain
 
+    def get_plain_text(self):
+        return self.plain
+
     def get_text(self):
         return self.text
 
@@ -295,8 +269,8 @@ class Paragraph:
 
     def set_text(self, text):
         self.text = text
-        self.plain = ''
-        self.rubies.clear()
+        self._get_plain_text()
+        self.breaker = Breaker(self.text)
 
     def split(self, offset):
         assert offset <= len(self.text)
