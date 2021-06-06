@@ -70,6 +70,8 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         self.heights = list()
         self.highlight_sentences = True
         self.reflow_line = -1  # line number to reflow after "delete_range"; -1 to reflow every line
+        self.click_count = 0
+        self.anchor = self.buffer.create_mark("anchor", self.buffer.get_start_iter())
 
         style = self.get_style_context()
         self.padding = style.get_padding(Gtk.StateFlags.NORMAL)
@@ -669,20 +671,45 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
     def on_mouse_move(self, wid, event):
         if (event.state & Gdk.ModifierType.BUTTON1_MASK):
             inside, cursor = self.get_iter_at_location(event.x - self.padding.left, self._get_offset() + event.y)
-            self.buffer.move_cursor(cursor, True)
+            if self.click_count == 1:
+                self.buffer.move_cursor(cursor, True)
+            else:
+                bound = self.buffer.get_iter_at_mark(self.anchor)
+                if cursor < bound:
+                    cursor.backward_visible_word_start()
+                    bound.forward_visible_word_end()
+                else:
+                    bound.backward_visible_word_start()
+                    cursor.forward_visible_word_end()
+                self.buffer.select_range(cursor, bound)
             self.place_cursor_onscreen()
         return True
 
     def on_mouse_press(self, wid, event):
         self.im.reset()
         if event.button == Gdk.BUTTON_PRIMARY:
+            if event.type == Gdk.EventType.BUTTON_PRESS:
+                self.click_count = 1
+            elif event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
+                self.click_count = 2
+            elif event.type == Gdk.EventType.TRIPLE_BUTTON_PRESS:
+                self.click_count = 3
             is_selection = (event.state & Gdk.ModifierType.SHIFT_MASK)
             inside, cursor = self.get_iter_at_location(event.x - self.padding.left, self._get_offset() + event.y)
-            self.buffer.move_cursor(cursor, is_selection)
+            if is_selection or self.click_count == 1:
+                self.buffer.move_cursor(cursor, is_selection)
+            else:
+                self.buffer.move_mark(self.anchor, cursor)
+                start = cursor.copy()
+                end = cursor.copy()
+                start.backward_visible_word_start()
+                end.forward_visible_word_end()
+                self.buffer.select_range(end, start)
             self.place_cursor_onscreen()
         return True
 
     def on_mouse_release(self, wid, event):
+        self.click_count = 0
         return True
 
     def on_preedit_changed(self, im):

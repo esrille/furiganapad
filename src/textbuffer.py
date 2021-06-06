@@ -433,8 +433,7 @@ class TextIter:
 class TextMark():
 
     def __init__(self, iter):
-        self.iter = TextIter(iter.get_buffer())
-        self.iter.assign(iter)
+        self.iter = iter.copy()
 
     def on_delete(self, start, end):
         if self.iter <= start:
@@ -654,7 +653,9 @@ class FuriganaBuffer(GObject.Object):
         clipboard.set_text(text, -1)
 
     def create_mark(self, mark_name, where):
-        self.marks[mark_name] = TextMark(where)
+        mark = TextMark(where)
+        self.marks[mark_name] = mark
+        return mark
 
     def cut_clipboard(self, clipboard, default_editable):
         start, end = self.get_selection_bounds()
