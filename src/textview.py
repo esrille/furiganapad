@@ -371,9 +371,9 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
     def get_vadjustment(self):
         return self._vadjustment
 
-    def on_commit(self, im, str):
+    def on_commit(self, im, text):
         self.buffer.begin_user_action()
-        self.buffer.insert_at_cursor(str)
+        self.buffer.insert_at_cursor(text)
         self.buffer.end_user_action()
         self.place_cursor_onscreen()
         return True
