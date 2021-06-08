@@ -466,10 +466,10 @@ class TextMark():
 class FuriganaBuffer(GObject.Object):
 
     __gsignals__ = {
-        'begin_user_action': (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'delete_range': (GObject.SIGNAL_RUN_LAST, None, (object, object, )),
-        'end_user_action': (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'insert_text': (GObject.SIGNAL_RUN_LAST, None, (object, str, )),
+        'begin-user-action': (GObject.SIGNAL_RUN_FIRST, None, ()),
+        'delete-range': (GObject.SIGNAL_RUN_LAST, None, (object, object, )),
+        'end-user-action': (GObject.SIGNAL_RUN_FIRST, None, ()),
+        'insert-text': (GObject.SIGNAL_RUN_LAST, None, (object, str, )),
         'modified-changed': (GObject.SIGNAL_RUN_LAST, None, ()),
         'redo': (GObject.SIGNAL_RUN_LAST, None, ()),
         'undo': (GObject.SIGNAL_RUN_LAST, None, ()),
@@ -500,9 +500,9 @@ class FuriganaBuffer(GObject.Object):
         self.create_mark('selection_bound', iter)
 
         # Connect operations for undo and redo
-        self.connect('insert_text', self.on_insert)
-        self.connect_after('insert_text', self.on_inserted)
-        self.connect('delete_range', self.on_delete)
+        self.connect('insert-text', self.on_insert)
+        self.connect_after('insert-text', self.on_inserted)
+        self.connect('delete-range', self.on_delete)
 
     def _annotate(self, s, r):
         logger.debug('_annotate("%s", "%s")', s, r)
@@ -642,7 +642,7 @@ class FuriganaBuffer(GObject.Object):
 
     def begin_user_action(self):
         self.user_action = True
-        self.emit('begin_user_action')
+        self.emit('begin-user-action')
 
     def copy_clipboard(self, clipboard):
         start, end = self.get_selection_bounds()
@@ -730,7 +730,7 @@ class FuriganaBuffer(GObject.Object):
 
         for mark in self.marks.values():
             mark.on_delete(start, end)
-        self.emit('delete_range', start, end)
+        self.emit('delete-range', start, end)
 
     def delete_selection(self, interactive, default_editable):
         if not self.get_has_selection():
@@ -840,11 +840,11 @@ class FuriganaBuffer(GObject.Object):
         was_modified = self.get_modified()
         logger.debug('do_redo')
         action = self.redo.pop()
-        if action[0] == 'insert_text':
+        if action[0] == 'insert-text':
             start = self.get_iter_at_line_offset(action[1], action[2])
             self.insert(start, action[5])
         else:
-            assert action[0] == 'delete_range'
+            assert action[0] == 'delete-range'
             start = self.get_iter_at_line_offset(action[1], action[2])
             end = self.get_iter_at_line_offset(action[3], action[4])
             self.delete(start, end)
@@ -854,7 +854,7 @@ class FuriganaBuffer(GObject.Object):
                     logger.debug('do_redo: %s', action)
                     self.undo.append(action)
                     action = self.redo.pop()
-                    if action[0] == 'insert_text':
+                    if action[0] == 'insert-text':
                         start = self.get_iter_at_line_offset(action[1], action[2])
                         self.insert(start, action[5])
                     else:
@@ -874,7 +874,7 @@ class FuriganaBuffer(GObject.Object):
             return
         logger.debug('do_undo')
         action = self.undo.pop()
-        if action[0] == 'insert_text':
+        if action[0] == 'insert-text':
             start = self.get_iter_at_line_offset(action[1], action[2])
             end = self.get_iter_at_line_offset(action[3], action[4])
             self.delete(start, end)
@@ -886,7 +886,7 @@ class FuriganaBuffer(GObject.Object):
                 logger.debug('do_undo: %s', action)
                 self.redo.append(action)
                 action = self.undo.pop()
-                if prev[0] == 'delete_range':
+                if prev[0] == 'delete-range':
                     start = self.get_iter_at_line_offset(action[1], action[2])
                     self.insert(start, action[5])
                 else:
@@ -894,7 +894,7 @@ class FuriganaBuffer(GObject.Object):
                     end = self.get_iter_at_line_offset(action[3], action[4])
                     self.delete(start, end)
         else:
-            assert action[0] == 'delete_range'
+            assert action[0] == 'delete-range'
             start = self.get_iter_at_line_offset(action[1], action[2])
             self.insert(start, action[5])
         self.place_cursor(start)
@@ -904,7 +904,7 @@ class FuriganaBuffer(GObject.Object):
             self.emit('modified-changed')
 
     def end_user_action(self):
-        self.emit('end_user_action')
+        self.emit('end-user-action')
         self.user_action = False
 
     def get_anchor(self):
@@ -1017,7 +1017,7 @@ class FuriganaBuffer(GObject.Object):
                 self.surround_deleted = False
         start = TextIter(self)
         start.assign(iter)
-        self.emit('insert_text', iter, text)
+        self.emit('insert-text', iter, text)
         for mark in self.marks.values():
             mark.on_insert(start, iter)
 
@@ -1038,7 +1038,7 @@ class FuriganaBuffer(GObject.Object):
         if self.user_action:
             was_modified = self.get_modified()
             text = self.get_text(start, end, True)
-            action = ['delete_range',
+            action = ['delete-range',
                       start.get_line(), start.get_line_offset(),
                       end.get_line(), end.get_line_offset(),
                       text,
@@ -1057,7 +1057,7 @@ class FuriganaBuffer(GObject.Object):
     def on_inserted(self, textbuffer, iter, text):
         if self.user_action:
             was_modified = self.get_modified()
-            action = ['insert_text',
+            action = ['insert-text',
                       self.inserting.get_line(), self.inserting.get_line_offset(),
                       iter.get_line(), iter.get_line_offset(),
                       text,

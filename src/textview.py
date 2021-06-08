@@ -69,16 +69,16 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         self.caret = Gdk.Rectangle()
         self.heights = list()
         self.highlight_sentences = True
-        self.reflow_line = -1  # line number to reflow after "delete_range"; -1 to reflow every line
+        self.reflow_line = -1  # line number to reflow after "delete-range"; -1 to reflow every line
         self.click_count = 0
         self.anchor = self.buffer.create_mark('anchor', self.buffer.get_start_iter())
 
         style = self.get_style_context()
         self.padding = style.get_padding(Gtk.StateFlags.NORMAL)
 
-        self.buffer.connect_after('insert_text', self.on_inserted)
-        self.buffer.connect('delete_range', self.on_delete)
-        self.buffer.connect_after('delete_range', self.on_deleted)
+        self.buffer.connect_after('insert-text', self.on_inserted)
+        self.buffer.connect('delete-range', self.on_delete)
+        self.buffer.connect_after('delete-range', self.on_deleted)
 
         self.connect('configure-event', self.on_configure)
         self.connect('draw', self.on_draw)
