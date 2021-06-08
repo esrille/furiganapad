@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: furiganapad 0.4.0\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2020-09-26 11:54+0900\n"
+"POT-Creation-Date: 2021-06-09 07:30+0900\n"
 "PO-Revision-Date: 2020-06-11 05:38+0900\n"
 "Last-Translator: Esrille Inc. <info@esrille.com>\n"
 "Language-Team: Japanese <info@esrille.com>\n"
@@ -20,51 +20,51 @@ msgstr ""
 msgid "FuriganaPad"
 msgstr "ふりがなパッド"
 
-#: src/window.py:96
+#: src/window.py:97 src/window.py:536 src/window.py:538
 msgid "Ruby"
 msgstr "ルビ"
 
-#: src/window.py:190
+#: src/window.py:204
 msgid "Text files"
 msgstr "テキスト ファイル"
 
-#: src/window.py:195
+#: src/window.py:209
 msgid "Python files"
 msgstr "Pythonのファイル"
 
-#: src/window.py:200
+#: src/window.py:214
 msgid "Any files"
 msgstr "すべてのファイル"
 
-#: src/window.py:222
+#: src/window.py:236
 msgid "Save changes to this document?"
 msgstr "かきかえた文章をセーブしますか？"
 
-#: src/window.py:223
+#: src/window.py:237
 msgid "If you don't, changes will be lost."
 msgstr "セーブしないと、かきかえた文章はのこりません。"
 
-#: src/window.py:224
+#: src/window.py:238
 msgid "Close _Without Saving"
 msgstr "セーブしないでとじる(_W)"
 
-#: src/window.py:257
+#: src/window.py:271
 msgid "Font"
 msgstr "フォント"
 
-#: src/window.py:258
+#: src/window.py:272
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr "ひさかたのひかりのどけきはるの日に しづごころなく花のちるらむ"
 
-#: src/window.py:365
+#: src/window.py:383
 msgid "Open File"
 msgstr "ファイルをひらく"
 
-#: src/window.py:439
+#: src/window.py:458
 msgid "Could not save the file."
 msgstr "ファイルをセーブできませんでした。"
 
-#: src/window.py:448
+#: src/window.py:467
 msgid "Save File"
 msgstr "なまえをつけてセーブ"
 
@@ -162,10 +162,14 @@ msgstr "ルビをふる(_R)"
 msgid "Highlight _Long Sentences"
 msgstr "ながい文をめだたせる(_L)"
 
-#: src/furiganapad.menu.ui:124 src/furiganapad.menu.ui:127
+#: src/furiganapad.menu.ui:122
+msgid "_Statusbar"
+msgstr "ステータスバー(_S)"
+
+#: src/furiganapad.menu.ui:128 src/furiganapad.menu.ui:131
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/furiganapad.menu.ui:132
+#: src/furiganapad.menu.ui:136
 msgid "_About Furiganapad"
 msgstr "ふりがなパッドについて(_A)"

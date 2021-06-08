@@ -118,6 +118,10 @@
           <attribute name="label" translatable="yes">Highlight _Long Sentences</attribute>
           <attribute name="action">win.highlightlongsentences</attribute>
         </item>
+        <item>
+          <attribute name="label" translatable="yes">_Statusbar</attribute>
+          <attribute name="action">win.statusbar</attribute>
+        </item>
       </section>
     </submenu>
     <submenu>

@@ -60,6 +60,7 @@ class Window(Gtk.ApplicationWindow):
         self.textview = FuriganaView()
         self.buffer = self.textview.get_buffer()
         self.buffer.connect_after('modified-changed', self.on_modified_changed)
+        self.buffer.connect_after('mark-set', self.on_mark_set)
 
         scrolled_window.add(self.textview)
         grid.pack_start(scrolled_window, True, True, 0)
@@ -102,6 +103,11 @@ class Window(Gtk.ApplicationWindow):
         self.rubybar.set_search_mode(False)
         self.ruby_entry.connect('activate', self.on_ruby)
 
+        self.statusbar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.line_col = Gtk.Label()
+        self.statusbar.pack_end(self.line_col, False, False, 10)
+        grid.pack_start(self.statusbar, False, False, 5)
+
         self.connect('key-press-event', self.on_key_press_event)
 
         actions = {
@@ -142,8 +148,15 @@ class Window(Gtk.ApplicationWindow):
             'activate', self.highlightlongsentences_callback)
         self.add_action(self.highlightlongsentences_action)
 
+        self.statusbar_action = Gio.SimpleAction.new_stateful(
+            'statusbar', None, GLib.Variant.new_boolean(True))
+        self.statusbar_action.connect(
+            'activate', self.statusbar_callback)
+        self.add_action(self.statusbar_action)
+
         self.file = None
         self._load_file(file)
+        self.update_statusbar()
 
     def _emit_to_focused(self, signal_name, *args):
         focused = self.get_focus()
@@ -323,6 +336,10 @@ class Window(Gtk.ApplicationWindow):
                 return True
         return False
 
+    def on_mark_set(self, buffer, where, mark):
+        if mark.get_name() == 'insert':
+            self.update_statusbar()
+
     def on_modified_changed(self, buffer):
         title = self.title
         if self.file:
@@ -409,6 +426,7 @@ class Window(Gtk.ApplicationWindow):
         ruby = not action.get_state()
         action.set_state(GLib.Variant.new_boolean(ruby))
         self.buffer.set_ruby_mode(ruby)
+        self.update_statusbar()
 
     def save(self):
         message = ''
@@ -498,6 +516,11 @@ class Window(Gtk.ApplicationWindow):
         self.file = file
         return self.buffer.set_modified(not file)
 
+    def statusbar_callback(self, action, parameter):
+        visible = not action.get_state()
+        action.set_state(GLib.Variant.new_boolean(visible))
+        self.statusbar.set_visible(visible)
+
     def unconvert_callback(self, action, parameter):
         self.buffer.begin_user_action()
         self.buffer.unconvert(self.buffer.get_cursor())
@@ -505,3 +528,12 @@ class Window(Gtk.ApplicationWindow):
 
     def undo_callback(self, action, parameter):
         self.textview.emit('undo')
+
+    def update_statusbar(self):
+        cursor = self.buffer.get_cursor()
+        status = f'{cursor.get_line() + 1}:{cursor.get_plain_line_offset() + 1}    '
+        if self.buffer.get_ruby_mode():
+            status += _("Ruby")
+        else:
+            status += '<s>' + _("Ruby") + '</s>'
+        self.line_col.set_markup(status)
