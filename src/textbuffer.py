@@ -730,7 +730,11 @@ class FuriganaBuffer(GObject.Object):
 
         for mark in self.marks.values():
             mark.on_delete(start, end)
+
+        was_modified = self.get_modified()
         self.emit('delete-range', start, end)
+        if not was_modified:
+            self.emit('modified-changed')
 
     def delete_selection(self, interactive, default_editable):
         if not self.get_has_selection():
@@ -1015,11 +1019,14 @@ class FuriganaBuffer(GObject.Object):
                 if self.ruby_mode and not iter.inside_ruby():
                     text = self._annotate(text, self.reading)
                 self.surround_deleted = False
+        was_modified = self.get_modified()
         start = TextIter(self)
         start.assign(iter)
         self.emit('insert-text', iter, text)
         for mark in self.marks.values():
             mark.on_insert(start, iter)
+        if not was_modified:
+            self.emit('modified-changed')
 
     def insert_at_cursor(self, text):
         self.delete_selection(False, True)
@@ -1036,7 +1043,6 @@ class FuriganaBuffer(GObject.Object):
 
     def on_delete(self, textbuffer, start, end):
         if self.user_action:
-            was_modified = self.get_modified()
             text = self.get_text(start, end, True)
             action = ['delete-range',
                       start.get_line(), start.get_line_offset(),
@@ -1047,8 +1053,6 @@ class FuriganaBuffer(GObject.Object):
             logger.debug('on_delete: %s', action)
             self.undo.append(action)
             self.redo.clear()
-            if not was_modified:
-                self.emit('modified-changed')
 
     def on_insert(self, textbuffer, iter, text):
         if self.user_action:
@@ -1056,7 +1060,6 @@ class FuriganaBuffer(GObject.Object):
 
     def on_inserted(self, textbuffer, iter, text):
         if self.user_action:
-            was_modified = self.get_modified()
             action = ['insert-text',
                       self.inserting.get_line(), self.inserting.get_line_offset(),
                       iter.get_line(), iter.get_line_offset(),
@@ -1067,8 +1070,6 @@ class FuriganaBuffer(GObject.Object):
             self.undo.append(action)
             self.redo.clear()
             self.inserting = None
-            if not was_modified:
-                self.emit('modified-changed')
 
     def place_cursor(self, where):
         self.select_range(where, where)
