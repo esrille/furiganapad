@@ -11,7 +11,7 @@
 　いまではウェブブラウザも、ふりがなを￹表示￺ひょうじ￻できるようになっています。「ふりがなパッド」は、￹総￺そう￻ルビの￹文章￺ぶんしょう￻をかんたんに￹作成￺さくせい￻したり￹編集￺へんしゅう￻したりできるようにつくられています。
 
 ## ふりがなパッドのプログラム
-　「ふりがなパッド」は、￹Python￺パイソン￻でかいたGTKのプログラムです。￹標準￺ひょうじゅん￻の[Gtk.TextView](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/TextView.html)のかわりに、ふりがなに￹対応￺たいおう￻したFuriganaViewを[Gtk.DrawingArea](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/DrawingArea.html)をつかってつくっています。￹文字￺もじ￻の￹描画￺びょうが￻には、[Pango](https://lazka.github.io/pgi-docs/index.html#Pango-1.0)をつかっています。ぜんたいでは2,500￹行￺ぎょう￻ほどのプログラムです。
+　「ふりがなパッド」は、￹Python￺パイソン￻でかいたGTKのプログラムです。￹標準￺ひょうじゅん￻の[Gtk.TextView](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/TextView.html)のかわりに、ふりがなに￹対応￺たいおう￻したFuriganaViewを[Gtk.DrawingArea](https://lazka.github.io/pgi-docs/index.html#Gtk-3.0/classes/DrawingArea.html)をつかってつくっています。￹文字￺もじ￻の￹描画￺びょうが￻には、[Pango](https://lazka.github.io/pgi-docs/index.html#Pango-1.0)をつかっています。
 
 ## ￹資料￺しりょう￻
 
