@@ -432,35 +432,43 @@ class TextIter:
 
 class TextMark():
 
-    def __init__(self, iter):
+    def __init__(self, buffer, name, iter):
+        self.buffer = buffer
+        self.name = name
         self.iter = iter.copy()
 
+    def get_buffer(self):
+        return self.buffer
+
+    def get_name(self):
+        return self.name
+
     def on_delete(self, start, end):
-        if self.iter <= start:
+        if start == end or self.iter <= start:
             return
         if self.iter <= end:
             self.iter.assign(start)
-            return
-        d = self.iter.get_line() - end.get_line()
-        self.iter.set_line(start.get_line() + d)
-        if 0 < d:
-            return
-        d = self.iter.get_line_offset() - end.get_line_offset()
-        self.iter.set_line_offset(start.get_line_offset() + d)
+        else:
+            d = self.iter.get_line() - end.get_line()
+            self.iter.set_line(start.get_line() + d)
+            if d <= 0:
+                d = self.iter.get_line_offset() - end.get_line_offset()
+                self.iter.set_line_offset(start.get_line_offset() + d)
+        self.buffer.emit('mark-set', self.iter.copy(), self)
 
     # The cursor has moved from start to end.
     def on_insert(self, start, end):
-        if self.iter < start:
+        if start == end or self.iter < start:
             return
         if self.iter == start:
             self.iter.assign(end)
-            return
-        d = self.iter.get_line() - start.get_line()
-        self.iter.set_line(end.get_line() + d)
-        if 0 < d:
-            return
-        d = self.iter.get_line_offset() - start.get_line_offset()
-        self.iter.set_line_offset(end.get_line_offset() + d)
+        else:
+            d = self.iter.get_line() - start.get_line()
+            self.iter.set_line(end.get_line() + d)
+            if d <= 0:
+                d = self.iter.get_line_offset() - start.get_line_offset()
+                self.iter.set_line_offset(end.get_line_offset() + d)
+        self.buffer.emit('mark-set', self.iter.copy(), self)
 
 
 class FuriganaBuffer(GObject.Object):
@@ -470,6 +478,7 @@ class FuriganaBuffer(GObject.Object):
         'delete-range': (GObject.SIGNAL_RUN_LAST, None, (object, object, )),
         'end-user-action': (GObject.SIGNAL_RUN_FIRST, None, ()),
         'insert-text': (GObject.SIGNAL_RUN_LAST, None, (object, str, )),
+        'mark-set': (GObject.SIGNAL_RUN_LAST, None, (object, object, )),
         'modified-changed': (GObject.SIGNAL_RUN_LAST, None, ()),
         'redo': (GObject.SIGNAL_RUN_LAST, None, ()),
         'undo': (GObject.SIGNAL_RUN_LAST, None, ()),
@@ -653,7 +662,8 @@ class FuriganaBuffer(GObject.Object):
         clipboard.set_text(text, -1)
 
     def create_mark(self, mark_name, where):
-        mark = TextMark(where)
+        assert mark_name
+        mark = TextMark(self, mark_name, where)
         self.marks[mark_name] = mark
         return mark
 
@@ -912,7 +922,7 @@ class FuriganaBuffer(GObject.Object):
         self.user_action = False
 
     def get_anchor(self):
-        return self.get_selection_bound().iter.copy()
+        return self.get_iter_at_mark(self.get_selection_bound())
 
     def get_bounds(self):
         start = self.get_start_iter()
@@ -920,7 +930,7 @@ class FuriganaBuffer(GObject.Object):
         return start, end
 
     def get_cursor(self):
-        return self.get_insert().iter.copy()
+        return self.get_iter_at_mark(self.get_insert())
 
     def get_end_iter(self):
         lineno = self.get_line_count() - 1
@@ -945,6 +955,9 @@ class FuriganaBuffer(GObject.Object):
 
     def get_modified(self):
         return 0 < len(self.undo)
+
+    def get_ruby_mode(self):
+        return self.ruby_mode
 
     def get_selection_bound(self):
         return self.marks['selection_bound']
@@ -1040,6 +1053,7 @@ class FuriganaBuffer(GObject.Object):
 
     def move_mark(self, mark, where):
         mark.iter.assign(where)
+        self.emit('mark-set', where, mark)
 
     def on_delete(self, textbuffer, start, end):
         if self.user_action:
