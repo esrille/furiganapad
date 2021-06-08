@@ -72,7 +72,7 @@ class Window(Gtk.ApplicationWindow):
         self.searchbar.connect_entry(self.search_entry)
         grid.pack_start(self.searchbar, False, False, 0)
         self.searchbar.set_search_mode(False)
-        self.search_entry.connect("activate", self.on_find)
+        self.search_entry.connect('activate', self.on_find)
         self.search_entry_text = ''
 
         self.replacebar = Gtk.SearchBar()
@@ -85,61 +85,61 @@ class Window(Gtk.ApplicationWindow):
         self.replacebar.connect_entry(self.replace_from)
         grid.pack_start(self.replacebar, False, False, 0)
         self.replacebar.set_search_mode(False)
-        self.replace_from.connect("activate", self.on_find)
-        self.replace_to.connect("activate", self.on_replace)
+        self.replace_from.connect('activate', self.on_find)
+        self.replace_to.connect('activate', self.on_replace)
         self.replace_from_text = ''
         self.replace_to_text = ''
 
         self.rubybar = Gtk.SearchBar()
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.rubybar.add(box)
-        label = Gtk.Label(_("Ruby") + ": ")
+        label = Gtk.Label(_("Ruby") + ': ')
         box.pack_start(label, False, False, 1)
         self.ruby_entry = Gtk.Entry()
         box.pack_start(self.ruby_entry, False, False, 1)
         self.rubybar.connect_entry(self.ruby_entry)
         grid.pack_start(self.rubybar, False, False, 0)
         self.rubybar.set_search_mode(False)
-        self.ruby_entry.connect("activate", self.on_ruby)
+        self.ruby_entry.connect('activate', self.on_ruby)
 
-        self.connect("key-press-event", self.on_key_press_event)
+        self.connect('key-press-event', self.on_key_press_event)
 
         actions = {
-            "new": self.new_callback,
-            "open": self.open_callback,
-            "save": self.save_callback,
-            "saveas": self.save_as_callback,
-            "close": self.close_callback,
-            "closeall": self.close_all_callback,
-            "undo": self.undo_callback,
-            "redo": self.redo_callback,
-            "cut": self.cut_callback,
-            "copy": self.copy_callback,
-            "paste": self.paste_callback,
-            "find": self.find_callback,
-            "replace": self.replace_callback,
-            "annotate": self.annotate_callback,
-            "unconvert": self.unconvert_callback,
-            "selectall": self.select_all_callback,
-            "font": self.font_callback,
-            "help": self.help_callback,
-            "about": self.about_callback,
+            'new': self.new_callback,
+            'open': self.open_callback,
+            'save': self.save_callback,
+            'saveas': self.save_as_callback,
+            'close': self.close_callback,
+            'closeall': self.close_all_callback,
+            'undo': self.undo_callback,
+            'redo': self.redo_callback,
+            'cut': self.cut_callback,
+            'copy': self.copy_callback,
+            'paste': self.paste_callback,
+            'find': self.find_callback,
+            'replace': self.replace_callback,
+            'annotate': self.annotate_callback,
+            'unconvert': self.unconvert_callback,
+            'selectall': self.select_all_callback,
+            'font': self.font_callback,
+            'help': self.help_callback,
+            'about': self.about_callback,
         }
         for name, method in actions.items():
             action = Gio.SimpleAction.new(name, None)
-            action.connect("activate", method)
+            action.connect('activate', method)
             self.add_action(action)
-        self.connect("delete-event", self.on_delete_event)
+        self.connect('delete-event', self.on_delete_event)
 
         action = Gio.SimpleAction.new_stateful(
-            "ruby", None, GLib.Variant.new_boolean(True))
-        action.connect("activate", self.ruby_callback)
+            'ruby', None, GLib.Variant.new_boolean(True))
+        action.connect('activate', self.ruby_callback)
         self.add_action(action)
 
         self.highlightlongsentences_action = Gio.SimpleAction.new_stateful(
-            "highlightlongsentences", None, GLib.Variant.new_boolean(True))
+            'highlightlongsentences', None, GLib.Variant.new_boolean(True))
         self.highlightlongsentences_action.connect(
-            "activate", self.highlightlongsentences_callback)
+            'activate', self.highlightlongsentences_callback)
         self.add_action(self.highlightlongsentences_action)
 
         self.file = None
@@ -154,7 +154,7 @@ class Window(Gtk.ApplicationWindow):
         if file:
             try:
                 [success, content, etags] = file.load_contents(None)
-                content = content.decode("utf-8", "ignore")
+                content = content.decode('utf-8', 'ignore')
                 content = remove_dangling_annotations(content)
                 if content:
                     self.buffer.begin_user_action()
@@ -180,7 +180,7 @@ class Window(Gtk.ApplicationWindow):
         dialog.set_version(package.get_version())
         # To close the dialog when "close" is clicked, e.g. on Raspberry Pi OS,
         # the "response" signal needs to be connected about_response_callback
-        dialog.connect("response", self.about_response_callback)
+        dialog.connect('response', self.about_response_callback)
         dialog.show()
 
     def about_response_callback(self, dialog, response):
@@ -209,7 +209,7 @@ class Window(Gtk.ApplicationWindow):
     def close_all_callback(self, action, parameter):
         windows = self.get_application().get_windows()
         for window in windows:
-            window.lookup_action("close").activate()
+            window.lookup_action('close').activate()
 
     def close_callback(self, action, parameter):
         if not self.confirm_save_changes():
@@ -271,7 +271,7 @@ class Window(Gtk.ApplicationWindow):
         return self.file
 
     def help_callback(self, action, parameter):
-        url = "file://" + os.path.join(package.get_datadir(), "help/index.html")
+        url = 'file://' + os.path.join(package.get_datadir(), 'help/index.html')
         Gtk.show_uri_on_window(self, url, Gdk.CURRENT_TIME)
         # see https://gitlab.gnome.org/GNOME/gtk/-/issues/1211
         self.get_window().set_cursor(self.get_application().get_default_cursor())
@@ -292,7 +292,7 @@ class Window(Gtk.ApplicationWindow):
         self.select_text(get_plain_text(entry.get_text()))
 
     def on_key_press_event(self, wid, event):
-        logger.debug("on_key_press: '%s', %08x", Gdk.keyval_name(event.keyval), event.state)
+        logger.debug('on_key_press: "%s", %08x', Gdk.keyval_name(event.keyval), event.state)
         # Control focus around search bars by checking keys typed into the
         # main window
         if self.search_entry.is_focus():
@@ -326,7 +326,7 @@ class Window(Gtk.ApplicationWindow):
     def on_modified_changed(self, buffer):
         title = self.title
         if self.file:
-            title = self.file.get_basename() + " – " + title
+            title = self.file.get_basename() + ' – ' + title
         if self.buffer.get_modified():
             title = '*' + title
         self.set_title(title)
@@ -370,7 +370,7 @@ class Window(Gtk.ApplicationWindow):
         self.add_filters(open_dialog)
         open_dialog.set_local_only(False)
         open_dialog.set_modal(True)
-        open_dialog.connect("response", self.open_response_cb)
+        open_dialog.connect('response', self.open_response_cb)
         open_dialog.show()
 
     def open_response_cb(self, dialog, response):

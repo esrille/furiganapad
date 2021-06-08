@@ -34,7 +34,7 @@ SENTENCE_SHORT = 50
 # A sentence with more than SENTENCE_LONG characters is long.
 SENTENCE_LONG = 60
 
-DEFAULT_FONT = "Noto Sans Mono CJK JP 18px"
+DEFAULT_FONT = 'Noto Sans Mono CJK JP 18px'
 RUBY_DIV = 2.75
 
 ESCAPE = str.maketrans({
@@ -71,21 +71,21 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         self.highlight_sentences = True
         self.reflow_line = -1  # line number to reflow after "delete_range"; -1 to reflow every line
         self.click_count = 0
-        self.anchor = self.buffer.create_mark("anchor", self.buffer.get_start_iter())
+        self.anchor = self.buffer.create_mark('anchor', self.buffer.get_start_iter())
 
         style = self.get_style_context()
         self.padding = style.get_padding(Gtk.StateFlags.NORMAL)
 
-        self.buffer.connect_after("insert_text", self.on_inserted)
-        self.buffer.connect("delete_range", self.on_delete)
-        self.buffer.connect_after("delete_range", self.on_deleted)
+        self.buffer.connect_after('insert_text', self.on_inserted)
+        self.buffer.connect('delete_range', self.on_delete)
+        self.buffer.connect_after('delete_range', self.on_deleted)
 
         self.connect('configure-event', self.on_configure)
-        self.connect("draw", self.on_draw)
-        self.connect("key-press-event", self.on_key_press)
-        self.connect("key-release-event", self.on_key_release)
-        self.connect("focus-in-event", self.on_focus_in)
-        self.connect("focus-out-event", self.on_focus_out)
+        self.connect('draw', self.on_draw)
+        self.connect('key-press-event', self.on_key_press)
+        self.connect('key-release-event', self.on_key_release)
+        self.connect('focus-in-event', self.on_focus_in)
+        self.connect('focus-out-event', self.on_focus_out)
 
         self.connect('motion-notify-event', self.on_mouse_move)
         self.connect('button-press-event', self.on_mouse_press)
@@ -97,7 +97,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                         Gdk.EventMask.BUTTON_RELEASE_MASK |
                         Gdk.EventMask.SCROLL_MASK)
 
-        logger.debug("Pango.version: %d", Pango.version())
+        logger.debug('Pango.version: %d', Pango.version())
         desc = Pango.font_description_from_string(DEFAULT_FONT)
         self.set_font(desc)
 
@@ -183,12 +183,12 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
 
     def _init_immultiontext(self):
         self.im = Gtk.IMMulticontext()
-        self.im.connect("commit", self.on_commit)
-        self.im.connect("delete-surrounding", self.on_delete_surrounding)
-        self.im.connect("retrieve-surrounding", self.on_retrieve_surrounding)
-        self.im.connect("preedit-changed", self.on_preedit_changed)
-        self.im.connect("preedit-end", self.on_preedit_end)
-        self.im.connect("preedit-start", self.on_preedit_start)
+        self.im.connect('commit', self.on_commit)
+        self.im.connect('delete-surrounding', self.on_delete_surrounding)
+        self.im.connect('retrieve-surrounding', self.on_retrieve_surrounding)
+        self.im.connect('preedit-changed', self.on_preedit_changed)
+        self.im.connect('preedit-end', self.on_preedit_end)
+        self.im.connect('preedit-start', self.on_preedit_start)
         self.preedit = ('', None, 0)
 
     def _init_scrollable(self):
@@ -231,7 +231,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                 self.place_cursor_onscreen()
 
     def do_move_cursor(self, step, count, extend_selection):
-        logger.debug("do_move_cursor(%d, %d, %d)", int(step), count, extend_selection)
+        logger.debug('do_move_cursor(%d, %d, %d)', int(step), count, extend_selection)
         if step == Gtk.MovementStep.LOGICAL_POSITIONS:
             (start, end) = self.buffer.get_selection_bounds()
             if start == end or extend_selection:
@@ -422,14 +422,14 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
             for i in range(text_length):
                 c = text[i]
                 if start == end:
-                    if c in "\t 　":
+                    if c in '\t 　':
                         markup += c
                         start += 1
                         end = start
                         continue
                 end = i + 1
-                if c in "　 。．？！" or text_length <= end:
-                    if c in "　 ":
+                if c in '　 。．？！' or text_length <= end:
+                    if c in '　 ':
                         end -= 1
                     else:
                         sentence += c
@@ -443,7 +443,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                         attr.end_index = attr.start_index + len(sentence.encode())
                         attr_list.insert(attr)
                     markup += sentence
-                    if c in "　 ":
+                    if c in '　 ':
                         markup += c
                     start = end = i + 1
                     sentence = ''
@@ -535,14 +535,14 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
             for i in range(text_length):
                 c = text[i]
                 if start == end:
-                    if c in "\t 　":
+                    if c in '\t 　':
                         markup += c
                         start += 1
                         end = start
                         continue
                 end = i + 1
-                if c in "　 。．？！" or text_length <= end:
-                    if c in "　 ":
+                if c in '　 。．？！' or text_length <= end:
+                    if c in '　 ':
                         end -= 1
                     else:
                         sentence += c
@@ -554,7 +554,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                         markup += '<span background="#ffa">' + sentence + '</span>'
                     else:
                         markup += sentence
-                    if c in "　 ":
+                    if c in '　 ':
                         markup += c
                     start = end = i + 1
                     sentence = ''
@@ -635,13 +635,13 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
             return True
 
     def on_focus_in(self, wid, event):
-        logger.debug("on_focus_in")
+        logger.debug('on_focus_in')
         self.im.set_client_window(wid.get_window())
         self.im.focus_in()
         return True
 
     def on_focus_out(self, wid, event):
-        logger.debug("on_focus_out")
+        logger.debug('on_focus_out')
         self.im.focus_out()
         return True
 
@@ -652,7 +652,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
             self.reflow(iter.get_line())
 
     def on_key_press(self, wid, event):
-        logger.debug("on_key_press: '%s', %08x", Gdk.keyval_name(event.keyval), event.state)
+        logger.debug('on_key_press: "%s", %08x', Gdk.keyval_name(event.keyval), event.state)
         if self.im.filter_keypress(event):
             return True
         if event.keyval == Gdk.KEY_Return:
@@ -845,7 +845,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
             line_height = metrics.get_ascent() + metrics.get_descent()
         self.line_height = math.ceil(line_height * 1.6 / Pango.SCALE)
         self.spacing = math.ceil(line_height * 0.6 / Pango.SCALE)
-        logger.debug("set_font: spacing %d, line_height %d", self.spacing, self.line_height)
+        logger.debug('set_font: spacing %d, line_height %d', self.spacing, self.line_height)
         self.reflow()
 
     def set_hadjustment(self, adjustment):
@@ -862,7 +862,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                 upper=0,
                 page_size=0
             )
-            self._hadjust_signal = adjustment.connect("value-changed", self.on_value_changed)
+            self._hadjust_signal = adjustment.connect('value-changed', self.on_value_changed)
 
     def set_vadjustment(self, adjustment):
         logger.debug('set_vadjustment')
@@ -883,7 +883,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                 upper=upper,
                 page_size=height
             )
-            self._vadjust_signal = adjustment.connect("value-changed", self.on_value_changed)
+            self._vadjust_signal = adjustment.connect('value-changed', self.on_value_changed)
 
     hadjustment = GObject.property(
         get_hadjustment, set_hadjustment, type=Gtk.Adjustment

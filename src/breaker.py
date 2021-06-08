@@ -30,8 +30,8 @@ BASE = 1
 RUBY = 2
 
 # Note 'を' is intentionally removed from HIRAGANA_BREAK.
-HIRAGANA_BREAK = ("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん"
-                  "ゔがぎぐげござじずぜぞだぢづでどばびぶべぼぁぃぅぇぉゃゅょっぱぴぷぺぽゎゐゑゝゞ")
+HIRAGANA_BREAK = ('あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん'
+                  'ゔがぎぐげござじずぜぞだぢづでどばびぶべぼぁぃぅぇぉゃゅょっぱぴぷぺぽゎゐゑゝゞ')
 
 
 def is_hiragana_break(s, offset):

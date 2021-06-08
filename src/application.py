@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019, 2020  Esrille Inc.
+# Copyright (c) 2019-2021  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 class Application(Gtk.Application):
     def __init__(self, *args, **kwargs):
         super().__init__(*args,
-                         application_id="com.esrille.furiganapad",
+                         application_id='com.esrille.furiganapad',
                          flags=Gio.ApplicationFlags.HANDLES_OPEN,
                          **kwargs)
         self.cursor = None
@@ -51,16 +51,16 @@ class Application(Gtk.Application):
                 win = Window(self, file=file)
                 win.show_all()
             if not self.cursor:
-                self.cursor = Gdk.Cursor.new_from_name(win.get_display(), "default")
+                self.cursor = Gdk.Cursor.new_from_name(win.get_display(), 'default')
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
 
         builder = Gtk.Builder()
         builder.set_translation_domain(package.get_domain())
-        filename = os.path.join(os.path.dirname(__file__), "furiganapad.menu.ui")
+        filename = os.path.join(os.path.dirname(__file__), 'furiganapad.menu.ui')
         builder.add_from_file(filename)
-        self.set_menubar(builder.get_object("menubar"))
+        self.set_menubar(builder.get_object('menubar'))
 
         style_provider = Gtk.CssProvider()
         style_provider.load_from_path(os.path.join(os.path.dirname(__file__), 'furiganapad.css'))
