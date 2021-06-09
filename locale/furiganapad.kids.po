@@ -1,13 +1,13 @@
 # Furiganapad
-# Copyright (C) 2020 Esrille Inc. <info@esrille.com>
+# Copyright (C) 2020, 2021 Esrille Inc. <info@esrille.com>
 # This file is distributed under the same license as the furiganapad package.
-# Esrille Inc. <info@esrille.com>, 2020.
+# Esrille Inc. <info@esrille.com>, 2020, 2021.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: furiganapad 0.4.0\n"
+"Project-Id-Version: furiganapad 0.5.0\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2021-06-09 07:30+0900\n"
+"POT-Creation-Date: 2021-06-10 03:45+0900\n"
 "PO-Revision-Date: 2020-06-11 05:38+0900\n"
 "Last-Translator: Esrille Inc. <info@esrille.com>\n"
 "Language-Team: Japanese <info@esrille.com>\n"
@@ -36,23 +36,23 @@ msgstr "Pythonのファイル"
 msgid "Any files"
 msgstr "すべてのファイル"
 
-#: src/window.py:236
+#: src/window.py:237
 msgid "Save changes to this document?"
 msgstr "かきかえた文章をセーブしますか？"
 
-#: src/window.py:237
+#: src/window.py:238
 msgid "If you don't, changes will be lost."
 msgstr "セーブしないと、かきかえた文章はのこりません。"
 
-#: src/window.py:238
+#: src/window.py:239
 msgid "Close _Without Saving"
 msgstr "セーブしないでとじる(_W)"
 
-#: src/window.py:271
+#: src/window.py:272
 msgid "Font"
 msgstr "フォント"
 
-#: src/window.py:272
+#: src/window.py:273
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr "ひさかたのひかりのどけきはるの日に しづごころなく花のちるらむ"
 
