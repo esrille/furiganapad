@@ -216,7 +216,8 @@ class Window(Gtk.ApplicationWindow):
         dialog.add_filter(filter_any)
 
     def annotate_callback(self, action, parameter):
-        if self.buffer.get_has_selection():
+        start, end = self.buffer.get_selection_bounds()
+        if start != end and start.get_line() == end.get_line():
             self.rubybar.set_search_mode(True)
 
     def close_all_callback(self, action, parameter):
@@ -365,18 +366,17 @@ class Window(Gtk.ApplicationWindow):
 
     def on_ruby(self, entry):
         start, end = self.buffer.get_selection_bounds()
-        if start == end:
-            return
-        if start.get_line() != end.get_line():
-            return
-        text = self.buffer.get_text(start, end, False)
-        ruby = entry.get_text()
-        self.buffer.begin_user_action()
-        self.buffer.delete(start, end)
-        if ruby:
-            text = IAA + text + IAS + get_plain_text(ruby) + IAT
-        self.buffer.insert_at_cursor(text)
-        self.buffer.end_user_action()
+        if start != end and start.get_line() == end.get_line():
+            text = self.buffer.get_text(start, end, False)
+            ruby = get_plain_text(entry.get_text())
+            self.buffer.begin_user_action()
+            self.buffer.delete(start, end)
+            if ruby:
+                text = IAA + text + IAS + ruby + IAT
+            self.buffer.insert_at_cursor(text)
+            self.buffer.end_user_action()
+        self.rubybar.set_search_mode(False)
+        self.textview.grab_focus()
 
     def open_callback(self, action, parameter):
         open_dialog = Gtk.FileChooserDialog(
