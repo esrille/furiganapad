@@ -58,6 +58,9 @@ class Window(Gtk.ApplicationWindow):
             Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
         self.textview = FuriganaView()
+        self.textview.connect_after('focus-in-event', self.on_textview_focus_in)
+        self.textview.connect_after('focus-out-event', self.on_textview_focus_out)
+
         self.buffer = self.textview.get_buffer()
         self.buffer.connect_after('modified-changed', self.on_modified_changed)
         self.buffer.connect_after('mark-set', self.on_mark_set)
@@ -378,6 +381,14 @@ class Window(Gtk.ApplicationWindow):
         self.rubybar.set_search_mode(False)
         self.textview.grab_focus()
 
+    def on_textview_focus_in(self, wid, event):
+        logger.debug('on_textview_focus_in')
+        self.set_action_sensitivity('selectall', True)
+
+    def on_textview_focus_out(self, wid, event):
+        logger.debug('on_textview_focus_out')
+        self.set_action_sensitivity('selectall', False)
+
     def open_callback(self, action, parameter):
         open_dialog = Gtk.FileChooserDialog(
             _("Open File"), self,
@@ -511,6 +522,9 @@ class Window(Gtk.ApplicationWindow):
             self.buffer.select_range(match_start, match_end)
             self.textview.scroll_mark_onscreen(self.buffer.get_insert())
         return match
+
+    def set_action_sensitivity(self, action_name, state):
+        self.lookup_action(action_name).set_enabled(state)
 
     def set_file(self, file):
         self.file = file

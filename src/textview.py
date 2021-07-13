@@ -638,12 +638,12 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         logger.debug('on_focus_in')
         self.im.set_client_window(wid.get_window())
         self.im.focus_in()
-        return True
+        return False
 
     def on_focus_out(self, wid, event):
         logger.debug('on_focus_out')
         self.im.focus_out()
-        return True
+        return False
 
     def on_inserted(self, textbuffer, iter, text):
         if has_newline(text):
