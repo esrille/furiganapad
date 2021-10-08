@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: furiganapad 0.5.0\n"
+"Project-Id-Version: furiganapad 0.5.1\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2021-06-10 03:45+0900\n"
+"POT-Creation-Date: 2021-10-08 11:56+0900\n"
 "PO-Revision-Date: 2020-06-11 05:38+0900\n"
 "Last-Translator: Esrille Inc. <info@esrille.com>\n"
 "Language-Team: Japanese <info@esrille.com>\n"
@@ -20,51 +20,51 @@ msgstr ""
 msgid "FuriganaPad"
 msgstr "ふりがなパッド"
 
-#: src/window.py:97 src/window.py:536 src/window.py:538
+#: src/window.py:100 src/window.py:550 src/window.py:552
 msgid "Ruby"
 msgstr "ルビ"
 
-#: src/window.py:204
+#: src/window.py:207
 msgid "Text files"
 msgstr "テキスト ファイル"
 
-#: src/window.py:209
+#: src/window.py:212
 msgid "Python files"
 msgstr "Pythonのファイル"
 
-#: src/window.py:214
+#: src/window.py:217
 msgid "Any files"
 msgstr "すべてのファイル"
 
-#: src/window.py:237
+#: src/window.py:240
 msgid "Save changes to this document?"
 msgstr "かきかえた文章をセーブしますか？"
 
-#: src/window.py:238
+#: src/window.py:241
 msgid "If you don't, changes will be lost."
 msgstr "セーブしないと、かきかえた文章はのこりません。"
 
-#: src/window.py:239
+#: src/window.py:242
 msgid "Close _Without Saving"
 msgstr "セーブしないでとじる(_W)"
 
-#: src/window.py:272
+#: src/window.py:275
 msgid "Font"
 msgstr "フォント"
 
-#: src/window.py:273
+#: src/window.py:276
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr "ひさかたのひかりのどけきはるの日に しづごころなく花のちるらむ"
 
-#: src/window.py:383
+#: src/window.py:394
 msgid "Open File"
 msgstr "ファイルをひらく"
 
-#: src/window.py:458
+#: src/window.py:469
 msgid "Could not save the file."
 msgstr "ファイルをセーブできませんでした。"
 
-#: src/window.py:467
+#: src/window.py:478
 msgid "Save File"
 msgstr "なまえをつけてセーブ"
 
