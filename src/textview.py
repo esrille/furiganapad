@@ -34,7 +34,7 @@ SENTENCE_SHORT = 50
 # A sentence with more than SENTENCE_LONG characters is long.
 SENTENCE_LONG = 60
 
-DEFAULT_FONT = 'Noto Sans Mono CJK JP 18px'
+DEFAULT_FONT = 'Noto Sans Mono CJK JP 16px'
 RUBY_DIV = 2.75
 
 ESCAPE = str.maketrans({
