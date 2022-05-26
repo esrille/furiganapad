@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2021  Esrille Inc.
+# Copyright (c) 2019-2022  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@ from textbuffer import remove_dangling_annotations, get_plain_text
 import gettext
 import logging
 import os
+import subprocess
 
 
 _ = lambda a : gettext.dgettext(package.get_domain(), a)
@@ -187,10 +188,10 @@ class Window(Gtk.ApplicationWindow):
         dialog.set_transient_for(self)
         dialog.set_modal(True)
         dialog.set_program_name(self.title)
-        dialog.set_copyright("Copyright 2019-2021 Esrille Inc.")
+        dialog.set_copyright("Copyright 2019-2022 Esrille Inc.")
         dialog.set_authors(["Esrille Inc."])
         dialog.set_documenters(["Esrille Inc."])
-        dialog.set_website("http://www.esrille.com/")
+        dialog.set_website("https://www.esrille.com/")
         dialog.set_website_label("Esrille Inc.")
         dialog.set_logo_icon_name(package.get_name())
         dialog.set_version(package.get_version())
@@ -288,10 +289,10 @@ class Window(Gtk.ApplicationWindow):
         return self.file
 
     def help_callback(self, action, parameter):
+        # Use yelp to open local HTMLs.
+        # cf. https://gitlab.gnome.org/GNOME/yelp/-/merge_requests/24
         url = 'file://' + os.path.join(package.get_datadir(), 'help/index.html')
-        Gtk.show_uri_on_window(self, url, Gdk.CURRENT_TIME)
-        # see https://gitlab.gnome.org/GNOME/gtk/-/issues/1211
-        self.get_window().set_cursor(self.get_application().get_default_cursor())
+        subprocess.Popen(['yelp', url])
 
     def highlightlongsentences_callback(self, action, parameter):
         highlight = not action.get_state()
