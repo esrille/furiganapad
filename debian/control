@@ -2,7 +2,7 @@ Source: furiganapad
 Section: editors
 Priority: optional
 Maintainer: Esrille Inc. <info@esrille.com>
-Build-Depends: debhelper (>=11),dh-python,autotools-dev,python3-dev,pkg-config
+Build-Depends: debhelper (>=11),dh-python,autotools-dev,autopoint,python3-dev,pkg-config
 Standards-Version: 4.1.2
 Homepage: https://github.com/esrille/furiganapad
 Vcs-Git: https://github.com/esrille/furiganapad.git
@@ -20,6 +20,7 @@ Depends: fonts-noto-cjk,
          python3-gi,
          python3-gi-cairo,
          python3-icu,
+         yelp,
          ${gir:Depends},
          ${misc:Depends},
          ${python3:Depends}
