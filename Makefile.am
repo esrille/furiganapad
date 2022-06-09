@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Esrille Inc.
+# Copyright (c) 2020-2022 Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@ SUBDIRS = \
 
 EXTRA_DIST = \
 	debian/changelog \
+	debian/changelog.in \
 	debian/compat \
 	debian/control \
 	debian/copyright \
@@ -39,12 +40,18 @@ EXTRA_DIST = \
 	README.txt \
 	$(NULL)
 
-CLEANFILES = \
-	README.md \
-	$(NULL)
-
 README.md : README.txt
 	tools/convert_to_tag.py README.txt README.md
+
+.PHONY: debian/changelog
+debian/changelog:
+	$(AM_V_GEN) \
+	( \
+		date=`date -R`; \
+		version=@VERSION@; \
+		s=`cat debian/changelog.in`; \
+		eval "echo \"$${s}\""; \
+	) > $@
 
 src/furiganapad.json : $(src)
 	tools/gettext.py $^ -o $@
