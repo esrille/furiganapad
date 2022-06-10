@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: furiganapad 0.5.1\n"
+"Project-Id-Version: furiganapad 0.5.2\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2021-10-08 11:56+0900\n"
+"POT-Creation-Date: 2022-06-09 20:43+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,55 +17,55 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/window.py:46
+#: src/window.py:47
 msgid "FuriganaPad"
 msgstr ""
 
-#: src/window.py:100 src/window.py:550 src/window.py:552
+#: src/window.py:101 src/window.py:551 src/window.py:553
 msgid "Ruby"
 msgstr ""
 
-#: src/window.py:207
+#: src/window.py:208
 msgid "Text files"
 msgstr ""
 
-#: src/window.py:212
+#: src/window.py:213
 msgid "Python files"
 msgstr ""
 
-#: src/window.py:217
+#: src/window.py:218
 msgid "Any files"
 msgstr ""
 
-#: src/window.py:240
+#: src/window.py:241
 msgid "Save changes to this document?"
 msgstr ""
 
-#: src/window.py:241
+#: src/window.py:242
 msgid "If you don't, changes will be lost."
 msgstr ""
 
-#: src/window.py:242
+#: src/window.py:243
 msgid "Close _Without Saving"
 msgstr ""
 
-#: src/window.py:275
+#: src/window.py:276
 msgid "Font"
 msgstr ""
 
-#: src/window.py:276
+#: src/window.py:277
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr ""
 
-#: src/window.py:394
+#: src/window.py:395
 msgid "Open File"
 msgstr ""
 
-#: src/window.py:469
+#: src/window.py:470
 msgid "Could not save the file."
 msgstr ""
 
-#: src/window.py:478
+#: src/window.py:479
 msgid "Save File"
 msgstr ""
 
