@@ -773,18 +773,28 @@ class FuriganaBuffer(GObject.Object):
         reading = self.paragraphs[start.get_line()].get_text()[start.get_line_offset():end.get_line_offset()]
 
         if self.surround_deleted:
-            if self.reading and is_reading(reading + self.reading):
-                # Extend self.reading
-                self.reading = reading + self.reading
-                logger.debug('reading: %s', self.reading)
+            if self.reading:
+                if not '―' in reading:
+                    if is_reading(reading + self.reading):
+                        # Extend self.reading
+                        # か + け―る
+                        self.reading = reading + self.reading
+                elif is_reading(reading):
+                    self.reading = reading
+                else:
+                    self.reading = ''
+                    self.surround_deleted = False
+                logger.debug(f'reading: {self.reading}')
             else:
                 self.surround_deleted = False
 
         if not self.surround_deleted:
             if is_reading(reading):
                 self.reading = reading
-                logger.debug('reading: %s', self.reading)
-            self.surround_deleted = True
+                logger.debug(f'reading: {self.reading}')
+                self.surround_deleted = True
+            else:
+                self.reading = ''
 
         self.delete(start, end)
 
@@ -1024,13 +1034,22 @@ class FuriganaBuffer(GObject.Object):
             if not text:
                 text = '\n'
         if self.surround_deleted:
-            if self.reading.startswith(text) and is_reading(self.reading[len(text):]):
-                # Shrink self.reading
-                self.reading = self.reading[len(text):]
-                logger.debug('reading: %s', self.reading)
+            if self.reading.startswith(text):
+                if not '―' in text:
+                    reading = self.reading[len(text):]
+                    if is_reading(reading):
+                        # Shrink self.reading
+                        # かけ― → か + け―
+                        self.reading = reading
+                else:
+                    # おだ―や → おだ―
+                    assert is_reading(text)
+                    self.reading = text
+                logger.debug(f'reading: {self.reading}')
             else:
                 if self.ruby_mode and not iter.inside_ruby():
                     text = self._annotate(text, self.reading)
+                self.reading = ''
                 self.surround_deleted = False
         was_modified = self.get_modified()
         start = TextIter(self)

@@ -5,7 +5,7 @@ Summary:    A text editor for Japanese texts with ruby characters
 License:    LGPLv2+
 URL:        https://github.com/esrille/%{name}
 Source0:    https://github.com/esrille/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.gz
-Requires:   ibus-hiragana >= 0.11.0
+Requires:   ibus-hiragana >= 0.14.0
 Requires:   google-noto-cjk-fonts-common, google-noto-fonts-common
 Requires:   gtk3
 Requires:   pango
