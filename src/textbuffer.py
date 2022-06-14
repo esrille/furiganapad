@@ -784,14 +784,14 @@ class FuriganaBuffer(GObject.Object):
                 else:
                     self.reading = ''
                     self.surround_deleted = False
-                logger.debug(f'reading: {self.reading}')
+                logger.debug(f'delete_surrounding - reading: {self.reading}')
             else:
                 self.surround_deleted = False
 
         if not self.surround_deleted:
             if is_reading(reading):
                 self.reading = reading
-                logger.debug(f'reading: {self.reading}')
+                logger.debug(f'delete_surrounding - reading: {self.reading}')
                 self.surround_deleted = True
             else:
                 self.reading = ''
@@ -1035,7 +1035,10 @@ class FuriganaBuffer(GObject.Object):
                 text = '\n'
         if self.surround_deleted:
             if self.reading.startswith(text):
-                if not '―' in text:
+                if text == self.reading:
+                    # canceled by [Esc]
+                    self.reading = ''
+                elif not '―' in text:
                     reading = self.reading[len(text):]
                     if is_reading(reading):
                         # Shrink self.reading
@@ -1045,7 +1048,7 @@ class FuriganaBuffer(GObject.Object):
                     # おだ―や → おだ―
                     assert is_reading(text)
                     self.reading = text
-                logger.debug(f'reading: {self.reading}')
+                logger.debug(f'insert - reading: {self.reading}')
             else:
                 if self.ruby_mode and not iter.inside_ruby():
                     text = self._annotate(text, self.reading)
