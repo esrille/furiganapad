@@ -23,6 +23,7 @@ from gi.repository import GObject
 from breaker import Breaker
 
 import logging
+import re
 import time
 
 
@@ -38,28 +39,11 @@ HIRAGANA = ('あいうえおかきくけこさしすせそたちつてとなに�
             'ゔがぎぐげござじずぜぞだぢづでどばびぶべぼぁぃぅぇぉゃゅょっぱぴぷぺぽゎゐゑ・ーゝゞ')
 KATAKANA = ('アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'
             'ヴガギグゲゴザジズゼゾダヂヅデドバビブベボァィゥェォャュョッパピプペポヮヰヱ・ーヽヾ')
+KANZI = re.compile(r'[\u4E00-\u9FFF\uFA0E-\uFA2D\uFA30-\uFA6A\uFA6B-\uFA6D𠮟]')
 
 PLAIN = 0
 BASE = 1
 RUBY = 2
-
-
-def to_hiragana(s):
-    t = ''
-    for c in s:
-        i = KATAKANA.find(c)
-        if i == -1:
-            t += c
-        else:
-            t += HIRAGANA[i]
-    return t
-
-
-def is_kana(s):
-    for c in s:
-        if c not in HIRAGANA + KATAKANA:
-            return False
-    return True
 
 
 def is_reading(s):
@@ -515,14 +499,14 @@ class FuriganaBuffer(GObject.Object):
 
     def _annotate(self, s, r):
         logger.debug('_annotate("%s", "%s")', s, r)
-        if is_kana(s):
-            return s
         pos = r.find('―')
         if 0 <= pos:
-            r = r[:pos] + r[pos + 1:]
+            r = r[:pos]
+            if not r:
+                return s
         before = ''
         for i in range(len(s)):
-            if i < len(r) and to_hiragana(s[i]) == r[i]:
+            if i < len(r) and s[i] == r[i]:
                 before += s[i]
             else:
                 break
@@ -530,15 +514,14 @@ class FuriganaBuffer(GObject.Object):
             s = s[len(before):]
             r = r[len(before):]
         after = ''
-        for i in range(len(s)):
-            if i < len(r) and to_hiragana(s[-1 - i]) == r[-1 - i]:
-                after = s[-1 - i] + after
+        for c in s[::-1]:
+            if not KANZI.search(c):
+                after = c + after
             else:
                 break
         if after:
             s = s[:-len(after)]
-            r = r[:-len(after)]
-        if s and r:
+        if s:
             s = IAA + s + IAS + r + IAT
         return before + s + after
 
