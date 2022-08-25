@@ -415,6 +415,8 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
     if Pango.version_check(1, 44, 0) is None:
 
         def _check_sentences(self, text, attr_list):
+            if not self.highlight_sentences:
+                return text
             markup = ''
             sentence = ''
             start = end = 0
