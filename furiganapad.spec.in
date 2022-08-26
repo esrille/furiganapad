@@ -8,7 +8,7 @@ Source0:    https://github.com/esrille/%{name}/releases/download/v%{version}/%{n
 Requires:   ibus-hiragana >= 0.14.2
 Requires:   google-noto-cjk-fonts-common, google-noto-fonts-common
 Requires:   gtk3
-Requires:   pango
+Requires:   pango >= 1.44.0
 Requires:   python3
 Requires:   python3-cairo
 Requires:   python3-gobject
