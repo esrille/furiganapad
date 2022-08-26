@@ -412,229 +412,116 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
     def on_deleted(self, textbuffer, start, end):
         self.reflow(self.reflow_line)
 
-    if Pango.version_check(1, 44, 0) is None:
-
-        def _check_sentences(self, text, attr_list):
-            if not self.highlight_sentences:
-                return text
-            markup = ''
-            sentence = ''
-            start = end = 0
-            text_length = len(text)
-            for i in range(text_length):
-                c = text[i]
-                if start == end:
-                    if c in '\t 　':
-                        markup += c
-                        start += 1
-                        end = start
-                        continue
-                end = i + 1
-                if c in '　 。．？！' or text_length <= end:
-                    if c in '　 ':
-                        end -= 1
-                    else:
-                        sentence += c
-                    count = end - start
-                    if SENTENCE_SHORT < count:
-                        if SENTENCE_LONG < count:
-                            attr = Pango.attr_background_new(0xffff, 0xa000, 0xa000)
-                        else:
-                            attr = Pango.attr_background_new(0xffff, 0xffff, 0xa000)
-                        attr.start_index = len(markup.encode())
-                        attr.end_index = attr.start_index + len(sentence.encode())
-                        attr_list.insert(attr)
-                    markup += sentence
-                    if c in '　 ':
-                        markup += c
-                    start = end = i + 1
-                    sentence = ''
+    def _check_sentences(self, text, attr_list):
+        if not self.highlight_sentences:
+            return text
+        markup = ''
+        sentence = ''
+        start = end = 0
+        text_length = len(text)
+        for i in range(text_length):
+            c = text[i]
+            if start == end:
+                if c in '\t 　':
+                    markup += c
+                    start += 1
+                    end = start
+                    continue
+            end = i + 1
+            if c in '　 。．？！' or text_length <= end:
+                if c in '　 ':
+                    end -= 1
                 else:
                     sentence += c
-            return markup
-
-        def on_draw(self, wid, cr):
-            cr.set_source_rgb(1, 1, 1)
-            cr.paint()
-            cr.move_to(0, 0)
-            cr.set_source_rgb(0, 0, 0)
-            cr.translate(self.padding.left, 0)
-
-            height = wid.get_allocated_height()
-            cursor = self.buffer.get_cursor()
-            start, end = self.buffer.get_selection_bounds()
-
-            layout = PangoCairo.create_layout(cr)
-            desc = self.get_font()
-            layout.set_font_description(desc)
-            layout.set_width(self.width * Pango.SCALE)
-            layout.set_spacing(self.spacing * Pango.SCALE)
-
-            lineno = 0
-            offset = self._get_offset()
-            y = self.spacing - offset
-            for paragraph in self.buffer.paragraphs:
-                h = self.heights[lineno]
-                if y < height and 0 <= y + h:
-                    text = paragraph.get_plain_text()
-                    cursor_offset = len(text)
-                    attr_list = Pango.AttrList().new()
-                    if lineno == cursor.get_line():
-                        cursor_offset = cursor.get_plain_line_offset()
-                        if self._has_preedit():
-                            text = text[:cursor_offset] + self.preedit[0] + text[cursor_offset:]
-                            attr_list.splice(self.preedit[1], len(text[:cursor_offset].encode()),
-                                             len(self.preedit[0].encode()))
-                            cursor_offset += self.preedit[2]
-                    if start == end or lineno < start.get_line() or end.get_line() < lineno:
-                        text = self._check_sentences(text, attr_list)
-                    else:
-                        attr = Pango.attr_background_new(0xac00, 0xce00, 0xf700)
-                        if start.get_line() < lineno < end.get_line():
-                            attr.start_index = 0
-                            attr.end_index = len(text.encode())
-                        elif start.get_line() == end.get_line():
-                            assert lineno == end.get_line()
-                            so = start.get_plain_line_offset()
-                            eo = end.get_plain_line_offset()
-                            attr.start_index = len(text[:so].encode())
-                            attr.end_index = attr.start_index + len(text[so:eo].encode())
-                        elif start.get_line() == lineno:
-                            o = start.get_plain_line_offset()
-                            attr.start_index = len(text[:o].encode())
-                            attr.end_index = attr.start_index + len(text[o:].encode())
-                        else:
-                            assert lineno == end.get_line()
-                            o = end.get_plain_line_offset()
-                            attr.start_index = 0
-                            attr.end_index = len(text[:o].encode())
-                        attr_list.insert(attr)
-                    layout.set_text(text, -1)
-                    layout.set_attributes(attr_list)
-                    PangoCairo.update_layout(cr, layout)
-                    cr.move_to(0, y)
-                    PangoCairo.show_layout(cr, layout)
-                    if lineno == cursor.get_line():
-                        self._draw_rubies(cr, layout, paragraph, text, y, cursor_offset, True)
-                        self._draw_caret(cr, layout, text, y, cursor_offset)
-                    else:
-                        self._draw_rubies(cr, layout, paragraph, text, y, cursor_offset, False)
-                y += h
-                lineno += 1
-
-            self.caret.y += offset
-            return True
-
-    else:
-
-        def _check_sentences(self, text):
-            if not self.highlight_sentences:
-                return text.translate(ESCAPE)
-            markup = ''
-            sentence = ''
-            start = end = 0
-            text_length = len(text)
-            for i in range(text_length):
-                c = text[i]
-                if start == end:
-                    if c in '\t 　':
-                        markup += c
-                        start += 1
-                        end = start
-                        continue
-                end = i + 1
-                if c in '　 。．？！' or text_length <= end:
-                    if c in '　 ':
-                        end -= 1
-                    else:
-                        sentence += c
-                    count = end - start
-                    sentence = sentence.translate(ESCAPE)
+                count = end - start
+                if SENTENCE_SHORT < count:
                     if SENTENCE_LONG < count:
-                        markup += '<span background="#faa">' + sentence + '</span>'
-                    elif SENTENCE_SHORT < count:
-                        markup += '<span background="#ffa">' + sentence + '</span>'
+                        attr = Pango.attr_background_new(0xffff, 0xa000, 0xa000)
                     else:
-                        markup += sentence
-                    if c in '　 ':
-                        markup += c
-                    start = end = i + 1
-                    sentence = ''
+                        attr = Pango.attr_background_new(0xffff, 0xffff, 0xa000)
+                    attr.start_index = len(markup.encode())
+                    attr.end_index = attr.start_index + len(sentence.encode())
+                    attr_list.insert(attr)
+                markup += sentence
+                if c in '　 ':
+                    markup += c
+                start = end = i + 1
+                sentence = ''
+            else:
+                sentence += c
+        return markup
+
+    def on_draw(self, wid, cr):
+        cr.set_source_rgb(1, 1, 1)
+        cr.paint()
+        cr.move_to(0, 0)
+        cr.set_source_rgb(0, 0, 0)
+        cr.translate(self.padding.left, 0)
+
+        height = wid.get_allocated_height()
+        cursor = self.buffer.get_cursor()
+        start, end = self.buffer.get_selection_bounds()
+
+        layout = PangoCairo.create_layout(cr)
+        desc = self.get_font()
+        layout.set_font_description(desc)
+        layout.set_width(self.width * Pango.SCALE)
+        layout.set_spacing(self.spacing * Pango.SCALE)
+
+        lineno = 0
+        offset = self._get_offset()
+        y = self.spacing - offset
+        for paragraph in self.buffer.paragraphs:
+            h = self.heights[lineno]
+            if y < height and 0 <= y + h:
+                text = paragraph.get_plain_text()
+                cursor_offset = len(text)
+                attr_list = Pango.AttrList().new()
+                if lineno == cursor.get_line():
+                    cursor_offset = cursor.get_plain_line_offset()
+                    if self._has_preedit():
+                        text = text[:cursor_offset] + self.preedit[0] + text[cursor_offset:]
+                        attr_list.splice(self.preedit[1], len(text[:cursor_offset].encode()),
+                                         len(self.preedit[0].encode()))
+                        cursor_offset += self.preedit[2]
+                if start == end or lineno < start.get_line() or end.get_line() < lineno:
+                    text = self._check_sentences(text, attr_list)
                 else:
-                    sentence += c
-            return markup
-
-        def on_draw(self, wid, cr):
-            cr.set_source_rgb(1, 1, 1)
-            cr.paint()
-            cr.move_to(0, 0)
-            cr.set_source_rgb(0, 0, 0)
-            cr.translate(self.padding.left, 0)
-
-            height = wid.get_allocated_height()
-            cursor = self.buffer.get_cursor()
-            start, end = self.buffer.get_selection_bounds()
-
-            layout = PangoCairo.create_layout(cr)
-            desc = self.get_font()
-            layout.set_font_description(desc)
-            layout.set_width(self.width * Pango.SCALE)
-            layout.set_spacing(self.spacing * Pango.SCALE)
-
-            lineno = 0
-            offset = self._get_offset()
-            y = self.spacing - offset
-            for paragraph in self.buffer.paragraphs:
-                h = self.heights[lineno]
-                if y < height and 0 <= y + h:
-                    text = paragraph.get_plain_text()
-                    cursor_offset = len(text)
-                    attr_list_preedit = Pango.AttrList().new()
-                    if lineno == cursor.get_line():
-                        cursor_offset = cursor.get_plain_line_offset()
-                        if self._has_preedit():
-                            text = text[:cursor_offset] + self.preedit[0] + text[cursor_offset:]
-                            attr_list_preedit.splice(self.preedit[1], len(text[:cursor_offset].encode()),
-                                                     len(self.preedit[0].encode()))
-                            cursor_offset += self.preedit[2]
-                    if start == end or lineno < start.get_line() or end.get_line() < lineno:
-                        markup = self._check_sentences(text)
-                    elif start.get_line() < lineno < end.get_line():
-                        markup = '<span background="#ACCEF7">' + text.translate(ESCAPE) + '</span>'
+                    attr = Pango.attr_background_new(0xac00, 0xce00, 0xf700)
+                    if start.get_line() < lineno < end.get_line():
+                        attr.start_index = 0
+                        attr.end_index = len(text.encode())
                     elif start.get_line() == end.get_line():
                         assert lineno == end.get_line()
                         so = start.get_plain_line_offset()
                         eo = end.get_plain_line_offset()
-                        markup = text[:so].translate(ESCAPE) + \
-                                 '<span background="#ACCEF7">' + text[so:eo].translate(ESCAPE) + '</span>' + \
-                                 text[eo:].translate(ESCAPE)
+                        attr.start_index = len(text[:so].encode())
+                        attr.end_index = attr.start_index + len(text[so:eo].encode())
                     elif start.get_line() == lineno:
                         o = start.get_plain_line_offset()
-                        markup = text[:o].translate(ESCAPE) + \
-                                 '<span background="#ACCEF7">' + text[o:].translate(ESCAPE) + '</span>'
+                        attr.start_index = len(text[:o].encode())
+                        attr.end_index = attr.start_index + len(text[o:].encode())
                     else:
                         assert lineno == end.get_line()
                         o = end.get_plain_line_offset()
-                        markup = '<span background="#ACCEF7">' + text[:o].translate(ESCAPE) + '</span>' + \
-                                 text[o:].translate(ESCAPE)
-                    layout.set_markup(markup, -1)
-                    if lineno == cursor.get_line() and self._has_preedit():
-                        attr_list = layout.get_attributes()
-                        attr_list.splice(attr_list_preedit, 0, 0)
-                        layout.set_attributes(attr_list)
-                    PangoCairo.update_layout(cr, layout)
-                    cr.move_to(0, y)
-                    PangoCairo.show_layout(cr, layout)
-                    if lineno == cursor.get_line():
-                        self._draw_rubies(cr, layout, paragraph, text, y, cursor_offset, True)
-                        self._draw_caret(cr, layout, text, y, cursor_offset)
-                    else:
-                        self._draw_rubies(cr, layout, paragraph, text, y, cursor_offset, False)
-                y += h
-                lineno += 1
+                        attr.start_index = 0
+                        attr.end_index = len(text[:o].encode())
+                    attr_list.insert(attr)
+                layout.set_text(text, -1)
+                layout.set_attributes(attr_list)
+                PangoCairo.update_layout(cr, layout)
+                cr.move_to(0, y)
+                PangoCairo.show_layout(cr, layout)
+                if lineno == cursor.get_line():
+                    self._draw_rubies(cr, layout, paragraph, text, y, cursor_offset, True)
+                    self._draw_caret(cr, layout, text, y, cursor_offset)
+                else:
+                    self._draw_rubies(cr, layout, paragraph, text, y, cursor_offset, False)
+            y += h
+            lineno += 1
 
-            self.caret.y += offset
-            return True
+        self.caret.y += offset
+        return True
 
     def on_focus_in(self, wid, event):
         logger.debug('on_focus_in')
