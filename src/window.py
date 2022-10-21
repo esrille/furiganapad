@@ -316,7 +316,6 @@ class Window(Gtk.ApplicationWindow):
         if self.search_entry.is_focus():
             if event.keyval == Gdk.KEY_Escape:
                 self.search_entry_text = self.search_entry.get_text()
-                self.searchbar.set_search_mode(False)
                 self.textview.grab_focus()
                 return True
         elif self.replace_to.is_focus() or self.replace_from.is_focus():
@@ -331,12 +330,10 @@ class Window(Gtk.ApplicationWindow):
             if event.keyval == Gdk.KEY_Escape:
                 self.replace_from_text = self.replace_from.get_text()
                 self.replace_to_text = self.replace_to.get_text()
-                self.replacebar.set_search_mode(False)
                 self.textview.grab_focus()
                 return True
         elif self.ruby_entry.is_focus():
             if event.keyval == Gdk.KEY_Escape:
-                self.rubybar.set_search_mode(False)
                 self.textview.grab_focus()
                 return True
         return False
@@ -379,12 +376,14 @@ class Window(Gtk.ApplicationWindow):
                 text = IAA + text + IAS + ruby + IAT
             self.buffer.insert_at_cursor(text)
             self.buffer.end_user_action()
-        self.rubybar.set_search_mode(False)
         self.textview.grab_focus()
 
     def on_textview_focus_in(self, wid, event):
         logger.debug('on_textview_focus_in')
         self.set_action_sensitivity('selectall', True)
+        self.searchbar.set_search_mode(False)
+        self.replacebar.set_search_mode(False)
+        self.rubybar.set_search_mode(False)
 
     def on_textview_focus_out(self, wid, event):
         logger.debug('on_textview_focus_out')
