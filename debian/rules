@@ -17,6 +17,8 @@
 %:
 	dh $@  --with python3
 
+override_dh_builddeb:
+	dh_builddeb -- -Zxz
 
 # dh_make generated override targets
 # This is example for Cmake (See https://bugs.debian.org/641051 )
