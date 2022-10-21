@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2021  Esrille Inc.
+# Copyright (c) 2019-2022  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -544,7 +544,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         logger.debug('on_key_press: "%s", %08x', Gdk.keyval_name(event.keyval), event.state)
         if self.im.filter_keypress(event):
             return True
-        if event.keyval == Gdk.KEY_Return:
+        if event.keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
             self.buffer.begin_user_action()
             self.buffer.insert_at_cursor('\n')
             self.buffer.end_user_action()
