@@ -332,10 +332,6 @@ class Window(Gtk.ApplicationWindow):
                 self.replace_to_text = self.replace_to.get_text()
                 self.textview.grab_focus()
                 return True
-        elif self.ruby_entry.is_focus():
-            if event.keyval == Gdk.KEY_Escape:
-                self.textview.grab_focus()
-                return True
         return False
 
     def on_mark_set(self, buffer, where, mark):
