@@ -8,7 +8,7 @@
 
 ```
 git clone https://github.com/esrille/furiganapad.git
-./autogen.sh
+./autogen.sh --prefix=/usr
 make
 sudo make install
 ```

@@ -46,11 +46,10 @@ aside a:hover {
 <h2>じぶんでビルドする<ruby>方法<rp>(</rp><rt>ほうほう</rt><rp>)</rp></ruby></h2>
 <p>&#x3000;「ふりがなパッド」をじぶんでビルドしてインストールしたいときは、つぎの<ruby>手順<rp>(</rp><rt>てじゅん</rt><rp>)</rp></ruby>でインストールできます。</p>
 <pre><code>git clone https://github.com/esrille/furiganapad.git
-./autogen.sh
+./autogen.sh --prefix=/usr
 make
 sudo make install
 </code></pre>
-
 <p>&#x3000;じぶんでビルドした「ふりがなパッド」をアンインストールするときは、つぎのようにします:</p>
 <pre><code>$ sudo make uninstall
 </code></pre>

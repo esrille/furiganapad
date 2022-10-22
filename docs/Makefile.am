@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Esrille Inc.
+# Copyright (c) 2020-2022 Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,7 @@ help_DATA = \
 	icon.png \
 	kids.png \
 	normal.png \
-	screenshot.mp4 \
+	screenshot.webm \
 	$(NULL)
 
 helpdir = $(pkgdatadir)/help
