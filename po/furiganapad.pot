@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: furiganapad 0.5.5\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2022-08-26 21:00+0900\n"
+"POT-Creation-Date: 2022-10-22 18:47+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "FuriganaPad"
 msgstr ""
 
-#: src/window.py:101 src/window.py:551 src/window.py:553
+#: src/window.py:101 src/window.py:546 src/window.py:548
 msgid "Ruby"
 msgstr ""
 
@@ -57,15 +57,15 @@ msgstr ""
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr ""
 
-#: src/window.py:395
+#: src/window.py:390
 msgid "Open File"
 msgstr ""
 
-#: src/window.py:470
+#: src/window.py:465
 msgid "Could not save the file."
 msgstr ""
 
-#: src/window.py:479
+#: src/window.py:474
 msgid "Save File"
 msgstr ""
 
