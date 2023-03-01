@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2022  Esrille Inc.
+# Copyright (c) 2019-2023  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -168,9 +168,10 @@ class Window(Gtk.ApplicationWindow):
             focused.emit(signal_name, *args)
 
     def _load_file(self, file):
+        self.set_file(file)
         if file:
             try:
-                [success, content, etags] = file.load_contents(None)
+                success, content, etags = file.load_contents(None)
                 content = content.decode('utf-8', 'ignore')
                 content = remove_dangling_annotations(content)
                 if content:
@@ -178,10 +179,11 @@ class Window(Gtk.ApplicationWindow):
                     self.buffer.set_text(content)
                     self.buffer.end_user_action()
                     self.buffer.place_cursor(self.buffer.get_start_iter())
-            except GObject.GError as e:
-                file = None
-                logger.error(e.message)
-        self.set_file(file)
+                self.buffer.set_modified(False)
+            except GLib.Error:
+                # Create a new file
+                self.save()
+                self.update_title()
 
     def about_callback(self, action, parameter):
         dialog = Gtk.AboutDialog()
@@ -339,12 +341,7 @@ class Window(Gtk.ApplicationWindow):
             self.update_statusbar()
 
     def on_modified_changed(self, buffer):
-        title = self.title
-        if self.file:
-            title = self.file.get_basename() + ' – ' + title
-        if self.buffer.get_modified():
-            title = '*' + title
-        self.set_title(title)
+        self.update_title()
 
     def on_replace(self, entry):
         text_from = get_plain_text(self.replace_from.get_text())
@@ -453,21 +450,16 @@ class Window(Gtk.ApplicationWindow):
                                             False,
                                             Gio.FileCreateFlags.NONE,
                                             None)
-        except GObject.GError as e:
-            message = e.message
-        except Exception as e:
-            message = str(e)
-        else:
             return self.set_file(self.file)
-
-        dialog = Gtk.MessageDialog(
-            self, 0, Gtk.MessageType.ERROR,
-            Gtk.ButtonsType.OK, _("Could not save the file."))
-        dialog.format_secondary_text(message)
-        dialog.run()
-        dialog.destroy()
-        self.save_as()
-        return True
+        except GLib.Error as e:
+            dialog = Gtk.MessageDialog(
+                self, 0, Gtk.MessageType.ERROR,
+                Gtk.ButtonsType.OK, _("Could not save the file."))
+            dialog.format_secondary_text(e.message)
+            dialog.run()
+            dialog.destroy()
+            self.save_as()
+            return True
 
     def save_as(self):
         dialog = Gtk.FileChooserDialog(
@@ -480,8 +472,8 @@ class Window(Gtk.ApplicationWindow):
         if self.file is not None:
             try:
                 dialog.set_file(self.file)
-            except GObject.GError as e:
-                logger.error(e.message)
+            except GLib.Error:
+                logger.exception(f'Could not create file "{self.file.get_path()}"')
         response = dialog.run()
         if response == Gtk.ResponseType.ACCEPT:
             self.file = dialog.get_file()
@@ -547,3 +539,11 @@ class Window(Gtk.ApplicationWindow):
         else:
             status += '<s>' + _("Ruby") + '</s>'
         self.line_col.set_markup(status)
+
+    def update_title(self):
+        title = self.title
+        if self.file:
+            title = self.file.get_basename() + ' – ' + title
+        if self.buffer.get_modified():
+            title = '*' + title
+        self.set_title(title)
