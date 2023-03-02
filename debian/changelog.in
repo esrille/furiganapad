@@ -4,6 +4,12 @@ furiganapad (${version}) unstable; urgency=low
 
  -- Esrille Inc. <info@esrille.com>  ${date}
 
+furiganapad (0.5.5) unstable; urgency=low
+
+  * See https://github.com/esrille/furiganapad/releases/tag/v0.5.5
+
+ -- Esrille Inc. <info@esrille.com>  Tue, 22 Nov 2022 23:40:31 +0900
+
 furiganapad (0.5.4) unstable; urgency=low
 
   * See https://github.com/esrille/furiganapad/releases/tag/v0.5.4
