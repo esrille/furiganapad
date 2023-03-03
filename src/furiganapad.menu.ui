@@ -37,6 +37,11 @@
           <attribute name="label" translatable="yes">Clos_e All</attribute>
           <attribute name="action">win.closeall</attribute>
         </item>
+        <item>
+          <attribute name="label" translatable="yes">_Quit</attribute>
+          <attribute name="action">app.quit</attribute>
+          <attribute name="accel">&lt;Primary&gt;q</attribute>
+        </item>
       </section>
     </submenu>
     <submenu>

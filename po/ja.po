@@ -1,13 +1,13 @@
 # Furiganapad
-# Copyright (C) 2020-2022 Esrille Inc. <info@esrille.com>
+# Copyright (C) 2020-2023 Esrille Inc. <info@esrille.com>
 # This file is distributed under the same license as the furiganapad package.
-# Esrille Inc. <info@esrille.com>, 2020-2022.
+# Esrille Inc. <info@esrille.com>, 2020-2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: furiganapad 0.5.5\n"
+"Project-Id-Version: furiganapad 0.6.0\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2022-10-22 18:47+0900\n"
+"POT-Creation-Date: 2023-03-02 20:19+0900\n"
 "PO-Revision-Date: 2020-06-11 05:38+0900\n"
 "Last-Translator: Esrille Inc. <info@esrille.com>\n"
 "Language-Team: Japanese <info@esrille.com>\n"
@@ -16,55 +16,87 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: src/application.py:50
+msgid "Initial window x position"
+msgstr "ウインドウの x 座標"
+
+#: src/application.py:50
+msgid "x"
+msgstr "x"
+
+#: src/application.py:52
+msgid "Initial window y position"
+msgstr "ウインドウの y 座標"
+
+#: src/application.py:52
+msgid "y"
+msgstr "y"
+
+#: src/application.py:54
+msgid "Initial window width"
+msgstr "ウインドウの幅"
+
+#: src/application.py:54
+msgid "w"
+msgstr "w"
+
+#: src/application.py:56
+msgid "Initial window height"
+msgstr "ウインドウの高さ"
+
+#: src/application.py:56
+msgid "h"
+msgstr "h"
+
 #: src/window.py:47
 msgid "FuriganaPad"
 msgstr "ふりがなパッド"
 
-#: src/window.py:101 src/window.py:546 src/window.py:548
+#: src/window.py:101 src/window.py:538 src/window.py:540
 msgid "Ruby"
 msgstr "ルビ"
 
-#: src/window.py:208
+#: src/window.py:210
 msgid "Text files"
 msgstr "テキスト ファイル"
 
-#: src/window.py:213
+#: src/window.py:215
 msgid "Python files"
 msgstr "Pythonのファイル"
 
-#: src/window.py:218
+#: src/window.py:220
 msgid "Any files"
 msgstr "すべてのファイル"
 
-#: src/window.py:241
+#: src/window.py:243
 msgid "Save changes to this document?"
 msgstr "書きかえた文章を保存しますか？"
 
-#: src/window.py:242
+#: src/window.py:244
 msgid "If you don't, changes will be lost."
 msgstr "保存しないと、書きかえた文章は残りません。"
 
-#: src/window.py:243
+#: src/window.py:245
 msgid "Close _Without Saving"
 msgstr "保存しないで閉じる(_W)"
 
-#: src/window.py:276
+#: src/window.py:278
 msgid "Font"
 msgstr "フォント"
 
-#: src/window.py:277
+#: src/window.py:279
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr "ひさかたのひかりのどけきはるの日に しづごころなく花のちるらむ"
 
-#: src/window.py:390
+#: src/window.py:387
 msgid "Open File"
 msgstr "ファイルを開く"
 
-#: src/window.py:465
+#: src/window.py:457
 msgid "Could not save the file."
 msgstr "ファイルを保存できませんでした。"
 
-#: src/window.py:474
+#: src/window.py:466
 msgid "Save File"
 msgstr "名前をつけて保存"
 
@@ -98,78 +130,82 @@ msgstr "閉じる(_C)"
 msgid "Clos_e All"
 msgstr "すべて閉じる(_E)"
 
-#: src/furiganapad.menu.ui:43
+#: src/furiganapad.menu.ui:41
+msgid "_Quit"
+msgstr "終了(_Q)"
+
+#: src/furiganapad.menu.ui:48
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: src/furiganapad.menu.ui:46
+#: src/furiganapad.menu.ui:51
 msgid "_Undo"
 msgstr "元に戻す(_U)"
 
-#: src/furiganapad.menu.ui:51
+#: src/furiganapad.menu.ui:56
 msgid "Re_do"
 msgstr "やり直す(_R)"
 
-#: src/furiganapad.menu.ui:58
+#: src/furiganapad.menu.ui:63
 msgid "Cu_t"
 msgstr "切り取り(_T)"
 
-#: src/furiganapad.menu.ui:63
+#: src/furiganapad.menu.ui:68
 msgid "_Copy"
 msgstr "コピー(_C)"
 
-#: src/furiganapad.menu.ui:68
+#: src/furiganapad.menu.ui:73
 msgid "_Paste"
 msgstr "貼り付け(_P)"
 
-#: src/furiganapad.menu.ui:75
+#: src/furiganapad.menu.ui:80
 msgid "Select _All"
 msgstr "すべて選択(_A)"
 
 #
-#: src/furiganapad.menu.ui:82
+#: src/furiganapad.menu.ui:87
 msgid "_Find…"
 msgstr "検索(_F)…"
 
 #
-#: src/furiganapad.menu.ui:87
+#: src/furiganapad.menu.ui:92
 msgid "_Replace…"
 msgstr "置換(_R)…"
 
 #
-#: src/furiganapad.menu.ui:94
+#: src/furiganapad.menu.ui:99
 msgid "Ru_by…"
 msgstr "ルビをふる(_B)…"
 
-#: src/furiganapad.menu.ui:99
+#: src/furiganapad.menu.ui:104
 msgid "Revert to _Hiragana"
 msgstr "ひらがなに戻す(_H)"
 
-#: src/furiganapad.menu.ui:106
+#: src/furiganapad.menu.ui:111
 msgid "_Settings"
 msgstr "設定(_S)"
 
 #
-#: src/furiganapad.menu.ui:109
+#: src/furiganapad.menu.ui:114
 msgid "_Font…"
 msgstr "フォントを変える(_F)…"
 
-#: src/furiganapad.menu.ui:113
+#: src/furiganapad.menu.ui:118
 msgid "_Ruby"
 msgstr "ルビをふる(_R)"
 
-#: src/furiganapad.menu.ui:118
+#: src/furiganapad.menu.ui:123
 msgid "Highlight _Long Sentences"
 msgstr "長い文をめだたせる(_L)"
 
-#: src/furiganapad.menu.ui:122
+#: src/furiganapad.menu.ui:127
 msgid "_Statusbar"
 msgstr "ステータスバー(_S)"
 
-#: src/furiganapad.menu.ui:128 src/furiganapad.menu.ui:131
+#: src/furiganapad.menu.ui:133 src/furiganapad.menu.ui:136
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/furiganapad.menu.ui:136
+#: src/furiganapad.menu.ui:141
 msgid "_About Furiganapad"
 msgstr "ふりがなパッドについて(_A)"
