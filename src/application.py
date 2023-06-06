@@ -90,9 +90,8 @@ class Application(Gtk.Application):
             logger.exception(f"Could not read '{pathname}'")
         except TypeError:
             logger.exception(f"Broken session file '{pathname}'")
-        else:
+        if 0 < len(self.get_windows()):
             return
-
         win = Window(self)
         win.show_all()
         win.move(self.window_x, self.window_y)
@@ -186,5 +185,7 @@ class Application(Gtk.Application):
                         path = window.get_file().get_path()
                         file.write(f'furiganapad -x {x} -y {y} -w {w} -h {h} {path} &\n')
         except:
-            logger.exception(f'Could not create "%s"', pathname)
+            logger.exception(f"Could not create '{pathname}'")
+        if 0 < len(self.get_windows()):
+            return
         self.quit()
