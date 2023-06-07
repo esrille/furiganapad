@@ -2,7 +2,12 @@ Source: furiganapad
 Section: editors
 Priority: optional
 Maintainer: Esrille Inc. <info@esrille.com>
-Build-Depends: debhelper (>=11),dh-python,autotools-dev,autopoint,python3-dev,pkg-config
+Build-Depends:
+ autopoint,
+ debhelper (>=11),
+ dh-python,
+ python3-dev,
+ pkg-config
 Standards-Version: 4.1.2
 Homepage: https://github.com/esrille/furiganapad
 Vcs-Git: https://github.com/esrille/furiganapad.git
@@ -10,19 +15,20 @@ Vcs-Browser: https://github.com/esrille/furiganapad
 
 Package: furiganapad
 Architecture: all
-Depends: fonts-noto-cjk,
-         gir1.2-glib-2.0,
-         gir1.2-gtk-3.0,
-         gir1.2-pango-1.0 (>= 1.44.0),
-         ibus-hiragana (>= 0.14.2),
-         python3,
-         python3-cairo,
-         python3-gi,
-         python3-gi-cairo,
-         python3-icu,
-         yelp,
-         ${gir:Depends},
-         ${misc:Depends},
-         ${python3:Depends}
-Recommends: ibus-gtk, ibus-gtk3
-Description: A text editor for Japanese texts with ruby characters.
+Depends:
+ ${gir:Depends},
+ ${misc:Depends},
+ ${python3:Depends},
+ fonts-noto-cjk,
+ gir1.2-gtk-3.0,
+ gir1.2-pango-1.0 (>= 1.44.0),
+ python3-gi,
+ python3-gi-cairo,
+ python3-icu,
+ yelp
+Recommends: ibus-hiragana (>= 0.15.0)
+Description: text editor for Japanese texts with ruby characters
+ FuriganaPad can be used to edit Japanese texts with ruby characters.
+ Ruby characters are automatically placed above Kanji characters when
+ converting Hiragana characters into Kanji characters by using
+ Hiragana IME for IBus.
