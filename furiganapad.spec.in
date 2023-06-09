@@ -2,7 +2,7 @@ Name:       @PACKAGE_NAME@
 Version:    @PACKAGE_VERSION@
 Release:    1%{?dist}
 Summary:    A text editor for Japanese texts with ruby characters
-License:    LGPLv2+
+License:    LGPL-2.1-or-later
 URL:        https://github.com/esrille/%{name}
 Source0:    https://github.com/esrille/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.gz
 Requires:   ibus-hiragana >= 0.14.2
@@ -21,24 +21,23 @@ BuildRequires: python3-devel
 BuildArch:     noarch
 
 %description
-FuriganaPad is a text editor for Japanese texts with ruby characters.
+FuriganaPad can be used to edit Japanese texts with ruby characters.
+Ruby characters are automatically placed above Kanji characters when
+converting Hiragana characters into Kanji characters by using
+Hiragana IME for IBus.
 
 %global __python %{__python3}
 
 %prep
-%setup -q
+%autosetup
 
 %build
-%configure --disable-static
-make %{?_smp_mflags}
+%configure
+%make_build
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=${RPM_BUILD_ROOT} install
+%make_install
 %find_lang %{name}
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
@@ -47,7 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/%{name}
 %{_datadir}/%{name}
 %{_datadir}/applications
-%{_datadir}/icons
+%{_datadir}/icons/hicolor/96x96/apps/furiganapad.png
 %{_datadir}/locale/ja/LC_MESSAGES/furiganapad.kids.mo
 %{_mandir}/man1/furiganapad.1*
 %{_mandir}/ja/man1/furiganapad.1*
