@@ -37,6 +37,8 @@ AC_CONFIG_FILES(
 docs/Makefile
 icons/Makefile
 locale/Makefile
+man/Makefile
+man/ja/Makefile
 po/Makefile.in
 src/Makefile
 src/furiganapad.in

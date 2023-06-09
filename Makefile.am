@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2022 Esrille Inc.
+# Copyright (c) 2020-2023 Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@ SUBDIRS = \
 	docs \
 	icons \
 	locale \
+	man \
 	po \
 	src\
 	tools\

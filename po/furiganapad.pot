@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: furiganapad 0.6.0\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2023-03-02 20:19+0900\n"
+"POT-Creation-Date: 2023-06-08 09:46+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,6 +47,10 @@ msgstr ""
 
 #: src/application.py:56
 msgid "h"
+msgstr ""
+
+#: src/application.py:58
+msgid "Print version information"
 msgstr ""
 
 #: src/window.py:47

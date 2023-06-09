@@ -54,7 +54,8 @@ class Application(Gtk.Application):
                              _("Initial window width"), _("w"))
         self.add_main_option("window-height", ord('h'), GLib.OptionFlags.NONE, GLib.OptionArg.INT,
                              _("Initial window height"), _("h"))
-
+        self.add_main_option("version", ord('v'), GLib.OptionFlags.NONE, GLib.OptionArg.NONE,
+                             _("Print version information"), None)
     def do_activate(self):
         pathname = os.path.join(package.get_user_datadir(), 'session')
         logger.info(f'do_activate: {pathname}')
@@ -106,6 +107,11 @@ class Application(Gtk.Application):
         monitor_n_geo = screen.get_monitor_geometry(n)
 
         options = command_line.get_options_dict()
+
+        if options.contains('version'):
+            print(package.get_name() + ' ' + package.get_version())
+            return 0
+
         value = options.lookup_value('window-x', GLib.VariantType.new('i'))
         self.window_x = value.get_int32() if value else monitor_n_geo.x
         value = options.lookup_value('window-y', GLib.VariantType.new('i'))

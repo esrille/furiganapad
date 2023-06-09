@@ -49,5 +49,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/applications
 %{_datadir}/icons
 %{_datadir}/locale/ja/LC_MESSAGES/furiganapad.kids.mo
+%{_mandir}/man1/furiganapad.1*
+%{_mandir}/ja/man1/furiganapad.1*
 
 %changelog
