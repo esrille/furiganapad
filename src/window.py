@@ -120,7 +120,6 @@ class Window(Gtk.ApplicationWindow):
             'save': self.save_callback,
             'saveas': self.save_as_callback,
             'close': self.close_callback,
-            'closeall': self.close_all_callback,
             'undo': self.undo_callback,
             'redo': self.redo_callback,
             'cut': self.cut_callback,
@@ -225,11 +224,6 @@ class Window(Gtk.ApplicationWindow):
         start, end = self.buffer.get_selection_bounds()
         if start != end and start.get_line() == end.get_line():
             self.rubybar.set_search_mode(True)
-
-    def close_all_callback(self, action, parameter):
-        windows = self.get_application().get_windows()
-        for window in windows:
-            window.lookup_action('close').activate()
 
     def close_callback(self, action, parameter):
         if not self.confirm_save_changes():

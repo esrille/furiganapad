@@ -194,4 +194,3 @@ class Application(Gtk.Application):
             logger.exception(f"Could not create '{pathname}'")
         if 0 < len(self.get_windows()):
             return
-        self.quit()
