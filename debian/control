@@ -8,7 +8,7 @@ Build-Depends:
  dh-python,
  python3-dev,
  pkg-config
-Standards-Version: 4.1.2
+Standards-Version: 4.5.0
 Homepage: https://github.com/esrille/furiganapad
 Vcs-Git: https://github.com/esrille/furiganapad.git
 Vcs-Browser: https://github.com/esrille/furiganapad
