@@ -45,7 +45,7 @@ src/furiganapad.in
 src/package.py.in
 tools/Makefile
 Makefile
-furiganapad.spec
+furiganapad.spec.in
 )
 
 AC_OUTPUT

@@ -33,12 +33,16 @@ EXTRA_DIST = \
 	debian/source/format \
 	autogen.sh \
 	@PACKAGE_NAME@.spec \
-	@PACKAGE_NAME@.spec.in \
+	@PACKAGE_NAME@.spec.in.in \
 	CONTRIBUTING.md \
 	COPYING \
 	NOTICE\
 	README.md \
 	README.txt \
+	$(NULL)
+
+DISTCLEANFILES = \
+	po/stamp-it \
 	$(NULL)
 
 README.md : README.txt
@@ -53,12 +57,13 @@ debian/changelog:
 		eval "echo \"$${s}\""; \
 	) > $@
 
-src/furiganapad.json : $(src)
-	tools/gettext.py $^ -o $@
-
-DISTCLEANFILES = \
-	po/stamp-it \
-	$(NULL)
+@PACKAGE_NAME@.spec:
+	$(AM_V_GEN) \
+	( \
+		date=`date +%a\ %b\ %d\ %Y`; \
+		s=`cat @PACKAGE_NAME@.spec.in`; \
+		eval "echo \"$${s}\""; \
+	) > $@
 
 uninstall-hook:
 	-rmdir $(pkgdatadir)
