@@ -44,7 +44,6 @@ EXTRA_DIST = \
 README.md : README.txt
 	tools/convert_to_tag.py README.txt README.md
 
-.PHONY: debian/changelog
 debian/changelog:
 	$(AM_V_GEN) \
 	( \

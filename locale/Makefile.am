@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Esrille Inc.
+# Copyright (c) 2020-2023 Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,7 @@ CLEANFILES = \
 	furiganapad.kids.mo \
 	$(NULL)
 
-furiganapad.kids.mo : $(srcdir)/../po/furiganapad.pot
-	msgmerge --update --lang=ja furiganapad.kids.po $<
+furiganapad.kids.mo : $(srcdir)/../po/furiganapad.pot furiganapad.kids.po
+	msgmerge --update --lang=ja $(srcdir)/furiganapad.kids.po $<
 	rm -f $@
-	msgfmt -c --statistics --verbose -o $@ furiganapad.kids.po
+	msgfmt -c --statistics --verbose -o $@ $(srcdir)/furiganapad.kids.po
