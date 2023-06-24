@@ -1,7 +1,7 @@
 # はじめに
 
 　「ふりがなパッド」は、ふりがなをうった￹文章￺ぶんしょう￻をかんたんにつくれるテキスト エディターです。
-「[ひらがなIME](https://github.com/esrille/ibus-hiragana)」といっしょにつかうと、￹漢字￺かんじ￻に￹自動的￺じどうてき￻にふりがなをふっていきます。
+「[ひらがなIME](https://github.com/esrille/ibus-hiragana)」といっしょにつかうと、￹入力￺にゅうりょく￻した￹漢字￺かんじ￻に￹自動的￺じどうてき￻にふりがなをふっていきます。
 
 <video controls autoplay muted playsinline>
 <source src='screenshot.webm' type='video/webm'>
@@ -14,4 +14,4 @@
 　いまはウェブブラウザも、ふりがなをふつうに￹表示￺ひょうじ￻できるようになっています。「ふりがなパッド」は、￹総￺そう￻ルビの￹文章￺ぶんしょう￻をかんたんに￹作成￺さくせい￻したり￹編集￺へんしゅう￻したりできるようにつくられています。
 
 <hr>
-<br><small>Copyright 2019-2022 Esrille Inc. </small>
+<br><small>Copyright 2019-2023 Esrille Inc. </small>
