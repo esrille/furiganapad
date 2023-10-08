@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([furiganapad], [0.6.0], [https://github.com/esrille/furiganapad/issues])
+AC_INIT([furiganapad], [0.6.1], [https://github.com/esrille/furiganapad/issues])
 AC_CONFIG_AUX_DIR([.])
 AM_INIT_AUTOMAKE([foreign tar-ustar])
 
@@ -30,7 +30,7 @@ AC_DEFINE_UNQUOTED(
 )
 
 # Check Python
-AM_PATH_PYTHON([3.7])
+AM_PATH_PYTHON([3.8])
 
 # OUTPUT files
 AC_CONFIG_FILES(
