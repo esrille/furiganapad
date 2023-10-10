@@ -53,8 +53,11 @@ autoreconf -fi -v
 %{_mandir}/ja/man1/furiganapad.1*
 
 %changelog
-* ${date} Esrille Inc. <info@esrille.com> - @PACKAGE_VERSION@-1
+* @DATE_RPM@ Esrille Inc. <info@esrille.com> - @PACKAGE_VERSION@-1
 - See https://github.com/esrille/furiganapad/releases/tag/v@PACKAGE_VERSION@
+
+* Sun Jun 25 2023 Esrille Inc. <info@esrille.com> - 0.6.0-1
+- See https://github.com/esrille/furiganapad/releases/tag/v0.6.0
 
 * Tue Nov 22 2022 Esrille Inc. <info@esrille.com> - 0.5.5-1
 - See https://github.com/esrille/furiganapad/releases/tag/v0.5.5

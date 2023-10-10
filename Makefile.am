@@ -33,7 +33,7 @@ EXTRA_DIST = \
 	debian/source/format \
 	autogen.sh \
 	@PACKAGE_NAME@.spec \
-	@PACKAGE_NAME@.spec.in.in \
+	@PACKAGE_NAME@.spec.in \
 	CONTRIBUTING.md \
 	COPYING \
 	NOTICE\
@@ -47,23 +47,6 @@ DISTCLEANFILES = \
 
 README.md : README.txt
 	tools/convert_to_tag.py README.txt README.md
-
-debian/changelog:
-	$(AM_V_GEN) \
-	( \
-		date=`date -R`; \
-		version=@VERSION@; \
-		s=`cat debian/changelog.in`; \
-		eval "echo \"$${s}\""; \
-	) > $@
-
-@PACKAGE_NAME@.spec:
-	$(AM_V_GEN) \
-	( \
-		date=`date +%a\ %b\ %d\ %Y`; \
-		s=`cat @PACKAGE_NAME@.spec.in`; \
-		eval "echo \"$${s}\""; \
-	) > $@
 
 uninstall-hook:
 	-rmdir $(pkgdatadir)

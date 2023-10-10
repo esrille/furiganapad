@@ -32,8 +32,21 @@ AC_DEFINE_UNQUOTED(
 # Check Python
 AM_PATH_PYTHON([3.8])
 
+# For ibus-hiragana.spec
+m4_define(furiganapad_datespec,
+  [m4_esyscmd(date '+%a %b %d %Y' | tr -d '\n\r')])
+DATE_RPM="furiganapad_datespec"
+AC_SUBST(DATE_RPM)
+
+# For debian/changelog
+m4_define(furiganapad_datedeb,
+  [m4_esyscmd(date --rfc-email | tr -d '\n\r')])
+DATE_DEB="furiganapad_datedeb"
+AC_SUBST(DATE_DEB)
+
 # OUTPUT files
 AC_CONFIG_FILES(
+debian/changelog
 docs/Makefile
 icons/Makefile
 locale/Makefile
@@ -45,7 +58,7 @@ src/furiganapad.in
 src/package.py.in
 tools/Makefile
 Makefile
-furiganapad.spec.in
+furiganapad.spec
 )
 
 AC_OUTPUT
