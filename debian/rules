@@ -3,8 +3,5 @@
 # output every command that modifies files on the build system.
 #export DH_VERBOSE = 1
 
-override_dh_auto_clean:
-	# Don't remove debian/changelog
-
 %:
 	dh $@  --with python3

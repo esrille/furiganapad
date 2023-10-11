@@ -48,5 +48,15 @@ DISTCLEANFILES = \
 README.md : README.txt
 	tools/convert_to_tag.py README.txt README.md
 
+debian/changelog:
+	$(AM_V_GEN) \
+	( \
+		date=`date -R`; \
+		version=@VERSION@; \
+		s=`cat debian/changelog.in`; \
+		eval "echo \"$${s}\""; \
+	) > $@
+
+
 uninstall-hook:
 	-rmdir $(pkgdatadir)

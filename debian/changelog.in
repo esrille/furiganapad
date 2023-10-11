@@ -1,8 +1,8 @@
-furiganapad (@PACKAGE_VERSION@) unstable; urgency=low
+furiganapad (${version}) unstable; urgency=low
 
-  * See https://github.com/esrille/furiganapad/releases/tag/v@PACKAGE_VERSION@
+  * See https://github.com/esrille/furiganapad/releases/tag/v${version}
 
- -- Esrille Inc. <info@esrille.com>  @DATE_DEB@
+ -- Esrille Inc. <info@esrille.com>  ${date}
 
 furiganapad (0.6.0) unstable; urgency=low
 

@@ -38,15 +38,8 @@ m4_define(furiganapad_datespec,
 DATE_RPM="furiganapad_datespec"
 AC_SUBST(DATE_RPM)
 
-# For debian/changelog
-m4_define(furiganapad_datedeb,
-  [m4_esyscmd(date --rfc-email | tr -d '\n\r')])
-DATE_DEB="furiganapad_datedeb"
-AC_SUBST(DATE_DEB)
-
 # OUTPUT files
 AC_CONFIG_FILES(
-debian/changelog
 docs/Makefile
 icons/Makefile
 locale/Makefile
