@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2023  Esrille Inc.
+# Copyright (c) 2019-2024  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -186,6 +186,7 @@ class Application(Gtk.Application):
                 for window in windows:
                     x, y = window.get_position()
                     w, h = window.get_size()
+                    window.present()
                     window.lookup_action('close').activate()
                     if window.get_file():
                         path = window.get_file().get_path()
