@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: furiganapad 0.6.1\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2023-10-08 21:32+0900\n"
+"POT-Creation-Date: 2024-03-18 08:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,7 +53,7 @@ msgstr ""
 msgid "Print version information"
 msgstr ""
 
-#: src/window.py:47
+#: src/window.py:47 src/furiganapad.desktop.in:4
 msgid "FuriganaPad"
 msgstr ""
 
@@ -103,6 +103,10 @@ msgstr ""
 
 #: src/window.py:460
 msgid "Save File"
+msgstr ""
+
+#: src/furiganapad.desktop.in:5
+msgid "Write Japanese texts with Furigana easily"
 msgstr ""
 
 #: src/furiganapad.menu.ui:6

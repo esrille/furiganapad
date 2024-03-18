@@ -1,13 +1,13 @@
 # Furiganapad
-# Copyright (C) 2020-2023 Esrille Inc. <info@esrille.com>
+# Copyright (C) 2020-2024 Esrille Inc. <info@esrille.com>
 # This file is distributed under the same license as the furiganapad package.
 # Esrille Inc. <info@esrille.com>, 2020-2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: furiganapad 0.6.0\n"
+"Project-Id-Version: furiganapad 0.6.1\n"
 "Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2023-10-08 21:32+0900\n"
+"POT-Creation-Date: 2024-03-18 08:42+0900\n"
 "PO-Revision-Date: 2020-06-11 05:38+0900\n"
 "Last-Translator: Esrille Inc. <info@esrille.com>\n"
 "Language-Team: Japanese <info@esrille.com>\n"
@@ -52,7 +52,7 @@ msgstr "h"
 msgid "Print version information"
 msgstr "バージョン番号を表示する"
 
-#: src/window.py:47
+#: src/window.py:47 src/furiganapad.desktop.in:4
 msgid "FuriganaPad"
 msgstr "ふりがなパッド"
 
@@ -104,6 +104,10 @@ msgstr "ファイルを保存できませんでした。"
 msgid "Save File"
 msgstr "名前をつけて保存"
 
+#: src/furiganapad.desktop.in:5
+msgid "Write Japanese texts with Furigana easily"
+msgstr "ふりがなつきの文章をかんたんにかけます"
+
 #: src/furiganapad.menu.ui:6
 msgid "_File"
 msgstr "ファイル(_F)"
@@ -112,7 +116,6 @@ msgstr "ファイル(_F)"
 msgid "_New Window"
 msgstr "新しいウィンドウ(_N)"
 
-#
 #: src/furiganapad.menu.ui:14
 msgid "_Open…"
 msgstr "開く(_O)…"
@@ -121,7 +124,6 @@ msgstr "開く(_O)…"
 msgid "_Save"
 msgstr "保存(_S)"
 
-#
 #: src/furiganapad.menu.ui:26
 msgid "Save _As…"
 msgstr "名前をつけて保存(_A)…"
@@ -162,17 +164,14 @@ msgstr "貼り付け(_P)"
 msgid "Select _All"
 msgstr "すべて選択(_A)"
 
-#
 #: src/furiganapad.menu.ui:83
 msgid "_Find…"
 msgstr "検索(_F)…"
 
-#
 #: src/furiganapad.menu.ui:88
 msgid "_Replace…"
 msgstr "置換(_R)…"
 
-#
 #: src/furiganapad.menu.ui:95
 msgid "Ru_by…"
 msgstr "ルビをふる(_B)…"
@@ -185,7 +184,6 @@ msgstr "ひらがなに戻す(_H)"
 msgid "_Settings"
 msgstr "設定(_S)"
 
-#
 #: src/furiganapad.menu.ui:110
 msgid "_Font…"
 msgstr "フォントを変える(_F)…"

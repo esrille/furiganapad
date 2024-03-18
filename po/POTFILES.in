@@ -3,4 +3,5 @@ src/main.py
 src/textbuffer.py
 src/textview.py
 src/window.py
+src/furiganapad.desktop.in
 src/furiganapad.menu.ui

@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2023 Esrille Inc.
+# Copyright (c) 2020-2024 Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -13,14 +13,15 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
+# po must be after the directories that contain .desktop files
 SUBDIRS = \
 	docs \
 	icons \
 	locale \
 	man \
-	po \
 	src\
 	tools\
+	po \
 	$(NULL)
 
 EXTRA_DIST = \

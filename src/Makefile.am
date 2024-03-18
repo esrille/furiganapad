@@ -36,12 +36,14 @@ desktopdir = $(datadir)/applications
 
 CLEANFILES = \
 	furiganapad \
+	furiganapad.desktop \
 	furiganapad.in \
 	package.py \
 	package.py.in \
 	$(NULL)
 
 EXTRA_DIST = \
+	furiganapad.desktop.in \
 	furiganapad.in.in \
 	package.py.in.in \
 	$(NULL)
@@ -63,6 +65,9 @@ furiganapad: furiganapad.in
 		eval "echo \"$${s}\""; \
 	) > $@
 	chmod +x $@
+
+furiganapad.desktop: furiganapad.desktop.in
+	$(AM_V_GEN)$(MSGFMT) --desktop --template $< -d $(top_srcdir)/po -o $@
 
 uninstall-hook:
 	-rmdir $(furiganapaddir)/__pycache__
