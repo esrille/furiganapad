@@ -54,10 +54,20 @@ debian/changelog:
 	( \
 		date=`date -R`; \
 		version=@VERSION@; \
+		source_version=@SOURCE_VERSION@; \
 		s=`cat debian/changelog.in`; \
 		eval "echo \"$${s}\""; \
 	) > $@
 
+@PACKAGE_NAME@.spec:
+	$(AM_V_GEN) \
+	( \
+		date=`date '+%a %b %d %Y'`; \
+		version=@VERSION@; \
+		source_version=@SOURCE_VERSION@; \
+		s=`cat @PACKAGE_NAME@.spec.in`; \
+		eval "echo \"$${s}\""; \
+	) > $@
 
 uninstall-hook:
 	-rmdir $(pkgdatadir)

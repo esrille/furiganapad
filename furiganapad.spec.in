@@ -1,10 +1,10 @@
-Name:       @PACKAGE_NAME@
-Version:    @PACKAGE_VERSION@
-Release:    1%{?dist}
+Name:       furiganapad
+Version:    ${version}
+Release:    %autorelease
 Summary:    A text editor for Japanese texts with ruby characters
 License:    LGPL-2.1-or-later
 URL:        https://github.com/esrille/%{name}
-Source0:    https://github.com/esrille/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.gz
+Source0:    https://github.com/esrille/%{name}/releases/download/v${source_version}/%{name}-${source_version}.tar.gz
 Requires:   ibus-hiragana >= 0.14.2
 Requires:   google-noto-cjk-fonts-common, google-noto-fonts-common
 Requires:   gtk3
@@ -53,8 +53,11 @@ autoreconf -fi -v
 %{_mandir}/ja/man1/furiganapad.1*
 
 %changelog
-* @DATE_RPM@ Esrille Inc. <info@esrille.com> - @PACKAGE_VERSION@-1
-- See https://github.com/esrille/furiganapad/releases/tag/v@PACKAGE_VERSION@
+* ${date} Esrille Inc. <info@esrille.com> - ${version}-1
+- See https://github.com/esrille/furiganapad/releases/tag/v${source_version}
+
+* Thu Oct 12 2023 Esrille Inc. <info@esrille.com> - 0.6.1-1
+- See https://github.com/esrille/furiganapad/releases/tag/v0.6.1
 
 * Sun Jun 25 2023 Esrille Inc. <info@esrille.com> - 0.6.0-1
 - See https://github.com/esrille/furiganapad/releases/tag/v0.6.0

@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2023 Esrille Inc.
+# Copyright (c) 2020-2024 Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -13,13 +13,16 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([furiganapad], [0.6.1], [https://github.com/esrille/furiganapad/issues])
+m4_define([furiganapad_version], [0.6.2~rc1])
+AC_INIT([furiganapad], [furiganapad_version], [https://github.com/esrille/furiganapad/issues])
 AC_CONFIG_AUX_DIR([.])
 AM_INIT_AUTOMAKE([foreign tar-ustar])
 
-AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.19.8])
 AM_GNU_GETTEXT_REQUIRE_VERSION([0.19.8])
+AM_GNU_GETTEXT([external])
+
+# Check Python
+AM_PATH_PYTHON([3.8])
 
 # define GETTEXT_* variables
 GETTEXT_PACKAGE=AC_PACKAGE_NAME
@@ -29,14 +32,11 @@ AC_DEFINE_UNQUOTED(
     [Define to the read-only architecture-independent data directory.]
 )
 
-# Check Python
-AM_PATH_PYTHON([3.8])
-
-# For ibus-hiragana.spec
-m4_define(furiganapad_datespec,
-  [m4_esyscmd(date '+%a %b %d %Y' | tr -d '\n\r')])
-DATE_RPM="furiganapad_datespec"
-AC_SUBST(DATE_RPM)
+# For GitHub
+m4_define(furiganapad_source_version,
+  [m4_esyscmd(echo -n furiganapad_version | tr '~' '-')])
+SOURCE_VERSION="furiganapad_source_version"
+AC_SUBST(SOURCE_VERSION)
 
 # OUTPUT files
 AC_CONFIG_FILES(
@@ -51,7 +51,6 @@ src/furiganapad.in
 src/package.py.in
 tools/Makefile
 Makefile
-furiganapad.spec
 )
 
 AC_OUTPUT

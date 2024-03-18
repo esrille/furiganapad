@@ -189,7 +189,7 @@ class Window(Gtk.ApplicationWindow):
         dialog.set_transient_for(self)
         dialog.set_modal(True)
         dialog.set_program_name(self.title)
-        dialog.set_copyright("Copyright 2019-2023 Esrille Inc.")
+        dialog.set_copyright("Copyright 2019-2024 Esrille Inc.")
         dialog.set_authors(["Esrille Inc."])
         dialog.set_documenters(["Esrille Inc."])
         dialog.set_website("https://www.esrille.com/")
