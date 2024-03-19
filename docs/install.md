@@ -47,5 +47,5 @@ sudo make install
 　ソースコードからビルドした「ふりがなパッド」をアンインストールするには、つぎのようにします:
 
 ```
-$ sudo make uninstall
+sudo make uninstall
 ```
