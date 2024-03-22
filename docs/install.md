@@ -24,12 +24,12 @@ sudo dnf install furiganapad
 
 ```
 sudo add-apt-repository ppa:esrille/releases
-sudo apt update
 ```
 
 　あとは、aptコマンドで「ふりがなパッド」をインストールできます。
 
 ```
+sudo apt update
 sudo apt install furiganapad
 ```
 
@@ -39,6 +39,7 @@ sudo apt install furiganapad
 
 ```
 git clone https://github.com/esrille/furiganapad.git
+cd furiganapad/
 ./autogen.sh --prefix=/usr
 make
 sudo make install
