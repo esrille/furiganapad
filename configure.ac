@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-m4_define([furiganapad_version], [0.6.2~rc1])
+m4_define([furiganapad_version], [0.6.2])
 AC_INIT([furiganapad], [furiganapad_version], [https://github.com/esrille/furiganapad/issues])
 AC_CONFIG_AUX_DIR([.])
 AM_INIT_AUTOMAKE([foreign tar-ustar])
