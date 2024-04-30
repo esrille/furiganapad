@@ -628,6 +628,8 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
 
     def place_cursor_onscreen(self):
         self.scroll_mark_onscreen(self.buffer.get_insert())
+        # Note GNOME Wayland IM module needs to be reset after changing the text cursor position.
+        self.im.reset()
 
     def reflow(self, line=-1, redraw=True):
         self.width = max(1, self.get_allocated_width() - self.padding.left - self.padding.right)
