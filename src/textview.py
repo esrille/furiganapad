@@ -26,6 +26,7 @@ from textbuffer import FuriganaBuffer, has_newline, remove_dangling_annotations
 import cairo
 import logging
 import math
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +63,13 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
 
         display = Gdk.Display.get_default()
         self._is_wayland = 'Wayland' in type(display).__name__
+        if self._is_wayland:
+            im_module = os.getenv('GTK_IM_MODULE')
+            if im_module is None:
+                pass
+            if im_module == 'ibus':
+                self._is_wayland = False
+        logger.info(f'is_wayland: {self._is_wayland}')
 
         self._init_scrollable()
         self._init_immultiontext()
