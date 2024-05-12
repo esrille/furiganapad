@@ -8,7 +8,7 @@ Build-Depends:
  dh-python,
  gtk-update-icon-cache,
  libglib2.0-dev-bin,
- meson (>=0.50),
+ meson (>=0.53),
  python3-dev,
  pkg-config
 Standards-Version: 4.5.0

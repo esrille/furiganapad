@@ -19,7 +19,7 @@ BuildRequires: gtk-update-icon-cache
 BuildRequires: gettext-devel
 BuildRequires: glib2-devel
 BuildRequires: libtool
-BuildRequires: meson >= 0.50.0
+BuildRequires: meson >= 0.53.0
 BuildRequires: pkgconfig
 BuildRequires: python3-devel
 BuildArch:     noarch

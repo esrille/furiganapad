@@ -1,1 +1,1 @@
-install_man('furiganapad.1', locale:'ja')
+install_data('furiganapad.1', install_dir: join_paths(get_option('mandir'), 'ja', 'man1'))
