@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: furiganapad 0.6.3\n"
-"Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2024-03-18 08:42+0900\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-13 16:17+0900\n"
 "PO-Revision-Date: 2020-06-11 05:38+0900\n"
 "Last-Translator: Esrille Inc. <info@esrille.com>\n"
 "Language-Team: Japanese <info@esrille.com>\n"
@@ -16,97 +16,97 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/application.py:50
-msgid "Initial window x position"
-msgstr "ウインドウのばしょ（左から右に）"
-
-#: src/application.py:50
-msgid "x"
-msgstr "x"
-
-#: src/application.py:52
-msgid "Initial window y position"
-msgstr "ウインドウのばしょ（上から下に）"
-
-#: src/application.py:52
-msgid "y"
-msgstr "y"
-
-#: src/application.py:54
-msgid "Initial window width"
-msgstr "ウインドウの左右のながさ"
-
-#: src/application.py:54
-msgid "w"
-msgstr "w"
-
-#: src/application.py:56
-msgid "Initial window height"
-msgstr "ウインドウの上下のながさ"
-
-#: src/application.py:56
-msgid "h"
-msgstr "h"
-
-#: src/application.py:58
-msgid "Print version information"
-msgstr "バージョンをみる"
-
-#: src/window.py:47 src/furiganapad.desktop.in:4
+#: data/com.esrille.furiganapad.desktop.in:4 src/window.py:46
 msgid "FuriganaPad"
 msgstr "ふりがなパッド"
 
-#: src/window.py:101 src/window.py:532 src/window.py:534
+#: data/com.esrille.furiganapad.desktop.in:5
+msgid "Write Japanese texts with Furigana easily"
+msgstr "ふりがなつきの文章をかんたんにかけます"
+
+#: src/application.py:49
+msgid "Initial window x position"
+msgstr "ウインドウの左からのばしょ"
+
+#: src/application.py:49
+msgid "x"
+msgstr "x"
+
+#: src/application.py:51
+msgid "Initial window y position"
+msgstr "ウインドウの上からのばしょ"
+
+#: src/application.py:51
+msgid "y"
+msgstr "y"
+
+#: src/application.py:53
+msgid "Initial window width"
+msgstr "ウインドウのはば"
+
+#: src/application.py:53
+msgid "w"
+msgstr "w"
+
+#: src/application.py:55
+msgid "Initial window height"
+msgstr "ウインドウのたかさ"
+
+#: src/application.py:55
+msgid "h"
+msgstr "h"
+
+#: src/application.py:57
+msgid "Print version information"
+msgstr "バージョンをみる"
+
+#: src/window.py:100 src/window.py:531 src/window.py:533
 msgid "Ruby"
 msgstr "ルビ"
 
-#: src/window.py:209
+#: src/window.py:208
 msgid "Text files"
 msgstr "テキスト ファイル"
 
-#: src/window.py:214
+#: src/window.py:213
 msgid "Python files"
 msgstr "Pythonのファイル"
 
-#: src/window.py:219
+#: src/window.py:218
 msgid "Any files"
 msgstr "すべてのファイル"
 
-#: src/window.py:237
+#: src/window.py:236
 msgid "Save changes to this document?"
 msgstr "かきかえた文章をセーブしますか？"
 
-#: src/window.py:238
+#: src/window.py:237
 msgid "If you don't, changes will be lost."
-msgstr "セーブしないと、かきかえた文章はのこりません。"
+msgstr "セーブしないと、かきかえた文章はきえてしまいます。"
 
-#: src/window.py:239
+#: src/window.py:238
 msgid "Close _Without Saving"
 msgstr "セーブしないでとじる(_W)"
 
-#: src/window.py:272
+#: src/window.py:271
 msgid "Font"
 msgstr "フォント"
 
-#: src/window.py:273
+#: src/window.py:272
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr "ひさかたのひかりのどけきはるの日に しづごころなく花のちるらむ"
 
-#: src/window.py:381
+#: src/window.py:380
 msgid "Open File"
 msgstr "ファイルをひらく"
 
-#: src/window.py:451
+#: src/window.py:450
 msgid "Could not save the file."
 msgstr "ファイルをセーブできませんでした。"
 
-#: src/window.py:460
+#: src/window.py:459
 msgid "Save File"
 msgstr "なまえをつけてセーブ"
-
-#: src/furiganapad.desktop.in:5
-msgid "Write Japanese texts with Furigana easily"
-msgstr "ふりがなつきの文章をかんたんにかけます"
 
 #: src/furiganapad.menu.ui:6
 msgid "_File"
@@ -134,7 +134,7 @@ msgstr "とじる(_C)"
 
 #: src/furiganapad.menu.ui:37
 msgid "_Quit"
-msgstr "やめる(_Q)"
+msgstr "おえる(_Q)"
 
 #: src/furiganapad.menu.ui:44
 msgid "_Edit"
@@ -142,7 +142,7 @@ msgstr "へんしゅう(_E)"
 
 #: src/furiganapad.menu.ui:47
 msgid "_Undo"
-msgstr "もとにもどす(_U)"
+msgstr "とりけす(_U)"
 
 #: src/furiganapad.menu.ui:52
 msgid "Re_do"
@@ -150,19 +150,19 @@ msgstr "やりなおす(_R)"
 
 #: src/furiganapad.menu.ui:59
 msgid "Cu_t"
-msgstr "けずりとる(_T)"
+msgstr "カット(_T)"
 
 #: src/furiganapad.menu.ui:64
 msgid "_Copy"
-msgstr "かきうつす(_C)"
+msgstr "コピー(_C)"
 
 #: src/furiganapad.menu.ui:69
 msgid "_Paste"
-msgstr "はりつける(_P)"
+msgstr "ペースト(_P)"
 
 #: src/furiganapad.menu.ui:76
 msgid "Select _All"
-msgstr "すべてえらぶ(_A)"
+msgstr "すべての文をえらぶ(_A)"
 
 #: src/furiganapad.menu.ui:83
 msgid "_Find…"

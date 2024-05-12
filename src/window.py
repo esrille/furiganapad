@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2023  Esrille Inc.
+# Copyright (c) 2019-2024  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,6 +15,7 @@
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 import package
+from package import _
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -24,13 +25,11 @@ from gi.repository import GLib, Gio, Gtk, Gdk, GObject, Pango
 from textview import FuriganaView
 from textbuffer import remove_dangling_annotations, get_plain_text
 
-import gettext
 import logging
 import os
 import subprocess
 
 
-_ = lambda a : gettext.dgettext(package.get_domain(), a)
 logger = logging.getLogger(__name__)
 
 IAA = '\uFFF9'  # IAA (INTERLINEAR ANNOTATION ANCHOR)
@@ -194,7 +193,7 @@ class Window(Gtk.ApplicationWindow):
         dialog.set_documenters(["Esrille Inc."])
         dialog.set_website("https://www.esrille.com/")
         dialog.set_website_label("Esrille Inc.")
-        dialog.set_logo_icon_name(package.get_name())
+        dialog.set_logo_icon_name('com.esrille.furiganapad')
         dialog.set_version(package.get_version())
         # To close the dialog when "close" is clicked, e.g. on Raspberry Pi OS,
         # the "response" signal needs to be connected about_response_callback
@@ -287,7 +286,7 @@ class Window(Gtk.ApplicationWindow):
     def help_callback(self, action, parameter):
         # Use yelp to open local HTMLs.
         # cf. https://gitlab.gnome.org/GNOME/yelp/-/merge_requests/24
-        url = 'file://' + os.path.join(package.get_datadir(), 'help/index.html')
+        url = 'file://' + os.path.join(package.get_datadir(), 'docs/index.html')
         subprocess.Popen(['yelp', url])
 
     def highlightlongsentences_callback(self, action, parameter):

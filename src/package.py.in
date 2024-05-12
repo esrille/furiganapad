@@ -1,6 +1,5 @@
-# typing-practice - Typing Practice
 #
-# Copyright (c) 2020 Esrille Inc.
+# Copyright (c) 2020-2024 Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,10 +14,9 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-# This file is a template file processed by the configure script.
-# The file name is listed in AC_CONFIG_FILES of configure.ac.
-
+import gettext
 import os
+
 import gi
 from gi.repository import Gio, GLib
 
@@ -39,7 +37,7 @@ def get_prefix():
 
 
 def get_datadir():
-    return '${pkgdatadir}'
+    return '@pkgdatadir@'
 
 
 def get_user_datadir():
@@ -47,7 +45,7 @@ def get_user_datadir():
 
 
 def get_localedir():
-    return '${localedir}'
+    return '@localedir@'
 
 
 def get_domain():
@@ -56,6 +54,12 @@ def get_domain():
         config = Gio.Settings.new(HIRAGANA_IME_KEY)
         path = config.get_string('dictionary')
         path = os.path.basename(path)
-        if path in ('restrained.1.dic', 'restrained.2.dic', 'restrained.3.dic', 'restrained.4.dic', 'restrained.5.dic', 'restrained.6.dic'):
-            return get_name() + '.kids'
+        if path in ('restrained.1.dic', 'restrained.2.dic', 'restrained.3.dic',
+                    'restrained.4.dic', 'restrained.5.dic', 'restrained.6.dic'):
+            return get_name() + '.school'
     return get_name()
+
+
+def _(text):
+    print(f'context: {get_domain()}')
+    return gettext.dgettext(get_domain(), text)

@@ -1,209 +1,210 @@
-# Furiganapad
-# Copyright (C) 2020-2024 Esrille Inc. <info@esrille.com>
-# This file is distributed under the same license as the furiganapad package.
-# Esrille Inc. <info@esrille.com>, 2020-2023.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the furiganapad.school package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: furiganapad 0.6.3\n"
+"Project-Id-Version: furiganapad.school\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-13 16:17+0900\n"
-"PO-Revision-Date: 2020-06-11 05:38+0900\n"
-"Last-Translator: Esrille Inc. <info@esrille.com>\n"
-"Language-Team: Japanese <info@esrille.com>\n"
-"Language: ja\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: data/com.esrille.furiganapad.desktop.in:4 src/window.py:46
 msgid "FuriganaPad"
-msgstr "ふりがなパッド"
+msgstr ""
 
 #: data/com.esrille.furiganapad.desktop.in:5
 msgid "Write Japanese texts with Furigana easily"
-msgstr "ふりがなつきの文章をかんたんにかけます"
+msgstr ""
 
 #: src/application.py:49
 msgid "Initial window x position"
-msgstr "ウインドウの x 座標"
+msgstr ""
 
 #: src/application.py:49
 msgid "x"
-msgstr "x"
+msgstr ""
 
 #: src/application.py:51
 msgid "Initial window y position"
-msgstr "ウインドウの y 座標"
+msgstr ""
 
 #: src/application.py:51
 msgid "y"
-msgstr "y"
+msgstr ""
 
 #: src/application.py:53
 msgid "Initial window width"
-msgstr "ウインドウの幅"
+msgstr ""
 
 #: src/application.py:53
 msgid "w"
-msgstr "w"
+msgstr ""
 
 #: src/application.py:55
 msgid "Initial window height"
-msgstr "ウインドウの高さ"
+msgstr ""
 
 #: src/application.py:55
 msgid "h"
-msgstr "h"
+msgstr ""
 
 #: src/application.py:57
 msgid "Print version information"
-msgstr "バージョン番号を表示する"
+msgstr ""
 
 #: src/window.py:100 src/window.py:531 src/window.py:533
 msgid "Ruby"
-msgstr "ルビ"
+msgstr ""
 
 #: src/window.py:208
 msgid "Text files"
-msgstr "テキスト ファイル"
+msgstr ""
 
 #: src/window.py:213
 msgid "Python files"
-msgstr "Pythonのファイル"
+msgstr ""
 
 #: src/window.py:218
 msgid "Any files"
-msgstr "すべてのファイル"
+msgstr ""
 
 #: src/window.py:236
 msgid "Save changes to this document?"
-msgstr "書きかえた文章を保存しますか？"
+msgstr ""
 
 #: src/window.py:237
 msgid "If you don't, changes will be lost."
-msgstr "保存しないと、書きかえた文章は残りません。"
+msgstr ""
 
 #: src/window.py:238
 msgid "Close _Without Saving"
-msgstr "保存しないで閉じる(_W)"
+msgstr ""
 
 #: src/window.py:271
 msgid "Font"
-msgstr "フォント"
+msgstr ""
 
 #: src/window.py:272
 msgid "The quick brown fox jumps over the lazy dog."
-msgstr "ひさかたのひかりのどけきはるの日に しづごころなく花のちるらむ"
+msgstr ""
 
 #: src/window.py:380
 msgid "Open File"
-msgstr "ファイルを開く"
+msgstr ""
 
 #: src/window.py:450
 msgid "Could not save the file."
-msgstr "ファイルを保存できませんでした。"
+msgstr ""
 
 #: src/window.py:459
 msgid "Save File"
-msgstr "名前をつけて保存"
+msgstr ""
 
 #: src/furiganapad.menu.ui:6
 msgid "_File"
-msgstr "ファイル(_F)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:9
 msgid "_New Window"
-msgstr "新しいウィンドウ(_N)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:14
 msgid "_Open…"
-msgstr "開く(_O)…"
+msgstr ""
 
 #: src/furiganapad.menu.ui:21
 msgid "_Save"
-msgstr "保存(_S)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:26
 msgid "Save _As…"
-msgstr "名前をつけて保存(_A)…"
+msgstr ""
 
 #: src/furiganapad.menu.ui:32
 msgid "_Close"
-msgstr "閉じる(_C)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:37
 msgid "_Quit"
-msgstr "終了(_Q)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:44
 msgid "_Edit"
-msgstr "編集(_E)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:47
 msgid "_Undo"
-msgstr "元に戻す(_U)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:52
 msgid "Re_do"
-msgstr "やり直す(_R)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:59
 msgid "Cu_t"
-msgstr "切り取り(_T)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:64
 msgid "_Copy"
-msgstr "コピー(_C)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:69
 msgid "_Paste"
-msgstr "貼り付け(_P)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:76
 msgid "Select _All"
-msgstr "すべて選択(_A)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:83
 msgid "_Find…"
-msgstr "検索(_F)…"
+msgstr ""
 
 #: src/furiganapad.menu.ui:88
 msgid "_Replace…"
-msgstr "置換(_R)…"
+msgstr ""
 
 #: src/furiganapad.menu.ui:95
 msgid "Ru_by…"
-msgstr "ルビをふる(_B)…"
+msgstr ""
 
 #: src/furiganapad.menu.ui:100
 msgid "Revert to _Hiragana"
-msgstr "ひらがなに戻す(_H)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:107
 msgid "_Settings"
-msgstr "設定(_S)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:110
 msgid "_Font…"
-msgstr "フォントを変える(_F)…"
+msgstr ""
 
 #: src/furiganapad.menu.ui:114
 msgid "_Ruby"
-msgstr "ルビをふる(_R)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:119
 msgid "Highlight _Long Sentences"
-msgstr "長い文をめだたせる(_L)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:123
 msgid "_Statusbar"
-msgstr "ステータスバー(_S)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:129 src/furiganapad.menu.ui:132
 msgid "_Help"
-msgstr "ヘルプ(_H)"
+msgstr ""
 
 #: src/furiganapad.menu.ui:137
 msgid "_About Furiganapad"
-msgstr "ふりがなパッドについて(_A)"
+msgstr ""

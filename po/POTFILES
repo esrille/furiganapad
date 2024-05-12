@@ -1,0 +1,7 @@
+data/com.esrille.furiganapad.desktop.in
+src/application.py
+src/main.py
+src/textbuffer.py
+src/textview.py
+src/window.py
+src/furiganapad.menu.ui

@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Esrille Inc. <info@esrille.com>
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the furiganapad package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: furiganapad 0.6.3~rc1\n"
-"Report-Msgid-Bugs-To: https://github.com/esrille/furiganapad/issues\n"
-"POT-Creation-Date: 2024-05-06 18:57+0900\n"
+"Project-Id-Version: furiganapad\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-13 16:17+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,96 +17,96 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/application.py:50
-msgid "Initial window x position"
-msgstr ""
-
-#: src/application.py:50
-msgid "x"
-msgstr ""
-
-#: src/application.py:52
-msgid "Initial window y position"
-msgstr ""
-
-#: src/application.py:52
-msgid "y"
-msgstr ""
-
-#: src/application.py:54
-msgid "Initial window width"
-msgstr ""
-
-#: src/application.py:54
-msgid "w"
-msgstr ""
-
-#: src/application.py:56
-msgid "Initial window height"
-msgstr ""
-
-#: src/application.py:56
-msgid "h"
-msgstr ""
-
-#: src/application.py:58
-msgid "Print version information"
-msgstr ""
-
-#: src/window.py:47 src/furiganapad.desktop.in:4
+#: data/com.esrille.furiganapad.desktop.in:4 src/window.py:46
 msgid "FuriganaPad"
 msgstr ""
 
-#: src/window.py:101 src/window.py:532 src/window.py:534
+#: data/com.esrille.furiganapad.desktop.in:5
+msgid "Write Japanese texts with Furigana easily"
+msgstr ""
+
+#: src/application.py:49
+msgid "Initial window x position"
+msgstr ""
+
+#: src/application.py:49
+msgid "x"
+msgstr ""
+
+#: src/application.py:51
+msgid "Initial window y position"
+msgstr ""
+
+#: src/application.py:51
+msgid "y"
+msgstr ""
+
+#: src/application.py:53
+msgid "Initial window width"
+msgstr ""
+
+#: src/application.py:53
+msgid "w"
+msgstr ""
+
+#: src/application.py:55
+msgid "Initial window height"
+msgstr ""
+
+#: src/application.py:55
+msgid "h"
+msgstr ""
+
+#: src/application.py:57
+msgid "Print version information"
+msgstr ""
+
+#: src/window.py:100 src/window.py:531 src/window.py:533
 msgid "Ruby"
 msgstr ""
 
-#: src/window.py:209
+#: src/window.py:208
 msgid "Text files"
 msgstr ""
 
-#: src/window.py:214
+#: src/window.py:213
 msgid "Python files"
 msgstr ""
 
-#: src/window.py:219
+#: src/window.py:218
 msgid "Any files"
 msgstr ""
 
-#: src/window.py:237
+#: src/window.py:236
 msgid "Save changes to this document?"
 msgstr ""
 
-#: src/window.py:238
+#: src/window.py:237
 msgid "If you don't, changes will be lost."
 msgstr ""
 
-#: src/window.py:239
+#: src/window.py:238
 msgid "Close _Without Saving"
 msgstr ""
 
-#: src/window.py:272
+#: src/window.py:271
 msgid "Font"
 msgstr ""
 
-#: src/window.py:273
+#: src/window.py:272
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr ""
 
-#: src/window.py:381
+#: src/window.py:380
 msgid "Open File"
 msgstr ""
 
-#: src/window.py:451
+#: src/window.py:450
 msgid "Could not save the file."
 msgstr ""
 
-#: src/window.py:460
+#: src/window.py:459
 msgid "Save File"
-msgstr ""
-
-#: src/furiganapad.desktop.in:5
-msgid "Write Japanese texts with Furigana easily"
 msgstr ""
 
 #: src/furiganapad.menu.ui:6

@@ -15,6 +15,7 @@
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 import package
+from package import _
 
 import gi
 gi.require_version('Gdk', '3.0')
@@ -23,12 +24,10 @@ from gi.repository import Gdk, GLib, Gio, Gtk
 
 from window import Window, DEFAULT_WIDTH, DEFAULT_HEIGHT
 
-import gettext
 import os
 import logging
 
 
-_ = lambda a : gettext.dgettext(package.get_domain(), a)
 logger = logging.getLogger(__name__)
 
 
@@ -99,7 +98,7 @@ class Application(Gtk.Application):
         win.resize(self.window_width, self.window_height)
 
     def do_command_line(self, command_line):
-        # call the default commandline handler
+        # call the default command line handler
         Gtk.Application.do_command_line(self, command_line)
 
         screen = Gdk.Screen.get_default()
@@ -148,10 +147,13 @@ class Application(Gtk.Application):
     def do_startup(self):
         Gtk.Application.do_startup(self)
 
+        resource_path = os.path.join(package.get_datadir(), 'furiganapad.gresource')
+        resource = Gio.Resource.load(resource_path)
+        resource._register()
+
         builder = Gtk.Builder()
         builder.set_translation_domain(package.get_domain())
-        filename = os.path.join(os.path.dirname(__file__), 'furiganapad.menu.ui')
-        builder.add_from_file(filename)
+        builder.add_from_resource('/com/esrille/furiganapad/furiganapad.menu.ui')
         self.set_menubar(builder.get_object('menubar'))
 
         style_provider = Gtk.CssProvider()
