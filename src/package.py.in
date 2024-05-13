@@ -61,5 +61,4 @@ def get_domain():
 
 
 def _(text):
-    print(f'context: {get_domain()}')
     return gettext.dgettext(get_domain(), text)
