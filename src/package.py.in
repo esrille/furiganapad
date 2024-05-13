@@ -17,8 +17,7 @@
 import gettext
 import os
 
-import gi
-from gi.repository import Gio, GLib
+from gi.repository import GLib, Gio
 
 
 HIRAGANA_IME_KEY = 'org.freedesktop.ibus.engine.hiragana'

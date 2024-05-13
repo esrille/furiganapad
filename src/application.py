@@ -14,24 +14,24 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-import package
-from package import _
+import logging
+import os
 
 import gi
 gi.require_version('Gdk', '3.0')
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gdk, GLib, Gio, Gtk
+from gi.repository import GLib, Gdk, Gio, Gtk
 
-from window import Window, DEFAULT_WIDTH, DEFAULT_HEIGHT
-
-import os
-import logging
+import package
+from package import _
+from window import DEFAULT_HEIGHT, DEFAULT_WIDTH, Window
 
 
 logger = logging.getLogger(__name__)
 
 
 class Application(Gtk.Application):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args,
                          application_id='com.esrille.furiganapad',
@@ -45,16 +45,17 @@ class Application(Gtk.Application):
         self.window_height = None
 
         # e.g., --window-x=2560 --window-y=32 --window-width=1024 --window-height=600
-        self.add_main_option("window-x", ord('x'), GLib.OptionFlags.NONE, GLib.OptionArg.INT,
-                             _("Initial window x position"), _("x"))
-        self.add_main_option("window-y", ord('y'), GLib.OptionFlags.NONE, GLib.OptionArg.INT,
-                             _("Initial window y position"), _("y"))
-        self.add_main_option("window-width", ord('w'), GLib.OptionFlags.NONE, GLib.OptionArg.INT,
-                             _("Initial window width"), _("w"))
-        self.add_main_option("window-height", ord('h'), GLib.OptionFlags.NONE, GLib.OptionArg.INT,
-                             _("Initial window height"), _("h"))
-        self.add_main_option("version", ord('v'), GLib.OptionFlags.NONE, GLib.OptionArg.NONE,
-                             _("Print version information"), None)
+        self.add_main_option('window-x', ord('x'), GLib.OptionFlags.NONE, GLib.OptionArg.INT,
+                             _('Initial window x position'), _('x'))
+        self.add_main_option('window-y', ord('y'), GLib.OptionFlags.NONE, GLib.OptionArg.INT,
+                             _('Initial window y position'), _('y'))
+        self.add_main_option('window-width', ord('w'), GLib.OptionFlags.NONE, GLib.OptionArg.INT,
+                             _('Initial window width'), _('w'))
+        self.add_main_option('window-height', ord('h'), GLib.OptionFlags.NONE, GLib.OptionArg.INT,
+                             _('Initial window height'), _('h'))
+        self.add_main_option('version', ord('v'), GLib.OptionFlags.NONE, GLib.OptionArg.NONE,
+                             _('Print version information'), None)
+
     def do_activate(self):
         pathname = os.path.join(package.get_user_datadir(), 'session')
         logger.info(f'do_activate: {pathname}')
@@ -193,7 +194,7 @@ class Application(Gtk.Application):
                     if window.get_file():
                         path = window.get_file().get_path()
                         file.write(f'furiganapad -x {x} -y {y} -w {w} -h {h} {path} &\n')
-        except:
+        except OSError:
             logger.exception(f"Could not create '{pathname}'")
         if 0 < len(self.get_windows()):
             return

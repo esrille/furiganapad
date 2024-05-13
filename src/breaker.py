@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021  Esrille Inc.
+# Copyright (c) 2021-2024  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,8 +15,9 @@
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 
-import icu
 import logging
+
+import icu
 
 
 logger = logging.getLogger(__name__)
@@ -43,6 +44,7 @@ def is_hiragana_break(s, offset):
 
 
 class Breaker:
+
     def __init__(self, text=''):
         self.length = 0
         self.cursor_positions = []

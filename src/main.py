@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2023  Esrille Inc.
+# Copyright (c) 2019-2024  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,13 +14,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-import package
-
-from gi.repository import GLib
-
-GLib.set_prgname(package.get_name())
-
-from application import Application
 
 import gettext
 import locale
@@ -29,6 +22,13 @@ import os
 import signal
 import sys
 
+from gi.repository import GLib
+
+import package
+from application import Application
+
+
+GLib.set_prgname(package.get_name())
 logger = logging.getLogger(__name__)
 
 

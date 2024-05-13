@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2022  Esrille Inc.
+# Copyright (c) 2019-2024  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,19 +14,19 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-import gi
-
-gi.require_version('Gtk', '3.0')
-gi.require_version('Pango', '1.0')
-gi.require_version('PangoCairo', '1.0')
-from gi.repository import Gtk, Gdk, GObject, Pango, PangoCairo
-
-from textbuffer import FuriganaBuffer, has_newline, remove_dangling_annotations
-
-import cairo
 import logging
 import math
 import os
+
+import cairo
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('Pango', '1.0')
+gi.require_version('PangoCairo', '1.0')
+from gi.repository import GObject, Gdk, Gtk, Pango, PangoCairo
+
+from textbuffer import FuriganaBuffer, has_newline, remove_dangling_annotations
+
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +78,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         self.width = 1
         self.height = 0
         self.caret = Gdk.Rectangle()
-        self.heights = list()
+        self.heights = []
         self.highlight_sentences = True
         self.reflow_line = -1  # line number to reflow after "delete-range"; -1 to reflow every line
         self.click_count = 0
@@ -103,10 +103,10 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         self.connect('button-release-event', self.on_mouse_release)
 
         self.set_can_focus(True)
-        self.add_events(Gdk.EventMask.BUTTON_PRESS_MASK |
-                        Gdk.EventMask.BUTTON_MOTION_MASK |
-                        Gdk.EventMask.BUTTON_RELEASE_MASK |
-                        Gdk.EventMask.SCROLL_MASK)
+        self.add_events(Gdk.EventMask.BUTTON_PRESS_MASK
+                        | Gdk.EventMask.BUTTON_MOTION_MASK
+                        | Gdk.EventMask.BUTTON_RELEASE_MASK
+                        | Gdk.EventMask.SCROLL_MASK)
 
         logger.debug('Pango.version: %d', Pango.version())
         desc = Pango.font_description_from_string(DEFAULT_FONT)
@@ -227,8 +227,8 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         self.buffer.cut_clipboard(clipboard, self.get_editable())
         self.place_cursor_onscreen()
 
-    def do_delete_from_cursor(self, type, count):
-        if type == Gtk.DeleteType.CHARS:
+    def do_delete_from_cursor(self, delete_type, count):
+        if delete_type == Gtk.DeleteType.CHARS:
             if self.buffer.delete_selection(True, True):
                 self.place_cursor_onscreen()
                 return
@@ -655,7 +655,6 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         layout.set_width(self.width * Pango.SCALE)
         layout.set_spacing(self.spacing * Pango.SCALE)
 
-        prev_height = self.height
         paragraph = self.get_paragraph(line)
         if paragraph and self.heights:
             self.height -= self.heights[line]

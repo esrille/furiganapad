@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2021  Esrille Inc.
+# Copyright (c) 2019-2024  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,6 +14,10 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+import re
+import time
+
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('Pango', '1.0')
@@ -21,10 +25,6 @@ gi.require_version('PangoCairo', '1.0')
 from gi.repository import GObject
 
 from breaker import Breaker
-
-import logging
-import re
-import time
 
 
 logger = logging.getLogger(__name__)
@@ -131,10 +131,11 @@ def remove_dangling_annotations(s):
 
 
 class Paragraph:
+
     def __init__(self, text=''):
         self.text = ''
         self.plain = ''
-        self.rubies = list()
+        self.rubies = []
         self.breaker = Breaker()
         self.set_text(text)
 
@@ -172,13 +173,13 @@ class Paragraph:
         assert 0 <= offset <= len(self.text)
         return self.breaker.following(offset)
 
-    def _forward_search(self, offset, str, flags):
+    def _forward_search(self, offset, sub, flags):
         plain = self.get_plain_text()
         offset = self._get_plain_offset(offset)
-        offset = plain.find(str, offset)
+        offset = plain.find(sub, offset)
         if offset < 0:
             return None
-        end = self._expand_plain_offset(offset + len(str))
+        end = self._expand_plain_offset(offset + len(sub))
         offset = self._expand_plain_offset(offset)
         return (offset, end)
 
@@ -189,7 +190,7 @@ class Paragraph:
     def _get_plain_offset(self, offset):
         mode = PLAIN
         i = 0
-        len = 0
+        pos = 0
         for c in self.text:
             if i == offset:
                 break
@@ -202,9 +203,9 @@ class Paragraph:
             elif mode == RUBY:
                 pass
             else:
-                len += 1
+                pos += 1
             i += 1
-        return len
+        return pos
 
     def _inside_ruby(self, offset):
         assert offset < self.get_length()
@@ -229,7 +230,7 @@ class Paragraph:
         self.plain = ''
         self.rubies.clear()
         mode = PLAIN
-        i = pos = len = 0
+        i = pos = length = 0
         ruby = ''
         for c in self.text:
             if c == IAA:
@@ -237,10 +238,10 @@ class Paragraph:
                 pos = i
             elif c == IAS:
                 mode = RUBY
-                len = i - pos
+                length = i - pos
             elif c == IAT:
                 mode = PLAIN
-                self.rubies.append([pos, len, ruby])
+                self.rubies.append([pos, length, ruby])
                 ruby = ''
             elif mode == RUBY:
                 ruby += c
@@ -266,9 +267,9 @@ class Paragraph:
 
     def split(self, offset):
         assert offset <= len(self.text)
-        next = Paragraph(self.text[offset:])
+        cont = Paragraph(self.text[offset:])
         self.set_text(self.text[:offset])
-        return next
+        return cont
 
 
 class TextIter:
@@ -372,12 +373,12 @@ class TextIter:
         self.offset = self.buffer.paragraphs[self.line].get_length() - 1
         return False
 
-    def forward_search(self, str, flags, limit):
-        if not str:
+    def forward_search(self, sub, flags, limit):
+        if not sub:
             return None
-        if limit and limit <= str:
+        if limit and limit <= self:
             return None
-        return self.buffer._forward_search(self, str, flags, limit)
+        return self.buffer._forward_search(self, sub, flags, limit)
 
     def forward_visible_word_end(self):
         return self.buffer._forward_visible_word_end(self)
@@ -471,7 +472,7 @@ class FuriganaBuffer(GObject.Object):
     def __init__(self):
         super().__init__()
         self.marks = {}
-        self.paragraphs = list()
+        self.paragraphs = []
         self.reading = ''
         self.surround_deleted = False
         self.annotated = ''
@@ -608,11 +609,11 @@ class FuriganaBuffer(GObject.Object):
             return True
         return False
 
-    def _forward_search(self, iter, str, flags, limit):
+    def _forward_search(self, iter, sub, flags, limit):
         while True:
             lineno = iter.get_line()
             offset = iter.get_line_offset()
-            bounds = self.paragraphs[lineno]._forward_search(offset, str, flags)
+            bounds = self.paragraphs[lineno]._forward_search(offset, sub, flags)
             if bounds:
                 iter.set_line_offset(bounds[0])
                 end = iter.copy()
@@ -740,24 +741,24 @@ class FuriganaBuffer(GObject.Object):
             self.delete(self.get_anchor(), self.get_cursor())
         return True
 
-    def delete_surrounding(self, offset, len):
-        if len == 0:
+    def delete_surrounding(self, offset, length):
+        if length == 0:
             return
         start = self.get_cursor()
         start.forward_cursor_positions(offset)
         end = start.copy()
-        end.forward_cursor_positions(len)
+        end.forward_cursor_positions(length)
         if end < start:
             start, end = end, start
-            if len < 0:
-                len = -len
+            if length < 0:
+                length = -length
 
         assert start.get_line() == end.get_line()
         reading = self.paragraphs[start.get_line()].get_text()[start.get_line_offset():end.get_line_offset()]
 
         if self.surround_deleted:
             if self.reading:
-                if not '―' in reading:
+                if '―' not in reading:
                     if is_reading(reading + self.reading):
                         # Extend self.reading
                         # か + け―る
@@ -815,11 +816,11 @@ class FuriganaBuffer(GObject.Object):
             iter.set_line_offset(iter.get_line_offset() + len(text))
             return
 
-        next = self.paragraphs[lineno].split(iter.get_line_offset())
+        cont = self.paragraphs[lineno].split(iter.get_line_offset())
         if lineno == self.get_line_count() - 1:
-            self.paragraphs.append(next)
+            self.paragraphs.append(cont)
         else:
-            self.paragraphs.insert(lineno + 1, next)
+            self.paragraphs.insert(lineno + 1, cont)
 
         text = lines[0].rstrip(NEWLINES)
         self.paragraphs[lineno].insert(iter.get_line_offset(), text)
@@ -1021,7 +1022,7 @@ class FuriganaBuffer(GObject.Object):
                 if text == self.reading:
                     # canceled by [Esc]
                     self.reading = ''
-                elif not '―' in text:
+                elif '―' not in text:
                     reading = self.reading[len(text):]
                     if is_reading(reading):
                         # Shrink self.reading

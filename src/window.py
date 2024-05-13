@@ -14,21 +14,19 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-import package
-from package import _
-
-import gi
-gi.require_version('Gtk', '3.0')
-gi.require_version('Pango', '1.0')
-from gi.repository import GLib, Gio, Gtk, Gdk, GObject, Pango
-
-from textview import FuriganaView
-from textbuffer import remove_dangling_annotations, get_plain_text
-
 import logging
 import os
 import subprocess
 
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('Pango', '1.0')
+from gi.repository import GLib, Gdk, Gio, Gtk, Pango
+
+import package
+from package import _
+from textbuffer import get_plain_text, remove_dangling_annotations
+from textview import FuriganaView
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +41,7 @@ DEFAULT_HEIGHT = 512
 class Window(Gtk.ApplicationWindow):
 
     def __init__(self, app, file=None):
-        self.title = _("FuriganaPad")
+        self.title = _('FuriganaPad')
         super().__init__(application=app, title=self.title)
         self.set_default_icon_name(package.get_name())
         self.set_default_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
@@ -97,7 +95,7 @@ class Window(Gtk.ApplicationWindow):
         self.rubybar = Gtk.SearchBar()
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.rubybar.add(box)
-        label = Gtk.Label(_("Ruby") + ': ')
+        label = Gtk.Label(_('Ruby') + ': ')
         box.pack_start(label, False, False, 1)
         self.ruby_entry = Gtk.Entry()
         box.pack_start(self.ruby_entry, False, False, 1)
@@ -188,11 +186,11 @@ class Window(Gtk.ApplicationWindow):
         dialog.set_transient_for(self)
         dialog.set_modal(True)
         dialog.set_program_name(self.title)
-        dialog.set_copyright("Copyright 2019-2024 Esrille Inc.")
-        dialog.set_authors(["Esrille Inc."])
-        dialog.set_documenters(["Esrille Inc."])
-        dialog.set_website("https://www.esrille.com/")
-        dialog.set_website_label("Esrille Inc.")
+        dialog.set_copyright('Copyright 2019-2024 Esrille Inc.')
+        dialog.set_authors(['Esrille Inc.'])
+        dialog.set_documenters(['Esrille Inc.'])
+        dialog.set_website('https://www.esrille.com/')
+        dialog.set_website_label('Esrille Inc.')
         dialog.set_logo_icon_name('com.esrille.furiganapad')
         dialog.set_version(package.get_version())
         # To close the dialog when "close" is clicked, e.g. on Raspberry Pi OS,
@@ -205,18 +203,18 @@ class Window(Gtk.ApplicationWindow):
 
     def add_filters(self, dialog):
         filter_text = Gtk.FileFilter()
-        filter_text.set_name(_("Text files"))
-        filter_text.add_mime_type("text/plain")
+        filter_text.set_name(_('Text files'))
+        filter_text.add_mime_type('text/plain')
         dialog.add_filter(filter_text)
 
         filter_py = Gtk.FileFilter()
-        filter_py.set_name(_("Python files"))
-        filter_py.add_mime_type("text/x-python")
+        filter_py.set_name(_('Python files'))
+        filter_py.add_mime_type('text/x-python')
         dialog.add_filter(filter_py)
 
         filter_any = Gtk.FileFilter()
-        filter_any.set_name(_("Any files"))
-        filter_any.add_pattern("*")
+        filter_any.set_name(_('Any files'))
+        filter_any.add_pattern('*')
         dialog.add_filter(filter_any)
 
     def annotate_callback(self, action, parameter):
@@ -233,9 +231,9 @@ class Window(Gtk.ApplicationWindow):
             return False
         dialog = Gtk.MessageDialog(
             self, 0, Gtk.MessageType.QUESTION,
-            Gtk.ButtonsType.NONE, _("Save changes to this document?"))
+            Gtk.ButtonsType.NONE, _('Save changes to this document?'))
         dialog.format_secondary_text(_("If you don't, changes will be lost."))
-        dialog.add_button(_("Close _Without Saving"), Gtk.ResponseType.NO)
+        dialog.add_button(_('Close _Without Saving'), Gtk.ResponseType.NO)
         dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
         dialog.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.YES)
         dialog.set_default_response(Gtk.ResponseType.YES)
@@ -268,8 +266,8 @@ class Window(Gtk.ApplicationWindow):
         self.search_entry.grab_focus()
 
     def font_callback(self, action, parameter):
-        dialog = Gtk.FontChooserDialog(_("Font"), self)
-        dialog.props.preview_text = _("The quick brown fox jumps over the lazy dog.")
+        dialog = Gtk.FontChooserDialog(_('Font'), self)
+        dialog.props.preview_text = _('The quick brown fox jumps over the lazy dog.')
         font_desc = self.textview.get_font()
         dialog.set_font_desc(font_desc)
         response = dialog.run()
@@ -377,7 +375,7 @@ class Window(Gtk.ApplicationWindow):
 
     def open_callback(self, action, parameter):
         open_dialog = Gtk.FileChooserDialog(
-            _("Open File"), self,
+            _('Open File'), self,
             Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
              Gtk.STOCK_OPEN, Gtk.ResponseType.ACCEPT))
@@ -426,7 +424,6 @@ class Window(Gtk.ApplicationWindow):
         self.update_statusbar()
 
     def save(self):
-        message = ''
         (start, end) = self.buffer.get_bounds()
         current_contents = self.buffer.get_text(start, end, True)
         try:
@@ -447,7 +444,7 @@ class Window(Gtk.ApplicationWindow):
         except GLib.Error as e:
             dialog = Gtk.MessageDialog(
                 self, 0, Gtk.MessageType.ERROR,
-                Gtk.ButtonsType.OK, _("Could not save the file."))
+                Gtk.ButtonsType.OK, _('Could not save the file.'))
             dialog.format_secondary_text(e.message)
             dialog.run()
             dialog.destroy()
@@ -456,7 +453,7 @@ class Window(Gtk.ApplicationWindow):
 
     def save_as(self):
         dialog = Gtk.FileChooserDialog(
-            _("Save File"), self,
+            _('Save File'), self,
             Gtk.FileChooserAction.SAVE,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
              Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
@@ -528,9 +525,9 @@ class Window(Gtk.ApplicationWindow):
         cursor = self.buffer.get_cursor()
         status = f'{cursor.get_line() + 1}:{cursor.get_plain_line_offset() + 1}    '
         if self.buffer.get_ruby_mode():
-            status += _("Ruby")
+            status += _('Ruby')
         else:
-            status += '<s>' + _("Ruby") + '</s>'
+            status += '<s>' + _('Ruby') + '</s>'
         self.line_col.set_markup(status)
 
     def update_title(self):
