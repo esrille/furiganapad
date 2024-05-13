@@ -40,13 +40,25 @@ sudo apt install furiganapad
 ```
 git clone https://github.com/esrille/furiganapad.git
 cd furiganapad/
-./autogen.sh --prefix=/usr
-make
-sudo make install
+meson setup --prefix /usr _build
+ninja -C _build
+sudo ninja -C _build install
 ```
 
-　ソースコードからビルドした「ふりがなパッド」をアンインストールするには、つぎのようにします:
+　ビルドするときに￹必要￺ひつよう￻なパッケージについては、debian/controlのBuild-Depends、あるいは、ibus-hiragana.specのBuildRequiresを￹参考￺さんこう￻にしてください。
+　Fedoraであれば、つぎのコマンドでビルドに￹必要￺ひつよう￻なパッケージをインストールできます。
 
 ```
-sudo make uninstall
+sudo yum-builddep ibus-hiragana.spec
+```
+
+　Ubuntuであれば、つぎのコマンドでビルドに￹必要￺ひつよう￻なパッケージをインストールできます。
+```
+sudo apt build-dep .
+```
+
+　ソースコードからビルドした「ふりがなパッド」をアンインストールするには、つぎのようにします。
+
+```
+sudo ninja -C _build uninstall
 ```

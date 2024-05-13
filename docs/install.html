@@ -62,12 +62,19 @@ sudo apt install furiganapad
 <p>&#x3000;「ふりがなパッド」をソースコードからインストールしたいときは、つぎの<ruby>手順<rp>(</rp><rt>てじゅん</rt><rp>)</rp></ruby>でインストールできます。</p>
 <pre><code>git clone https://github.com/esrille/furiganapad.git
 cd furiganapad/
-./autogen.sh --prefix=/usr
-make
-sudo make install
+meson setup --prefix /usr _build
+ninja -C _build
+sudo ninja -C _build install
 </code></pre>
-<p>&#x3000;ソースコードからビルドした「ふりがなパッド」をアンインストールするには、つぎのようにします:</p>
-<pre><code>sudo make uninstall
+<p>&#x3000;ビルドするときに<ruby>必要<rp>(</rp><rt>ひつよう</rt><rp>)</rp></ruby>なパッケージについては、debian/controlのBuild-Depends、あるいは、ibus-hiragana.specのBuildRequiresを<ruby>参考<rp>(</rp><rt>さんこう</rt><rp>)</rp></ruby>にしてください。</p>
+<p>&#x3000;Fedoraであれば、つぎのコマンドでビルドに<ruby>必要<rp>(</rp><rt>ひつよう</rt><rp>)</rp></ruby>なパッケージをインストールできます。</p>
+<pre><code>sudo yum-builddep ibus-hiragana.spec
+</code></pre>
+<p>&#x3000;Ubuntuであれば、つぎのコマンドでビルドに<ruby>必要<rp>(</rp><rt>ひつよう</rt><rp>)</rp></ruby>なパッケージをインストールできます。</p>
+<pre><code>sudo apt build-dep .
+</code></pre>
+<p>&#x3000;ソースコードからビルドした「ふりがなパッド」をアンインストールするには、つぎのようにします。</p>
+<pre><code>sudo ninja -C _build uninstall
 </code></pre>
 </main>
 <nav>
