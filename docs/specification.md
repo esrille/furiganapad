@@ -12,4 +12,4 @@
 ```
 $ tools/convert_to_tag.py README.txt README.md
 ```
-[convert_to_tag.py](https://github.com/esrille/furiganapad/blob/master/tools/convert_to_tag.py)スクリプトも「ふりがなパッド」のレポジトリのなかにおいてあります。
+[convert_to_tag.py](https://github.com/esrille/furiganapad/blob/main/tools/convert_to_tag.py)スクリプトも「ふりがなパッド」のレポジトリのなかにおいてあります。
