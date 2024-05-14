@@ -28,7 +28,7 @@ from gi.repository import GObject, Gdk, Gtk, Pango, PangoCairo
 from textbuffer import FuriganaBuffer, has_newline, remove_dangling_annotations
 
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 # A sentence with more than SENTENCE_SHORT characters is not short.
 SENTENCE_SHORT = 50
@@ -69,7 +69,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                 pass
             if im_module == 'ibus':
                 self._is_wayland = False
-        logger.info(f'is_wayland: {self._is_wayland}')
+        LOGGER.info(f'is_wayland: {self._is_wayland}')
 
         self._init_scrollable()
         self._init_immultiontext()
@@ -108,7 +108,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                         | Gdk.EventMask.BUTTON_RELEASE_MASK
                         | Gdk.EventMask.SCROLL_MASK)
 
-        logger.debug('Pango.version: %d', Pango.version())
+        LOGGER.debug(f'Pango.version: {Pango.version_string()}')
         desc = Pango.font_description_from_string(DEFAULT_FONT)
         self.set_font(desc)
 
@@ -242,7 +242,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
                 self.place_cursor_onscreen()
 
     def do_move_cursor(self, step, count, extend_selection):
-        logger.debug('do_move_cursor(%d, %d, %d)', int(step), count, extend_selection)
+        LOGGER.debug(f'do_move_cursor({int(step)}, {count}, {extend_selection})')
         if step == Gtk.MovementStep.LOGICAL_POSITIONS:
             (start, end) = self.buffer.get_selection_bounds()
             if start == end or extend_selection:
@@ -535,13 +535,13 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         return True
 
     def on_focus_in(self, wid, event):
-        logger.debug('on_focus_in')
+        LOGGER.debug('on_focus_in')
         self.im.set_client_window(wid.get_window())
         self.im.focus_in()
         return False
 
     def on_focus_out(self, wid, event):
-        logger.debug('on_focus_out')
+        LOGGER.debug('on_focus_out')
         self.im.focus_out()
         return False
 
@@ -552,7 +552,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
             self.reflow(iter.get_line())
 
     def on_key_press(self, wid, event):
-        logger.debug('on_key_press: "%s", %08x', Gdk.keyval_name(event.keyval), event.state)
+        LOGGER.debug(f'on_key_press: {Gdk.keyval_name(event.keyval)}, {event.state:#08x}')
         if self.im.filter_keypress(event):
             return True
         if event.keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
@@ -617,17 +617,17 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         cursor = self.buffer.get_cursor()
         self.buffer.delete_selection(True, True)
         self.reflow(cursor.get_line())
-        logger.debug('on_preedit_changed: "%s" %d', self.preedit[0], self.preedit[2])
+        LOGGER.debug(f'on_preedit_changed: "{self.preedit[0]}" {self.preedit[2]}')
 
     def on_preedit_end(self, im):
         self.preedit = self.im.get_preedit_string()
         self.buffer.delete_selection(True, True)
-        logger.debug('on_preedit_end: "%s" %d', self.preedit[0], self.preedit[2])
+        LOGGER.debug(f'on_preedit_end: "{self.preedit[0]}" {self.preedit[2]}')
 
     def on_preedit_start(self, im):
         self.preedit = self.im.get_preedit_string()
         self.buffer.delete_selection(True, True)
-        logger.debug('on_preedit_start: "%s" %d', self.preedit[0], self.preedit[2])
+        LOGGER.debug(f'on_preedit_start: "{self.preedit[0]}" {self.preedit[2]}')
 
     def on_retrieve_surrounding(self, im):
         text, offset = self.buffer.get_surrounding()
@@ -747,11 +747,11 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
             line_height = metrics.get_ascent() + metrics.get_descent()
         self.line_height = math.ceil(line_height * 1.6 / Pango.SCALE)
         self.spacing = math.ceil(line_height * 0.6 / Pango.SCALE)
-        logger.debug('set_font: spacing %d, line_height %d', self.spacing, self.line_height)
+        LOGGER.debug(f'set_font: spacing={self.spacing}, line_height={self.line_height}')
         self.reflow()
 
     def set_hadjustment(self, adjustment):
-        logger.debug('set_hadjustment')
+        LOGGER.debug('set_hadjustment')
         if self._hadjustment:
             self._hadjustment.disconnect(self._hadjust_signal)
             self._hadjust_signal = None
@@ -767,7 +767,7 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
             self._hadjust_signal = adjustment.connect('value-changed', self.on_value_changed)
 
     def set_vadjustment(self, adjustment):
-        logger.debug('set_vadjustment')
+        LOGGER.debug('set_vadjustment')
         if self._vadjustment:
             self._vadjustment.disconnect(self._vadjust_signal)
             self._vadjust_signal = None

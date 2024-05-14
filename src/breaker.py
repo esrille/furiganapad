@@ -14,13 +14,12 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-
 import logging
 
 import icu
 
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 IAA = '\uFFF9'  # IAA (INTERLINEAR ANNOTATION ANCHOR)
 IAS = '\uFFFA'  # IAS (INTERLINEAR ANNOTATION SEPARATOR)

@@ -27,7 +27,7 @@ from package import _
 from window import DEFAULT_HEIGHT, DEFAULT_WIDTH, Window
 
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class Application(Gtk.Application):
@@ -58,7 +58,7 @@ class Application(Gtk.Application):
 
     def do_activate(self):
         pathname = os.path.join(package.get_user_datadir(), 'session')
-        logger.info(f'do_activate: {pathname}')
+        LOGGER.info(f'do_activate: {pathname}')
         try:
             with open(pathname, 'r') as file:
                 for line in file:
@@ -70,13 +70,13 @@ class Application(Gtk.Application):
                     args = line.split()
                     if len(args) < 10:
                         continue
-                    logger.info(f'{len(args)}')
+                    LOGGER.info(f'{len(args)}')
                     x = int(args[2])
                     y = int(args[4])
                     w = int(args[6])
                     h = int(args[8])
                     path = args[9]
-                    logger.info(f'do_activate: -x {x} -y {y} -w {w} -h {h} {path}')
+                    LOGGER.info(f'do_activate: -x {x} -y {y} -w {w} -h {h} {path}')
 
                     file = Gio.File.new_for_path(path)
                     win = self.is_opened(file)
@@ -88,9 +88,9 @@ class Application(Gtk.Application):
                     win.move(x, y)
                     win.resize(w, h)
         except OSError:
-            logger.exception(f"Could not read '{pathname}'")
+            LOGGER.exception(f"Could not read '{pathname}'")
         except TypeError:
-            logger.exception(f"Broken session file '{pathname}'")
+            LOGGER.exception(f"Broken session file '{pathname}'")
         if 0 < len(self.get_windows()):
             return
         win = Window(self)
@@ -180,7 +180,7 @@ class Application(Gtk.Application):
 
     def on_quit(self, *args):
         pathname = os.path.join(package.get_user_datadir(), 'session')
-        logger.info(f'on_quit: {pathname}')
+        LOGGER.info(f'on_quit: {pathname}')
         try:
             descriptor = os.open(pathname, os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
             with open(descriptor, 'w') as file:
@@ -195,6 +195,6 @@ class Application(Gtk.Application):
                         path = window.get_file().get_path()
                         file.write(f'furiganapad -x {x} -y {y} -w {w} -h {h} {path} &\n')
         except OSError:
-            logger.exception(f"Could not create '{pathname}'")
+            LOGGER.exception(f"Could not create '{pathname}'")
         if 0 < len(self.get_windows()):
             return

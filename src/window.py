@@ -28,7 +28,8 @@ from package import _
 from textbuffer import get_plain_text, remove_dangling_annotations
 from textview import FuriganaView
 
-logger = logging.getLogger(__name__)
+
+LOGGER = logging.getLogger(__name__)
 
 IAA = '\uFFF9'  # IAA (INTERLINEAR ANNOTATION ANCHOR)
 IAS = '\uFFFA'  # IAS (INTERLINEAR ANNOTATION SEPARATOR)
@@ -303,7 +304,7 @@ class Window(Gtk.ApplicationWindow):
         self.select_text(get_plain_text(entry.get_text()))
 
     def on_key_press_event(self, wid, event):
-        logger.debug('on_key_press: "%s", %08x', Gdk.keyval_name(event.keyval), event.state)
+        LOGGER.debug(f'on_key_press: {Gdk.keyval_name(event.keyval)}, {event.state:#08x}')
         # Control focus around search bars by checking keys typed into the
         # main window
         if self.search_entry.is_focus():
@@ -363,14 +364,14 @@ class Window(Gtk.ApplicationWindow):
         self.textview.grab_focus()
 
     def on_textview_focus_in(self, wid, event):
-        logger.debug('on_textview_focus_in')
+        LOGGER.debug('on_textview_focus_in')
         self.set_action_sensitivity('selectall', True)
         self.searchbar.set_search_mode(False)
         self.replacebar.set_search_mode(False)
         self.rubybar.set_search_mode(False)
 
     def on_textview_focus_out(self, wid, event):
-        logger.debug('on_textview_focus_out')
+        LOGGER.debug('on_textview_focus_out')
         self.set_action_sensitivity('selectall', False)
 
     def open_callback(self, action, parameter):
@@ -463,7 +464,7 @@ class Window(Gtk.ApplicationWindow):
             try:
                 dialog.set_file(self.file)
             except GLib.Error:
-                logger.exception(f'Could not create file "{self.file.get_path()}"')
+                LOGGER.exception(f'Could not create file "{self.file.get_path()}"')
         response = dialog.run()
         if response == Gtk.ResponseType.ACCEPT:
             self.file = dialog.get_file()
