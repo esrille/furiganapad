@@ -9,8 +9,8 @@ furiganapad_docs = [
   'specification.html',
   'usage.html',
   'icon.png',
-  'kids.png',
   'normal.png',
+  'school.png',
   'screenshot.webm',
 ]
 
