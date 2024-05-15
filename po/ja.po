@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: furiganapad 0.6.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-13 16:17+0900\n"
+"POT-Creation-Date: 2024-05-15 18:23+0900\n"
 "PO-Revision-Date: 2020-06-11 05:38+0900\n"
 "Last-Translator: Esrille Inc. <info@esrille.com>\n"
 "Language-Team: Japanese <info@esrille.com>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/com.esrille.furiganapad.desktop.in:4 src/window.py:46
+#: data/com.esrille.furiganapad.desktop.in:4 src/window.py:45
 msgid "FuriganaPad"
 msgstr "ふりがなパッド"
 
@@ -60,53 +60,65 @@ msgstr "h"
 msgid "Print version information"
 msgstr "バージョン番号を表示する"
 
-#: src/window.py:100 src/window.py:531 src/window.py:533
+#: src/window.py:99 src/window.py:527 src/window.py:529
 msgid "Ruby"
 msgstr "ルビ"
 
-#: src/window.py:208
+#: src/window.py:207
 msgid "Text files"
 msgstr "テキスト ファイル"
 
-#: src/window.py:213
+#: src/window.py:212
 msgid "Python files"
 msgstr "Pythonのファイル"
 
-#: src/window.py:218
+#: src/window.py:217
 msgid "Any files"
 msgstr "すべてのファイル"
 
-#: src/window.py:236
+#: src/window.py:235
 msgid "Save changes to this document?"
 msgstr "書きかえた文章を保存しますか？"
 
-#: src/window.py:237
+#: src/window.py:236
 msgid "If you don't, changes will be lost."
 msgstr "保存しないと、書きかえた文章は残りません。"
 
-#: src/window.py:238
+#: src/window.py:237
 msgid "Close _Without Saving"
 msgstr "保存しないで閉じる(_W)"
 
-#: src/window.py:271
+#: src/window.py:270
 msgid "Font"
 msgstr "フォント"
 
-#: src/window.py:272
+#: src/window.py:271
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr "ひさかたのひかりのどけきはるの日に しづごころなく花のちるらむ"
 
-#: src/window.py:380
+#: src/window.py:379
 msgid "Open File"
 msgstr "ファイルを開く"
 
-#: src/window.py:450
+#: src/window.py:381
+msgid "Open"
+msgstr "開く"
+
+#: src/window.py:382 src/window.py:457
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: src/window.py:444
 msgid "Could not save the file."
 msgstr "ファイルを保存できませんでした。"
 
-#: src/window.py:459
+#: src/window.py:453
 msgid "Save File"
 msgstr "名前をつけて保存"
+
+#: src/window.py:456
+msgid "Save"
+msgstr "保存"
 
 #: src/furiganapad.menu.ui:6
 msgid "_File"

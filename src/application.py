@@ -121,7 +121,9 @@ class Application(Gtk.Application):
         value = options.lookup_value('window-height', GLib.VariantType.new('i'))
         self.window_height = value.get_int32() if value else DEFAULT_HEIGHT
 
-        args = command_line.get_arguments()[1:]
+        args = command_line.get_arguments()
+        LOGGER.info(args[0])    # /app/share/furiganapad/src/main.py if runs in sandbox
+        args = args[1:]
         if args:
             files = []
             for pathname in args:

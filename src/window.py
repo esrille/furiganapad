@@ -285,8 +285,8 @@ class Window(Gtk.ApplicationWindow):
     def help_callback(self, action, parameter):
         # Use yelp to open local HTMLs.
         # cf. https://gitlab.gnome.org/GNOME/yelp/-/merge_requests/24
-        url = 'file://' + os.path.join(package.get_datadir(), 'docs/index.html')
-        subprocess.Popen(['yelp', url])
+        path = os.path.join(package.get_datadir(), 'docs/index.html')
+        subprocess.Popen(['yelp', path])
 
     def highlightlongsentences_callback(self, action, parameter):
         highlight = not action.get_state()
@@ -375,19 +375,15 @@ class Window(Gtk.ApplicationWindow):
         self.set_action_sensitivity('selectall', False)
 
     def open_callback(self, action, parameter):
-        open_dialog = Gtk.FileChooserDialog(
+        dialog = Gtk.FileChooserNative.new(
             _('Open File'), self,
             Gtk.FileChooserAction.OPEN,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-             Gtk.STOCK_OPEN, Gtk.ResponseType.ACCEPT))
-        self.add_filters(open_dialog)
-        open_dialog.set_local_only(False)
-        open_dialog.set_modal(True)
-        open_dialog.connect('response', self.open_response_cb)
-        open_dialog.show()
-
-    def open_response_cb(self, dialog, response):
+            _('Open'),
+            _('Cancel'))
+        self.add_filters(dialog)
+        dialog.set_modal(True)
         file = None
+        response = dialog.run()
         if response == Gtk.ResponseType.ACCEPT:
             file = dialog.get_file()
         dialog.destroy()
@@ -453,11 +449,12 @@ class Window(Gtk.ApplicationWindow):
             return True
 
     def save_as(self):
-        dialog = Gtk.FileChooserDialog(
-            _('Save File'), self,
+        dialog = Gtk.FileChooserNative.new(
+            _('Save File'),
+            self,
             Gtk.FileChooserAction.SAVE,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-             Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
+            _('Save'),
+            _('Cancel'))
         dialog.set_do_overwrite_confirmation(True)
         dialog.set_modal(True)
         if self.file is not None:
@@ -468,6 +465,7 @@ class Window(Gtk.ApplicationWindow):
         response = dialog.run()
         if response == Gtk.ResponseType.ACCEPT:
             self.file = dialog.get_file()
+            LOGGER.debug(f'save_as: {self.file} "{dialog.get_current_folder()}"')
             dialog.destroy()
             return self.save()
         dialog.destroy()

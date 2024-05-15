@@ -11,7 +11,7 @@ furiganapad_docs = [
   'icon.png',
   'normal.png',
   'school.png',
-  'screenshot.webm',
+  'screenshot.webm'
 ]
 
 install_data(furiganapad_docs, install_dir: moduledir)
