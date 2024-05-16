@@ -467,7 +467,9 @@ class Window(Gtk.ApplicationWindow):
             self.file = dialog.get_file()
             LOGGER.debug(f'save_as: {self.file} "{dialog.get_current_folder()}"')
             dialog.destroy()
-            return self.save()
+            result = self.save()
+            self.update_title()
+            return result
         dialog.destroy()
         return True
 
