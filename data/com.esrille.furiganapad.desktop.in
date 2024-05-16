@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=FuriganaPad
-Comment=Write Japanese texts with Furigana easily
+Comment=Write Japanese text with Ruby annotations easily
 Icon=com.esrille.furiganapad
 Exec=furiganapad %F
 Terminal=false

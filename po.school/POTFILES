@@ -1,4 +1,5 @@
 data/com.esrille.furiganapad.desktop.in
+data/com.esrille.furiganapad.metainfo.xml.in
 src/application.py
 src/main.py
 src/textbuffer.py

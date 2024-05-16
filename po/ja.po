@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: furiganapad 0.6.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-15 18:23+0900\n"
+"POT-Creation-Date: 2024-05-16 12:30+0900\n"
 "PO-Revision-Date: 2020-06-11 05:38+0900\n"
 "Last-Translator: Esrille Inc. <info@esrille.com>\n"
 "Language-Team: Japanese <info@esrille.com>\n"
@@ -16,13 +16,33 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/com.esrille.furiganapad.desktop.in:4 src/window.py:45
+#: data/com.esrille.furiganapad.desktop.in:4
+#: data/com.esrille.furiganapad.metainfo.xml.in:6 src/window.py:45
 msgid "FuriganaPad"
 msgstr "ふりがなパッド"
 
 #: data/com.esrille.furiganapad.desktop.in:5
-msgid "Write Japanese texts with Furigana easily"
+#: data/com.esrille.furiganapad.metainfo.xml.in:7
+msgid "Write Japanese text with Ruby annotations easily"
 msgstr "ふりがなつきの文章をかんたんにかけます"
+
+#: data/com.esrille.furiganapad.metainfo.xml.in:12
+msgid ""
+"FuriganaPad enables you to edit Japanese text with ruby characters. Ruby "
+"characters are automatically placed above kanji characters in cooperation "
+"with Hiragana IME for IBus."
+msgstr ""
+"ふりがなパッドをつかうと、ふりがなをつけた文章をかんたんにつくれます。「ひら"
+"がなIME for IBus」といっしょにつかうと、自動的に漢字にふりがなをつけていきま"
+"す。"
+
+#: data/com.esrille.furiganapad.metainfo.xml.in:24
+msgid "Screenshot"
+msgstr "スクリーンショット"
+
+#: data/com.esrille.furiganapad.metainfo.xml.in:28
+msgid "Screen-capture"
+msgstr "スクリーンキャプチャー"
 
 #: src/application.py:49
 msgid "Initial window x position"
