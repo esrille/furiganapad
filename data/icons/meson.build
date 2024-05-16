@@ -11,3 +11,9 @@ install_data(
   icon_128_dir / ('@0@.png').format(application_id),
   install_dir: get_option('datadir') / 'icons' / icon_128_dir
 )
+
+icon_256_dir = 'hicolor' / '256x256' / 'apps'
+install_data(
+  icon_256_dir / ('@0@.png').format(application_id),
+  install_dir: get_option('datadir') / 'icons' / icon_256_dir
+)
