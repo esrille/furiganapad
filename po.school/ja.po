@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: furiganapad 0.6.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-16 12:30+0900\n"
+"POT-Creation-Date: 2024-05-17 04:41+0900\n"
 "PO-Revision-Date: 2020-06-11 05:38+0900\n"
 "Last-Translator: Esrille Inc. <info@esrille.com>\n"
 "Language-Team: Japanese <info@esrille.com>\n"
@@ -28,19 +28,17 @@ msgstr "ふりがなつきの文章をかんたんにかけます"
 
 #: data/com.esrille.furiganapad.metainfo.xml.in:12
 msgid ""
-"FuriganaPad enables you to edit Japanese text with ruby characters. Ruby "
-"characters are automatically placed above kanji characters in cooperation "
-"with Hiragana IME for IBus."
+"With Hiragana IME for IBus, FuriganaPad automatically puts Ruby characters "
+"above Kanji as you type them."
 msgstr ""
-"ふりがなパッドをつかうと、ふりがなをつけた文章をかんたんにつくれます。「ひら"
-"がなIME for IBus」といっしょにつかうと、自動的に漢字にふりがなをつけていきま"
-"す。"
+"「ひらがなIME for IBus」といっしょにつかうと、入力した漢字に自動的にふりが"
+"なをつけていきます。"
 
-#: data/com.esrille.furiganapad.metainfo.xml.in:24
+#: data/com.esrille.furiganapad.metainfo.xml.in:23
 msgid "Screenshot"
 msgstr "スクリーンショット"
 
-#: data/com.esrille.furiganapad.metainfo.xml.in:28
+#: data/com.esrille.furiganapad.metainfo.xml.in:27
 msgid "Screen-capture"
 msgstr "スクリーンキャプチャー"
 
@@ -80,7 +78,7 @@ msgstr "h"
 msgid "Print version information"
 msgstr "バージョンをみる"
 
-#: src/window.py:99 src/window.py:527 src/window.py:529
+#: src/window.py:99 src/window.py:529 src/window.py:531
 msgid "Ruby"
 msgstr "ルビ"
 

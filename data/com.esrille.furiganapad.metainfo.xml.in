@@ -10,9 +10,8 @@
   </developer>
   <description>
     <p>
-      FuriganaPad enables you to edit Japanese text with ruby characters.
-      Ruby characters are automatically placed above kanji characters
-      in cooperation with Hiragana IME for IBus.
+      With Hiragana IME for IBus, FuriganaPad automatically puts Ruby characters
+      above Kanji as you type them.
     </p>
   </description>
   <launchable type="desktop-id">com.esrille.furiganapad.desktop</launchable>
@@ -24,7 +23,7 @@
       <caption>Screenshot</caption>
     </screenshot>
     <screenshot>
-      <image>https://esrille.github.io/furiganapad/screenshot.webm</image>
+      <video codec="vp9">https://esrille.github.io/furiganapad/screenshot.webm</video>
       <caption>Screen-capture</caption>
     </screenshot>
   </screenshots>
@@ -34,7 +33,7 @@
     <control>touch</control>
   </supports>
   <releases>
-    <release version="0.7.0" date="2024-05-16">
+    <release version="0.7.0" date="2024-05-17">
     <url type="details">https://github.com/esrille/furiganapad/releases/tag/v0.7.0</url>
     </release>
   </releases>
