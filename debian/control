@@ -3,6 +3,7 @@ Section: editors
 Priority: optional
 Maintainer: Esrille Inc. <info@esrille.com>
 Build-Depends:
+ appstream,
  debhelper (>=11),
  desktop-file-utils,
  dh-python,
