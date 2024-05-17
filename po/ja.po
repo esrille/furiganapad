@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: furiganapad 0.6.3\n"
+"Project-Id-Version: furiganapad 0.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-17 16:32+0900\n"
+"POT-Creation-Date: 2024-05-17 22:09+0900\n"
 "PO-Revision-Date: 2020-06-11 05:38+0900\n"
 "Last-Translator: Esrille Inc. <info@esrille.com>\n"
 "Language-Team: Japanese <info@esrille.com>\n"
@@ -34,11 +34,11 @@ msgstr ""
 "「ひらがなIME for IBus」といっしょにつかうと、入力した漢字に自動的にふりがな"
 "をつけていきます。"
 
-#: data/com.esrille.furiganapad.metainfo.xml.in:23
+#: data/com.esrille.furiganapad.metainfo.xml.in:24
 msgid "Screenshot"
 msgstr "スクリーンショット"
 
-#: data/com.esrille.furiganapad.metainfo.xml.in:27
+#: data/com.esrille.furiganapad.metainfo.xml.in:28
 msgid "Screen-capture"
 msgstr "スクリーンキャプチャー"
 
