@@ -19,7 +19,11 @@
   <url type="homepage">https://github.com/esrille/furiganapad</url>
   <screenshots>
     <screenshot type="default">
-      <image>https://github.com/esrille/furiganapad/raw/main/screenshot.png</image>
+      <image>https://esrille.github.io/furiganapad/screenshot_en.png</image>
+      <caption>Screenshot</caption>
+    </screenshot>
+    <screenshot>
+      <image xml:lang="ja">https://esrille.github.io/furiganapad/screenshot.png</image>
       <caption>Screenshot</caption>
     </screenshot>
     <screenshot>
