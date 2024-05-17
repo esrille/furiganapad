@@ -3,7 +3,6 @@
 　「ふりがなパッド」は、ふりがなをうった￹文章￺ぶんしょう￻をかんたんにつくれるテキスト エディターです。
 「[ひらがなIME](https://github.com/esrille/ibus-hiragana)」といっしょにつかうと、￹入力￺にゅうりょく￻した￹漢字￺かんじ￻に￹自動的￺じどうてき￻にふりがなをふっていきます。
 
-<br>
 <video controls autoplay muted playsinline>
 <source src='screenshot.webm' type='video/webm'>
 スクリーン ショット

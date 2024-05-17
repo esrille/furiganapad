@@ -39,7 +39,7 @@ h5 {
 h6 {
   font-size: 12pt;
 }
-img {
+img, video {
   border-style: none;
   max-width: 100%;
   margin-top: 1em;
