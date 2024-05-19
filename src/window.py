@@ -178,6 +178,7 @@ class Window(Gtk.ApplicationWindow):
                     self.buffer.place_cursor(self.buffer.get_start_iter())
                 self.buffer.set_modified(False)
             except GLib.Error:
+                LOGGER.exception(f'Could not read "{self.file.get_path()}"')
                 # Create a new file
                 self.save()
                 self.update_title()

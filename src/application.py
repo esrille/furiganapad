@@ -70,23 +70,21 @@ class Application(Gtk.Application):
                     args = line.split()
                     if len(args) < 10:
                         continue
-                    LOGGER.info(f'{len(args)}')
                     x = int(args[2])
                     y = int(args[4])
                     w = int(args[6])
                     h = int(args[8])
                     path = args[9]
                     LOGGER.info(f'do_activate: -x {x} -y {y} -w {w} -h {h} {path}')
-
                     file = Gio.File.new_for_path(path)
                     win = self.is_opened(file)
                     if win:
                         win.present()
-                    else:
+                    elif os.path.isfile(path):
                         win = Window(self, file=file)
                         win.show_all()
-                    win.move(x, y)
-                    win.resize(w, h)
+                        win.move(x, y)
+                        win.resize(w, h)
         except OSError:
             LOGGER.exception(f"Could not read '{pathname}'")
         except TypeError:
