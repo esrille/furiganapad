@@ -101,7 +101,7 @@ msgstr "Vuoi salvare le modifiche a questo documento?"
 
 #: src/window.py:236
 msgid "If you don't, changes will be lost."
-msgstr "In caso contrario, le modifiche andranno perse"
+msgstr "In caso contrario, le modifiche andranno perse."
 
 #: src/window.py:237
 msgid "Close _Without Saving"
