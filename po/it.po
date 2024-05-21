@@ -1,0 +1,240 @@
+# Furiganapad
+# Copyright (C) 2020-2024 Esrille Inc. <info@esrille.com>
+# This file is distributed under the same license as the furiganapad package.
+# Esrille Inc. <info@esrille.com>, 2020-2023.
+# Albno Battistella <albanobattistella@gmail.com>,2024.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: furiganapad 0.7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-17 22:09+0900\n"
+"PO-Revision-Date: 2024-05-21 14:38+0100\n"
+"Last-Translator: Albano Battistella <albanobattistella@gmail.com>\n"
+"Language-Team: Italian <albanobattistella@gmail.com>\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/com.esrille.furiganapad.desktop.in:4
+#: data/com.esrille.furiganapad.metainfo.xml.in:6 src/window.py:45
+msgid "FuriganaPad"
+msgstr "FuriganaPad"
+
+#: data/com.esrille.furiganapad.desktop.in:5
+#: data/com.esrille.furiganapad.metainfo.xml.in:7
+msgid "Write Japanese text with Ruby annotations easily"
+msgstr "Scrivi facilmente testo giapponese con annotazioni Ruby"
+
+#: data/com.esrille.furiganapad.metainfo.xml.in:12
+msgid ""
+"With Hiragana IME for IBus, FuriganaPad automatically puts Ruby characters "
+"above Kanji as you type them."
+msgstr ""
+"Con Hiragana IME per IBus, FuriganaPad inserisce automaticamente i caratteri Ruby "
+"sopra i Kanji mentre li digiti."
+
+#: data/com.esrille.furiganapad.metainfo.xml.in:24
+msgid "Screenshot"
+msgstr "Screenshot"
+
+#: data/com.esrille.furiganapad.metainfo.xml.in:28
+msgid "Screen-capture"
+msgstr "Cattura dello schermo"
+
+#: src/application.py:49
+msgid "Initial window x position"
+msgstr "Posizione iniziale della finestra x"
+
+#: src/application.py:49
+msgid "x"
+msgstr "x"
+
+#: src/application.py:51
+msgid "Initial window y position"
+msgstr "Posizione iniziale della finestra y"
+
+#: src/application.py:51
+msgid "y"
+msgstr "y"
+
+#: src/application.py:53
+msgid "Initial window width"
+msgstr "Larghezza iniziale della finestra"
+
+#: src/application.py:53
+msgid "w"
+msgstr "w"
+
+#: src/application.py:55
+msgid "Initial window height"
+msgstr "Altezza iniziale della finestra"
+
+#: src/application.py:55
+msgid "h"
+msgstr "h"
+
+#: src/application.py:57
+msgid "Print version information"
+msgstr "Stampa le informazioni sulla versione"
+
+#: src/window.py:99 src/window.py:529 src/window.py:531
+msgid "Ruby"
+msgstr "Ruby"
+
+#: src/window.py:207
+msgid "Text files"
+msgstr "File di testo"
+
+#: src/window.py:212
+msgid "Python files"
+msgstr "File Python"
+
+#: src/window.py:217
+msgid "Any files"
+msgstr "Qualsiasi file"
+
+#: src/window.py:235
+msgid "Save changes to this document?"
+msgstr "Vuoi salvare le modifiche a questo documento?"
+
+#: src/window.py:236
+msgid "If you don't, changes will be lost."
+msgstr "In caso contrario, le modifiche andranno perse"
+
+#: src/window.py:237
+msgid "Close _Without Saving"
+msgstr "Chiudi _Senza Salvare"
+
+#: src/window.py:270
+msgid "Font"
+msgstr "Font"
+
+#: src/window.py:271
+msgid "The quick brown fox jumps over the lazy dog."
+msgstr "La veloce volpe marrone salta sopra il cane pigro."
+
+#: src/window.py:379
+msgid "Open File"
+msgstr "Apri file"
+
+#: src/window.py:381
+msgid "Open"
+msgstr "Apri"
+
+#: src/window.py:382 src/window.py:457
+msgid "Cancel"
+msgstr "Annulla"
+
+#: src/window.py:444
+msgid "Could not save the file."
+msgstr "Impossibile salvare il file."
+
+#: src/window.py:453
+msgid "Save File"
+msgstr "Salva File"
+
+#: src/window.py:456
+msgid "Save"
+msgstr "Salva"
+
+#: src/furiganapad.menu.ui:6
+msgid "_File"
+msgstr "_File"
+
+#: src/furiganapad.menu.ui:9
+msgid "_New Window"
+msgstr "_Nuova finestra"
+
+#: src/furiganapad.menu.ui:14
+msgid "_Open…"
+msgstr "_Apri…"
+
+#: src/furiganapad.menu.ui:21
+msgid "_Save"
+msgstr "_Salva"
+
+#: src/furiganapad.menu.ui:26
+msgid "Save _As…"
+msgstr "Salva _come…"
+
+#: src/furiganapad.menu.ui:32
+msgid "_Close"
+msgstr "_Chiudi"
+
+#: src/furiganapad.menu.ui:37
+msgid "_Quit"
+msgstr "_Esci"
+
+#: src/furiganapad.menu.ui:44
+msgid "_Edit"
+msgstr "_Modifica"
+
+#: src/furiganapad.menu.ui:47
+msgid "_Undo"
+msgstr "_Annulla"
+
+#: src/furiganapad.menu.ui:52
+msgid "Re_do"
+msgstr "Rifai"
+
+#: src/furiganapad.menu.ui:59
+msgid "Cu_t"
+msgstr "Taglia"
+
+#: src/furiganapad.menu.ui:64
+msgid "_Copy"
+msgstr "_Copia"
+
+#: src/furiganapad.menu.ui:69
+msgid "_Paste"
+msgstr "_Incolla"
+
+#: src/furiganapad.menu.ui:76
+msgid "Select _All"
+msgstr "Seleziona _tutto"
+
+#: src/furiganapad.menu.ui:83
+msgid "_Find…"
+msgstr "_Trova…"
+
+#: src/furiganapad.menu.ui:88
+msgid "_Replace…"
+msgstr "_Sostituisci…"
+
+#: src/furiganapad.menu.ui:95
+msgid "Ru_by…"
+msgstr "Ruby…"
+
+#: src/furiganapad.menu.ui:100
+msgid "Revert to _Hiragana"
+msgstr "Ritorna all'Hiragana"
+
+#: src/furiganapad.menu.ui:107
+msgid "_Settings"
+msgstr "_Impostazioni"
+
+#: src/furiganapad.menu.ui:110
+msgid "_Font…"
+msgstr "_Font…"
+
+#: src/furiganapad.menu.ui:114
+msgid "_Ruby"
+msgstr "_Ruby"
+
+#: src/furiganapad.menu.ui:119
+msgid "Highlight _Long Sentences"
+msgstr "Evidenzia _Frasi lunghe"
+
+#: src/furiganapad.menu.ui:123
+msgid "_Statusbar"
+msgstr "_Barra di stato"
+
+#: src/furiganapad.menu.ui:129 src/furiganapad.menu.ui:132
+msgid "_Help"
+msgstr "_Aiuto"
+
+#: src/furiganapad.menu.ui:137
+msgid "_About Furiganapad"
+msgstr "_Informazioni su Furiganapad"
