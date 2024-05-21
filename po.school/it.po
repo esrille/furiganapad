@@ -113,7 +113,7 @@ msgstr "Font"
 
 #: src/window.py:271
 msgid "The quick brown fox jumps over the lazy dog."
-msgstr "La veloce volpe marrone salta sopra il cane pigro."
+msgstr "Ma la volpe col suo balzo ha raggiunto il quieto Fido."
 
 #: src/window.py:379
 msgid "Open File"
