@@ -60,6 +60,9 @@ Hiragana IME for IBus.
 * ${date} Esrille Inc. <info@esrille.com> - ${version}-1
 - See https://github.com/esrille/furiganapad/releases/tag/v${source_version}
 
+* Fri May 17 2024 Esrille Inc. <info@esrille.com> - 0.7.0-1
+- See https://github.com/esrille/furiganapad/releases/tag/v0.7.0
+
 * Thu Mar 28 2024 Esrille Inc. <info@esrille.com> - 0.6.2-1
 - See https://github.com/esrille/furiganapad/releases/tag/v0.6.2
 
