@@ -51,7 +51,7 @@ Hiragana IME for IBus.
 %{_datadir}/%{name}
 %{_datadir}/applications
 %{_datadir}/icons/hicolor/*/*/*.png
-%{_datadir}/locale/ja/LC_MESSAGES/furiganapad.school.mo
+%{_datadir}/locale/*/LC_MESSAGES/furiganapad.school.mo
 %{_datadir}/metainfo/com.esrille.furiganapad.metainfo.xml
 %{_mandir}/man1/furiganapad.1*
 %{_mandir}/ja/man1/furiganapad.1*
