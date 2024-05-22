@@ -6,7 +6,7 @@ FuriganaPad allows you to easily write Japanese text with Ruby annotations. With
 
 ## About Ruby annotations
 
-Kanji can be particularly challenging to read, especially for children in Japan. In Japan, children learn more than a thousand Kanji characters over six years of elementary school. Japanese books for children often include Ruby annotations in _Hiragana_, known as _Furigana_, on all Kanji characters. This method of adding _Furigana_ is known as '_Sô Furigana_' or 'Total Ruby.'
+Kanji can be particularly challenging to read, especially for children in Japan. In Japan, children learn over a thousand Kanji characters during their six years of elementary school. Japanese books for children often include Ruby annotations in _Hiragana_, known as _Furigana_, on all Kanji characters. This method of adding _Furigana_ is known as '_Sô Furigana_' or 'Total Ruby.'
 
 Recently, there has been an increase in opportunities to see and write sentences in plain, easy Japanese, known as ‘_Yasashii Nihongo_.’ Easy Japanese is also typically written with Total Ruby. _Furigana_ is also helpful for people with dyslexia.
 
