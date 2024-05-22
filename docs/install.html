@@ -42,7 +42,7 @@ aside a:hover {
 </div>
 <main>
 <h1>インストール<ruby>方法<rp>(</rp><rt>ほうほう</rt><rp>)</rp></ruby></h1>
-<p>&#x3000;つかっているOSがFedoraかUbuntuであれば、かんたんに「ふりがなパッド」をインストールすることができます。</p>
+<p>&#x3000;つかっているOSがFedoraかUbuntuであれば、かんたんに「ふりがなパッド」をインストールすることができます。また、Linuxのアプリストア「<a href="https://flathub.org/ja">Flathub</a>」から「ふりがなパッド」をインストールすることもできます。</p>
 <h3>Fedoraのばあい</h3>
 <p>&#x3000;Fedora<ruby>用<rp>(</rp><rt>よう</rt><rp>)</rp></ruby>のソフトウェア パッケージはCoprプロジェクト「<a href="https://copr.fedorainfracloud.org/coprs/g/esrille/releases/">@esrille/releases</a>」から<ruby>提供<rp>(</rp><rt>ていきょう</rt><rp>)</rp></ruby>しています。このCoprプロジェクトを<ruby>有効<rp>(</rp><rt>ゆうこう</rt><rp>)</rp></ruby>にするには、いちど、コマンドラインからつぎのように<ruby>実行<rp>(</rp><rt>じっこう</rt><rp>)</rp></ruby>します。</p>
 <pre><code>sudo dnf copr enable @esrille/releases
@@ -57,6 +57,15 @@ aside a:hover {
 <p>&#x3000;あとは、aptコマンドで「ふりがなパッド」をインストールできます。</p>
 <pre><code>sudo apt update
 sudo apt install furiganapad
+</code></pre>
+<h3>Flathubからインストールする<ruby>方法<rp>(</rp><rt>ほうほう</rt><rp>)</rp></ruby></h3>
+<p>&#x3000;Flathubからインストールするときは、<a href="https://apps.gnome.org/Software/">GNOME Software</a>を<ruby>利用<rp>(</rp><rt>りよう</rt><rp>)</rp></ruby>するのがかんたんです。GNOME Softwareが<ruby>起動<rp>(</rp><rt>きどう</rt><rp>)</rp></ruby>したら、ルーペのアイコンをクリックして、「ふりがなパッド」をさがします。<ruby>英語<rp>(</rp><rt>えいご</rt><rp>)</rp></ruby><ruby>環境<rp>(</rp><rt>かんきょう</rt><rp>)</rp></ruby>のときは、「furiganapad」と<ruby>入力<rp>(</rp><rt>にゅうりょく</rt><rp>)</rp></ruby>してさがしてください。<ruby>一覧<rp>(</rp><rt>いちらん</rt><rp>)</rp></ruby>から「ふりがなパッド」を<ruby>選択<rp>(</rp><rt>せんたく</rt><rp>)</rp></ruby>すると、インストールすることができます。</p>
+<p><img alt="GNOME Software" src="furiganapad.flathub.png"></p>
+<p>&#x3000;Flathubからインストールしたソフトウェアは、それぞれ<ruby>専用<rp>(</rp><rt>せんよう</rt><rp>)</rp></ruby>のサンドボックスのなかで<ruby>実行<rp>(</rp><rt>じっこう</rt><rp>)</rp></ruby>されます。サンドボックスは、インストールしたソフトウェアが<ruby>不正<rp>(</rp><rt>ふせい</rt><rp>)</rp></ruby>なことをおこなえないようにします。ふりがなパッドのばあいは、ユーザーが<ruby>指定<rp>(</rp><rt>してい</rt><rp>)</rp></ruby>したファイル<ruby>以外<rp>(</rp><rt>いがい</rt><rp>)</rp></ruby>にはアクセスできなくなります。そのため、<ruby>以前<rp>(</rp><rt>いぜん</rt><rp>)</rp></ruby>ひらいていたファイルを<ruby>自動<rp>(</rp><rt>じどう</rt><rp>)</rp></ruby>でひらく<ruby>機能<rp>(</rp><rt>きのう</rt><rp>)</rp></ruby>などは<ruby>一部<rp>(</rp><rt>いちぶ</rt><rp>)</rp></ruby>、<ruby>制限<rp>(</rp><rt>せいげん</rt><rp>)</rp></ruby>されます。</p>
+<p><br>
+<strong>ヒント</strong>: UbuntuでFlathubを<ruby>利用<rp>(</rp><rt>りよう</rt><rp>)</rp></ruby>したいときは、いちどコマンドラインからつぎのように<ruby>実行<rp>(</rp><rt>じっこう</rt><rp>)</rp></ruby>してください。Fedoraでは、GNOME Softwareがはじめからインストールされています。</p>
+<pre><code>sudo apt install flatpak gnome-software-plugin-flatpak
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 </code></pre>
 <h3>ソースコードからインストールする<ruby>方法<rp>(</rp><rt>ほうほう</rt><rp>)</rp></ruby></h3>
 <p>&#x3000;「ふりがなパッド」をソースコードからインストールしたいときは、つぎの<ruby>手順<rp>(</rp><rt>てじゅん</rt><rp>)</rp></ruby>でインストールできます。</p>

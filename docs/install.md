@@ -1,6 +1,7 @@
 # インストール￹方法￺ほうほう￻
 
 　つかっているOSがFedoraかUbuntuであれば、かんたんに「ふりがなパッド」をインストールすることができます。
+また、Linuxのアプリストア「[Flathub](https://flathub.org/ja)」から「ふりがなパッド」をインストールすることもできます。
 
 ### Fedoraのばあい
 
@@ -31,6 +32,29 @@ sudo add-apt-repository ppa:esrille/releases
 ```
 sudo apt update
 sudo apt install furiganapad
+```
+
+### Flathubからインストールする￹方法￺ほうほう￻
+
+　Flathubからインストールするときは、[GNOME Software](https://apps.gnome.org/Software/)を￹利用￺りよう￻するのがかんたんです。
+GNOME Softwareが￹起動￺きどう￻したら、ルーペのアイコンをクリックして、「ふりがなパッド」をさがします。
+￹英語￺えいご￻￹環境￺かんきょう￻のときは、「furiganapad」と￹入力￺にゅうりょく￻してさがしてください。
+￹一覧￺いちらん￻から「ふりがなパッド」を￹選択￺せんたく￻すると、インストールすることができます。
+
+![GNOME Software](furiganapad.flathub.png)
+
+　Flathubからインストールしたソフトウェアは、それぞれ￹専用￺せんよう￻のサンドボックスのなかで￹実行￺じっこう￻されます。
+サンドボックスは、インストールしたソフトウェアが￹不正￺ふせい￻なことをおこなえないようにします。
+ふりがなパッドのばあいは、ユーザーが￹指定￺してい￻したファイル￹以外￺いがい￻にはアクセスできなくなります。
+そのため、￹以前￺いぜん￻ひらいていたファイルを￹自動￺じどう￻でひらく￹機能￺きのう￻などは￹一部￺いちぶ￻、￹制限￺せいげん￻されます。
+
+<br>
+**ヒント**: UbuntuでFlathubを￹利用￺りよう￻したいときは、いちどコマンドラインからつぎのように￹実行￺じっこう￻してください。
+Fedoraでは、GNOME Softwareがはじめからインストールされています。
+
+```
+sudo apt install flatpak gnome-software-plugin-flatpak
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ```
 
 ### ソースコードからインストールする￹方法￺ほうほう￻
