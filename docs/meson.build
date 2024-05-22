@@ -8,6 +8,7 @@ furiganapad_docs = [
   'install.html',
   'specification.html',
   'usage.html',
+  'furiganapad.flathub.png',
   'icon.png',
   'normal.png',
   'school.png',
