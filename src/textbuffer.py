@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2024  Esrille Inc.
+# Copyright (c) 2019-2025  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -473,8 +473,6 @@ class FuriganaBuffer(GObject.Object):
         super().__init__()
         self.marks = {}
         self.paragraphs = []
-        self.reading = ''
-        self.surround_deleted = False
         self.annotated = ''
         self.ruby_mode = True
 
@@ -497,34 +495,6 @@ class FuriganaBuffer(GObject.Object):
         self.connect('insert-text', self.on_insert)
         self.connect_after('insert-text', self.on_inserted)
         self.connect('delete-range', self.on_delete)
-
-    def _annotate(self, s, r):
-        LOGGER.debug(f'_annotate("{s}", "{r}")')
-        pos = r.find('―')
-        if 0 <= pos:
-            r = r[:pos]
-            if not r:
-                return s
-        before = ''
-        for i in range(len(s)):
-            if i < len(r) and s[i] == r[i]:
-                before += s[i]
-            else:
-                break
-        if before:
-            s = s[len(before):]
-            r = r[len(before):]
-        after = ''
-        for c in s[::-1]:
-            if not KANZI.search(c):
-                after = c + after
-            else:
-                break
-        if after:
-            s = s[:-len(after)]
-        if s:
-            s = IAA + s + IAS + r + IAT
-        return before + s + after
 
     def _backward_cursor_position(self, iter):
         lineno = iter.get_line()
@@ -741,9 +711,9 @@ class FuriganaBuffer(GObject.Object):
             self.delete(self.get_anchor(), self.get_cursor())
         return True
 
-    def delete_surrounding(self, offset, length):
+    def delete_surrounding(self, offset, length) -> str:
         if length == 0:
-            return
+            return ''
         start = self.get_cursor()
         start.forward_cursor_positions(offset)
         end = start.copy()
@@ -752,35 +722,10 @@ class FuriganaBuffer(GObject.Object):
             start, end = end, start
             if length < 0:
                 length = -length
-
         assert start.get_line() == end.get_line()
-        reading = self.paragraphs[start.get_line()].get_text()[start.get_line_offset():end.get_line_offset()]
-
-        if self.surround_deleted:
-            if self.reading:
-                if '―' not in reading:
-                    if is_reading(reading + self.reading):
-                        # Extend self.reading
-                        # か + け―る
-                        self.reading = reading + self.reading
-                elif is_reading(reading):
-                    self.reading = reading
-                else:
-                    self.reading = ''
-                    self.surround_deleted = False
-                LOGGER.debug(f'delete_surrounding - reading: {self.reading}')
-            else:
-                self.surround_deleted = False
-
-        if not self.surround_deleted:
-            if is_reading(reading):
-                self.reading = reading
-                LOGGER.debug(f'delete_surrounding - reading: {self.reading}')
-                self.surround_deleted = True
-            else:
-                self.reading = ''
-
+        deleted = self.paragraphs[start.get_line()].get_text()[start.get_line_offset():end.get_line_offset()]
         self.delete(start, end)
+        return deleted
 
     def do_delete_range(self, start, end):
         if start.get_line() == end.get_line():
@@ -909,7 +854,10 @@ class FuriganaBuffer(GObject.Object):
         if not self.get_modified():
             self.emit('modified-changed')
 
-    def end_user_action(self):
+    def end_user_action(self, *, surround_deleted=None):
+        if surround_deleted is not None:
+            if self.undo:
+                self.undo[-1][7] = surround_deleted
         self.emit('end-user-action')
         self.user_action = False
 
@@ -1005,37 +953,13 @@ class FuriganaBuffer(GObject.Object):
         return text
 
     def insert(self, iter, text):
+        LOGGER.debug(f'insert: "{text}"')
         if not text:
-            self.surround_deleted = False
             return
         if self.empty():
-            if text.endswith('\r\n'):
-                text = text[:-2]
-            elif text[-1] in NEWLINES:
-                text = text[:-1]
+            text = text.rstrip(NEWLINES)
             if not text:
                 text = '\n'
-        if self.surround_deleted:
-            if self.reading.startswith(text):
-                if text == self.reading:
-                    # canceled by [Esc]
-                    self.reading = ''
-                elif '―' not in text:
-                    reading = self.reading[len(text):]
-                    if is_reading(reading):
-                        # Shrink self.reading
-                        # かけ― → か + け―
-                        self.reading = reading
-                else:
-                    # おだ―や → おだ―
-                    assert is_reading(text)
-                    self.reading = text
-                LOGGER.debug(f'insert - reading: {self.reading}')
-            else:
-                if self.ruby_mode and not iter.inside_ruby():
-                    text = self._annotate(text, self.reading)
-                self.reading = ''
-                self.surround_deleted = False
         was_modified = self.get_modified()
         start = TextIter(self)
         start.assign(iter)
@@ -1067,7 +991,7 @@ class FuriganaBuffer(GObject.Object):
                       end.get_line(), end.get_line_offset(),
                       text,
                       time.perf_counter(),
-                      self.surround_deleted]
+                      None]
             LOGGER.debug(f'on_delete: {action}')
             self.undo.append(action)
             self.redo.clear()
@@ -1083,7 +1007,7 @@ class FuriganaBuffer(GObject.Object):
                       iter.get_line(), iter.get_line_offset(),
                       text,
                       time.perf_counter(),
-                      self.surround_deleted]
+                      None]
             LOGGER.debug(f'on_inserted: {action}')
             self.undo.append(action)
             self.redo.clear()

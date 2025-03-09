@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2024  Esrille Inc.
+# Copyright (c) 2019-2025  Esrille Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,8 @@ gi.require_version('Pango', '1.0')
 gi.require_version('PangoCairo', '1.0')
 from gi.repository import GObject, Gdk, Gtk, Pango, PangoCairo
 
-from textbuffer import FuriganaBuffer, has_newline, remove_dangling_annotations
+from textbuffer import (FuriganaBuffer, has_newline, remove_dangling_annotations,
+                        IAA, IAS, IAT, KANZI, is_reading)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -83,6 +84,9 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         self.reflow_line = -1  # line number to reflow after "delete-range"; -1 to reflow every line
         self.click_count = 0
         self.anchor = self.buffer.create_mark('anchor', self.buffer.get_start_iter())
+
+        self.reading = ''
+        self.surround_deleted = False
 
         style = self.get_style_context()
         self.padding = style.get_padding(Gtk.StateFlags.NORMAL)
@@ -201,6 +205,8 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         self.im.connect('preedit-end', self.on_preedit_end)
         self.im.connect('preedit-start', self.on_preedit_start)
         self.preedit = ('', None, 0)
+
+        self.last_preedit = ''
 
     def _init_scrollable(self):
         self._hadjustment = self._vadjustment = None
@@ -393,10 +399,67 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
     def get_vadjustment(self):
         return self._vadjustment
 
+    def _annotate(self, s, r):
+        LOGGER.debug(f'_annotate("{s}", "{r}"): last_preedit={self.last_preedit}')
+        if '―' in r:
+            r = r.split('―', maxsplit=1)[0]
+            if not r:
+                return s
+
+        common = 0
+        for i in range(min(len(s), len(r))):
+            if s[i] == r[i]:
+                common += 1
+            else:
+                break
+        before = s[:common]
+        s = s[common:]
+        r = r[common:]
+
+        if s.startswith(self.last_preedit):
+            after = s[len(self.last_preedit):]
+            s = self.last_preedit
+        else:
+            after = s
+            s = ''
+
+        while s and not KANZI.search(s[-1]):
+            after = s[-1] + after
+            s = s[:-1]
+
+        if s:
+            s = IAA + s + IAS + r + IAT
+        return before + s + after
+
     def on_commit(self, im, text):
+
+        if not text:
+            self.surround_deleted = False
+        if self.surround_deleted:
+            if self.reading.startswith(text):
+                if text == self.reading:
+                    # canceled by [Esc]
+                    self.reading = ''
+                elif '―' not in text:
+                    reading = self.reading[len(text):]
+                    if is_reading(reading):
+                        # Shrink self.reading
+                        # かけ― → か + け―
+                        self.reading = reading
+                else:
+                    # おだ―や → おだ―
+                    assert is_reading(text)
+                    self.reading = text
+                LOGGER.debug(f'on_commit: reading={self.reading}')
+            else:
+                if self.buffer.get_ruby_mode() and not self.buffer.get_cursor().inside_ruby():
+                    text = self._annotate(text, self.reading)
+                self.reading = ''
+                self.surround_deleted = False
+
         self.buffer.begin_user_action()
         self.buffer.insert_at_cursor(text)
-        self.buffer.end_user_action()
+        self.buffer.end_user_action(surround_deleted=self.surround_deleted)
         self.place_cursor_onscreen()
         return True
 
@@ -415,8 +478,33 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
 
     def on_delete_surrounding(self, im, offset, n_chars):
         self.buffer.begin_user_action()
-        self.buffer.delete_surrounding(offset, n_chars)
-        self.buffer.end_user_action()
+        reading = self.buffer.delete_surrounding(offset, n_chars)
+        LOGGER.debug(f'on_delete_surrounding: {reading}')
+
+        if self.surround_deleted:
+            if self.reading:
+                if '―' not in reading:
+                    if is_reading(reading + self.reading):
+                        # Extend self.reading
+                        # か + け―る
+                        self.reading = reading + self.reading
+                elif is_reading(reading):
+                    self.reading = reading
+                else:
+                    self.reading = ''
+                    self.surround_deleted = False
+                LOGGER.debug(f'on_delete_surrounding: reading {self.reading}')
+            else:
+                self.surround_deleted = False
+        if not self.surround_deleted:
+            if is_reading(reading):
+                self.reading = reading
+                LOGGER.debug(f'on_delete_surrounding: reading: {self.reading}')
+                self.surround_deleted = True
+            else:
+                self.reading = ''
+
+        self.buffer.end_user_action(surround_deleted=self.surround_deleted)
         self.place_cursor_onscreen()
         return True
 
@@ -613,6 +701,9 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         return True
 
     def on_preedit_changed(self, im):
+        if self.preedit[0]:
+            self.last_preedit = self.preedit[0]
+
         self.preedit = self.im.get_preedit_string()
         cursor = self.buffer.get_cursor()
         self.buffer.delete_selection(True, True)
