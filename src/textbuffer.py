@@ -39,7 +39,7 @@ HIRAGANA = ('あいうえおかきくけこさしすせそたちつてとなに�
             'ゔがぎぐげござじずぜぞだぢづでどばびぶべぼぁぃぅぇぉゃゅょっぱぴぷぺぽゎゐゑ・ーゝゞ')
 KATAKANA = ('アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'
             'ヴガギグゲゴザジズゼゾダヂヅデドバビブベボァィゥェォャュョッパピプペポヮヰヱ・ーヽヾ')
-KANZI = re.compile(r'[\u4E00-\u9FFF\uFA0E-\uFA2D\uFA30-\uFA6A\uFA6B-\uFA6D𠮟]')
+KANZI = re.compile(r'[\u4E00-\u9FFF\uFA0E-\uFA2D\uFA30-\uFA6A\uFA6B-\uFA6D𠮟]+')
 
 PLAIN = 0
 BASE = 1

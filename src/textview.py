@@ -17,6 +17,7 @@
 import logging
 import math
 import os
+import re
 
 import cairo
 import gi
@@ -400,35 +401,27 @@ class FuriganaView(Gtk.DrawingArea, Gtk.Scrollable):
         return self._vadjustment
 
     def _annotate(self, s, r):
-        LOGGER.debug(f'_annotate("{s}", "{r}"): last_preedit={self.last_preedit}')
-        if '―' in r:
-            r = r.split('―', maxsplit=1)[0]
-            if not r:
-                return s
+        LOGGER.debug(f'_annotate("{s}", "{r}"): last_preedit="{self.last_preedit}"')
 
-        common = 0
-        for i in range(min(len(s), len(r))):
-            if s[i] == r[i]:
-                common += 1
-            else:
-                break
-        before = s[:common]
-        s = s[common:]
-        r = r[common:]
+        if not s:
+            return ''
+        if not r or not self.last_preedit:
+            return s
 
+        before = ''
+        after = ''
         if s.startswith(self.last_preedit):
             after = s[len(self.last_preedit):]
             s = self.last_preedit
-        else:
-            after = s
-            s = ''
 
-        while s and not KANZI.search(s[-1]):
-            after = s[-1] + after
-            s = s[:-1]
+        m = re.search(KANZI, s)
+        if m:
+            before = s[:m.start()]
+            if r.startswith(before):
+                r = r[m.start():]
+            after = s[m.end():] + after
+            s = IAA + m.group() + IAS + r + IAT
 
-        if s:
-            s = IAA + s + IAS + r + IAT
         return before + s + after
 
     def on_commit(self, im, text):
