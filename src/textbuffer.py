@@ -45,6 +45,9 @@ PLAIN = 0
 BASE = 1
 RUBY = 2
 
+MAX_PRECIDING_TEXT = 512
+MAX_SURROUNDING_TEXT = 1024
+
 
 def is_reading(s):
     if not s:
@@ -914,7 +917,17 @@ class FuriganaBuffer(GObject.Object):
 
     def get_surrounding(self):
         cursor = self.get_cursor()
-        return self.paragraphs[cursor.get_line()].get_text(), cursor.get_line_offset()
+        line = cursor.get_line()
+        text = self.paragraphs[line].get_text()
+        offset = cursor.get_line_offset()
+        while (0 < line
+               and offset < MAX_PRECIDING_TEXT
+               and len(text) < MAX_SURROUNDING_TEXT):
+            line -= 1
+            prev = self.paragraphs[line].get_text()
+            text = prev + '\n' + text
+            offset += len(prev) + 1
+        return text, offset
 
     def get_text(self, start, end, include_hidden_chars):
         if start == end:
