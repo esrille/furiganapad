@@ -86,9 +86,9 @@ class Application(Gtk.Application):
                         win.move(x, y)
                         win.resize(w, h)
         except OSError:
-            LOGGER.exception(f"Could not read '{pathname}'")
+            LOGGER.debug(f"Could not read '{pathname}'")
         except TypeError:
-            LOGGER.exception(f"Broken session file '{pathname}'")
+            LOGGER.debug(f"Broken session file '{pathname}'")
         if 0 < len(self.get_windows()):
             return
         win = Window(self)
