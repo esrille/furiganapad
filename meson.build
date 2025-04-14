@@ -1,5 +1,5 @@
 project('furiganapad',
-          version: '0.7.2~rc1',
+          version: '0.7.2',
     meson_version: '>= 0.53.0',
   default_options: [ 'warning_level=2', 'werror=false', ],
 )

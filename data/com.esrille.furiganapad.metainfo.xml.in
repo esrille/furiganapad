@@ -34,7 +34,7 @@
     <control>touch</control>
   </supports>
   <releases>
-    <release version="0.7.2" date="2025-04-13">
+    <release version="0.7.2" date="2025-04-14">
     <url type="details">https://github.com/esrille/furiganapad/releases/tag/v0.7.2</url>
     </release>
     <release version="0.7.1" date="2024-05-22">
